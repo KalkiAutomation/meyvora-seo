@@ -1,7 +1,6 @@
 <?php
 /**
  * Plugin Name: Meyvora SEO – Smart SEO Toolkit
- * Plugin URI: https://meyvora.com/meyvora-seo
  * Description: Lightweight, editor-focused SEO: meta titles, descriptions, SEO score, focus keyword, canonical, Open Graph, Twitter cards. Elementor-aware analysis.
  * Version: 1.0.0
  *
