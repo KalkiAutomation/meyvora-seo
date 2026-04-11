@@ -57,24 +57,22 @@ Core SEO features (meta tags, sitemap, redirects, schema, analysis) run entirely
 
 == Changelog ==
 
-= 2.0.0 =
-* Major release: meta box overhaul with tabbed UI (General, Social, Advanced, Score), live snippet preview, character counters, secondary keywords.
-* New analysis checks: keyword density, keyword in first H2, paragraph count, sentence length, passive voice, transition words, Flesch Reading Ease, OG image set, schema set. Redistributed weights; total score remains 100.
-* Readability module: Flesch, passive voice %, transition words %, average sentence length. Analysis result caching with cache invalidation on save.
-* Block Editor: Gutenberg sidebar panel; hide classic meta box when block editor active.
-* Elementor: editor script for re-analyze on save and score badge; AJAX endpoint for analysis.
-* Beaver Builder, Divi, WPBakery integrations: content extraction for analysis.
-* XML Sitemap: full implementation (index, posts, pages, categories, tags, CPTs, images); settings; ping on publish.
-* Schema module: Article, WebPage, BreadcrumbList, Organization, WebSite, Product (WooCommerce). Settings for organization and sameAs.
-* Redirect manager: DB tables, template_redirect, admin Redirects page with add/list/delete, CSV import/export, 404 monitor.
-* Breadcrumbs module: shortcode, template tag, schema; optional CSS.
-* WooCommerce: product in supported post types and sitemap; Product schema.
-* Admin bar: SEO score on frontend for singular posts/pages.
-* Filterable post types; get_public_post_types(); product support when WooCommerce active.
-* Upgrade routine: create redirect tables and flush rewrite rules when upgrading from &lt; 2.0.0.
-* Helper: meyvora_seo_clear_analysis_cache( $post_id ).
+= 1.0.0 =
+* Initial WordPress.org release: tabbed SEO panel (General, Social, Advanced, Score), live snippet preview, character counters, secondary keywords.
+* SEO analysis: 20+ checks including keyword density, first H2, readability (Flesch, passive voice, transition words), OG/schema checks; score 0–100 with caching.
+* Readability module with cache invalidation on save.
+* Block Editor sidebar panel; classic meta box when the block editor is not used.
+* Page builder content extraction for Elementor, Beaver Builder, Divi, and WPBakery.
+* XML sitemap (index, posts, pages, taxonomies, CPTs, images), settings, optional ping on publish.
+* JSON-LD schema (Article, WebPage, BreadcrumbList, Organization, WebSite, FAQ, Product for WooCommerce), organization settings.
+* Redirect manager (DB-backed), CSV import/export, 404 monitor.
+* Breadcrumbs shortcode, template tag, and schema.
+* WooCommerce product SEO and Product schema where applicable.
+* Admin bar SEO score on singular content; filterable post types.
+* On activation/update, required database tables are created and rewrite rules are flushed when needed.
+* Developer helper: `meyvora_seo_clear_analysis_cache( $post_id )`.
 
 == Upgrade Notice ==
 
-= 2.0.0 =
-Upgrade to get tabbed meta box, new analysis checks, readability, XML sitemap, schema, redirect manager, breadcrumbs, Block Editor sidebar, and WooCommerce support. Redirect and 404 tables are created automatically.
+= 1.0.0 =
+First public release. After activation, visit the plugin settings and run through the SEO panel on your content. Redirect and related tables are created automatically when you use those features.
