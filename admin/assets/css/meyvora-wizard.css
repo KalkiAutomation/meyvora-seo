@@ -1,0 +1,346 @@
+/**
+ * Meyvora SEO Setup Wizard — full-screen steps, --mev-* design tokens.
+ *
+ * @package Meyvora_SEO
+ */
+
+/* Full-screen container */
+.mev-wizard-wrap {
+	position: fixed;
+	inset: 0;
+	background: var(--mev-gray-50);
+	z-index: 100000;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	overflow-y: auto;
+	padding: 24px 16px 48px;
+}
+
+.mev-wizard-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	max-width: 560px;
+	margin-bottom: 24px;
+}
+
+.mev-wizard-brand {
+	font-size: 18px;
+	font-weight: 700;
+	color: var(--mev-gray-900);
+}
+
+.mev-wizard-skip {
+	font-size: 13px;
+	color: var(--mev-gray-500);
+	text-decoration: none;
+	transition: color 0.15s var(--mev-ease);
+}
+
+.mev-wizard-skip:hover {
+	color: var(--mev-primary);
+}
+
+/* Progress dots */
+.mev-wizard-progress {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 32px;
+}
+
+.mev-wizard-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: var(--mev-radius-full);
+	background: var(--mev-gray-300);
+	transition: background 0.2s var(--mev-ease);
+}
+
+.mev-wizard-dot.is-active {
+	background: var(--mev-primary);
+	transform: scale(1.2);
+}
+
+/* Steps container */
+.mev-wizard-steps {
+	width: 100%;
+	max-width: 560px;
+}
+
+.mev-wizard-step {
+	display: none;
+	animation: mev-wizard-fade 0.25s var(--mev-ease);
+}
+
+.mev-wizard-step.is-active,
+.mev-wizard-step[data-step]:not([hidden]) {
+	display: block;
+}
+
+.mev-wizard-step[hidden] {
+	display: none !important;
+}
+
+@keyframes mev-wizard-fade {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+.mev-wizard-title {
+	font-size: 24px;
+	font-weight: 700;
+	color: var(--mev-gray-900);
+	margin: 0 0 8px;
+	line-height: 1.3;
+}
+
+.mev-wizard-desc {
+	font-size: 15px;
+	color: var(--mev-gray-600);
+	margin: 0 0 24px;
+	line-height: 1.5;
+}
+
+/* Step 1: site type options */
+.mev-wizard-options {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 12px;
+	margin-bottom: 32px;
+}
+
+.mev-wizard-option {
+	display: flex;
+	align-items: center;
+	padding: 14px 16px;
+	background: var(--mev-surface);
+	border: 1px solid var(--mev-border);
+	border-radius: var(--mev-radius);
+	cursor: pointer;
+	transition: border-color 0.15s var(--mev-ease), box-shadow 0.15s var(--mev-ease);
+}
+
+.mev-wizard-option:hover {
+	border-color: var(--mev-gray-400);
+}
+
+.mev-wizard-option input {
+	margin: 0 10px 0 0;
+}
+
+.mev-wizard-option input:checked + .mev-wizard-option-label {
+	font-weight: 600;
+	color: var(--mev-primary);
+}
+
+.mev-wizard-option:has(input:checked) {
+	border-color: var(--mev-primary);
+	box-shadow: 0 0 0 2px var(--mev-primary-light);
+}
+
+.mev-wizard-option-label {
+	font-size: 14px;
+	color: var(--mev-gray-800);
+}
+
+/* Fields */
+.mev-wizard-field {
+	margin-bottom: 20px;
+}
+
+.mev-wizard-field label {
+	display: block;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--mev-gray-700);
+	margin-bottom: 6px;
+}
+
+.mev-wizard-input {
+	width: 100%;
+	max-width: 100%;
+	padding: 10px 12px;
+	font-size: 14px;
+	border: 1px solid var(--mev-border);
+	border-radius: var(--mev-radius-sm);
+	background: var(--mev-surface);
+	color: var(--mev-gray-900);
+	box-sizing: border-box;
+}
+
+.mev-wizard-input:focus {
+	outline: none;
+	border-color: var(--mev-primary);
+	box-shadow: 0 0 0 2px var(--mev-primary-light);
+}
+
+/* Logo */
+.mev-wizard-logo-wrap {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	flex-wrap: wrap;
+}
+
+.mev-wizard-logo-preview {
+	width: 80px;
+	height: 80px;
+	border: 1px dashed var(--mev-border);
+	border-radius: var(--mev-radius-sm);
+	background: var(--mev-gray-100);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+}
+
+.mev-wizard-logo-preview img {
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: contain;
+}
+
+.mev-wizard-logo-placeholder {
+	font-size: 12px;
+	color: var(--mev-gray-400);
+}
+
+/* Step 4: toggles */
+.mev-wizard-toggles {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin-bottom: 32px;
+}
+
+.mev-wizard-toggle {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 16px;
+	background: var(--mev-surface);
+	border: 1px solid var(--mev-border);
+	border-radius: var(--mev-radius);
+	cursor: pointer;
+	transition: border-color 0.15s var(--mev-ease);
+}
+
+.mev-wizard-toggle:hover {
+	border-color: var(--mev-gray-300);
+}
+
+.mev-wizard-toggle-label {
+	font-size: 14px;
+	color: var(--mev-gray-800);
+}
+
+.mev-wizard-switch {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.mev-wizard-switch-ui {
+	width: 44px;
+	height: 24px;
+	border-radius: var(--mev-radius-full);
+	background: var(--mev-gray-300);
+	position: relative;
+	transition: background 0.2s var(--mev-ease);
+	flex-shrink: 0;
+}
+
+.mev-wizard-switch-ui::after {
+	content: '';
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 20px;
+	height: 20px;
+	border-radius: var(--mev-radius-full);
+	background: var(--mev-surface);
+	box-shadow: var(--mev-shadow-sm);
+	transition: transform 0.2s var(--mev-ease);
+}
+
+.mev-wizard-toggle:has(.mev-wizard-switch:checked) .mev-wizard-switch-ui {
+	background: var(--mev-primary);
+}
+
+.mev-wizard-toggle:has(.mev-wizard-switch:checked) .mev-wizard-switch-ui::after {
+	transform: translateX(20px);
+}
+
+/* Step 5: ping box */
+.mev-wizard-ping-box {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 32px;
+	flex-wrap: wrap;
+}
+
+.mev-wizard-ping-status {
+	font-size: 13px;
+	color: var(--mev-gray-600);
+}
+
+/* Buttons */
+.mev-wizard-actions {
+	display: flex;
+	gap: 12px;
+	margin-top: 24px;
+	flex-wrap: wrap;
+}
+
+.mev-wizard-actions--center {
+	justify-content: center;
+}
+
+.mev-wizard-actions .mev-btn {
+	min-width: 120px;
+}
+
+/* Reuse mev-btn if present; fallbacks */
+.mev-wizard-wrap .mev-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px 18px;
+	font-size: 14px;
+	font-weight: 600;
+	border-radius: var(--mev-radius-sm);
+	border: none;
+	cursor: pointer;
+	text-decoration: none;
+	transition: background 0.15s var(--mev-ease), color 0.15s var(--mev-ease);
+}
+
+.mev-wizard-wrap .mev-btn--primary {
+	background: var(--mev-primary);
+	color: #fff;
+}
+
+.mev-wizard-wrap .mev-btn--primary:hover {
+	background: var(--mev-primary-hover);
+}
+
+.mev-wizard-wrap .mev-btn--secondary {
+	background: var(--mev-surface);
+	color: var(--mev-gray-700);
+	border: 1px solid var(--mev-border);
+}
+
+.mev-wizard-wrap .mev-btn--secondary:hover {
+	background: var(--mev-gray-100);
+	border-color: var(--mev-gray-300);
+}
+
+.mev-wizard-wrap .mev-btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}

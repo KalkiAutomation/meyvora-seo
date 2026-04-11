@@ -1,0 +1,120 @@
+/* ============================================================
+   Meyvora FAQ – Frontend Styles
+   Default: accordion. Falls back to "show all" when JS disabled.
+   ============================================================ */
+
+.meyvora-faq-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: 1px solid var(--meyvora-faq-border, #e5e7eb);
+    border-radius: var(--meyvora-faq-radius, 8px);
+    overflow: hidden;
+    font-family: var(--meyvora-faq-font, inherit);
+}
+
+/* ---- Individual item ---- */
+.meyvora-faq-item {
+    border-bottom: 1px solid var(--meyvora-faq-border, #e5e7eb);
+}
+.meyvora-faq-item:last-child {
+    border-bottom: none;
+}
+
+/* ---- Question / toggle button ---- */
+.meyvora-faq-question {
+    all: unset;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--meyvora-faq-q-padding, 16px 20px);
+    font-size: var(--meyvora-faq-q-size, 1rem);
+    font-weight: var(--meyvora-faq-q-weight, 600);
+    color: var(--meyvora-faq-q-color, #111827);
+    background: var(--meyvora-faq-q-bg, #fff);
+    cursor: pointer;
+    transition: background 0.15s ease;
+    box-sizing: border-box;
+    text-align: left;
+    line-height: 1.4;
+}
+.meyvora-faq-question:hover,
+.meyvora-faq-question:focus-visible {
+    background: var(--meyvora-faq-q-hover-bg, #f9fafb);
+    outline: none;
+}
+.meyvora-faq-question[aria-expanded="true"] {
+    background: var(--meyvora-faq-q-open-bg, #f5f3ff);
+    color: var(--meyvora-faq-q-open-color, #6d28d9);
+}
+
+/* ---- Chevron icon ---- */
+.meyvora-faq-icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-left: 12px;
+    transition: transform 0.25s ease;
+    color: var(--meyvora-faq-icon-color, #9ca3af);
+}
+.meyvora-faq-question[aria-expanded="true"] .meyvora-faq-icon {
+    transform: rotate(180deg);
+    color: var(--meyvora-faq-icon-open-color, #7c3aed);
+}
+
+/* ---- Answer panel ---- */
+/* max-height for open state set by JS from content height for smooth transition */
+.meyvora-faq-answer {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.35s ease, opacity 0.25s ease;
+    opacity: 0;
+}
+.meyvora-faq-answer.is-open {
+    opacity: 1;
+}
+.meyvora-faq-answer-inner {
+    padding: var(--meyvora-faq-a-padding, 4px 20px 18px);
+    font-size: var(--meyvora-faq-a-size, 0.9375rem);
+    color: var(--meyvora-faq-a-color, #374151);
+    line-height: 1.65;
+}
+.meyvora-faq-answer-inner p:first-child { margin-top: 0; }
+.meyvora-faq-answer-inner p:last-child  { margin-bottom: 0; }
+
+/* ---- "Show all" mode: everything open, no toggle ---- */
+.meyvora-faq-list--show-all .meyvora-faq-question {
+    cursor: default;
+    pointer-events: none;
+}
+.meyvora-faq-list--show-all .meyvora-faq-icon {
+    display: none;
+}
+.meyvora-faq-list--show-all .meyvora-faq-answer {
+    max-height: none;
+    opacity: 1;
+}
+
+/* ---- No-JS fallback: always open ---- */
+.no-js .meyvora-faq-answer {
+    max-height: none;
+    opacity: 1;
+}
+
+/* ---- Icon style: plus/minus ---- */
+.meyvora-faq-list--icon-plus .meyvora-faq-icon--chevron { display: none; }
+.meyvora-faq-list--icon-plus .meyvora-faq-icon--plus    { display: block; }
+.meyvora-faq-list--icon-plus .meyvora-faq-question[aria-expanded="true"] .meyvora-faq-icon--plus {
+    transform: rotate(45deg);
+}
+
+.meyvora-faq-list:not(.meyvora-faq-list--icon-plus) .meyvora-faq-icon--plus { display: none; }
+
+/* ---- First item open by default (accordion only) ---- */
+/* handled via JS — no extra CSS needed */
+
+/* ---- Separator between Q and A ---- */
+.meyvora-faq-list--separator .meyvora-faq-question[aria-expanded="true"] {
+    border-bottom: 1px solid var(--meyvora-faq-border, #e5e7eb);
+}

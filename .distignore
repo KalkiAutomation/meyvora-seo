@@ -1,0 +1,15 @@
+# Git
+.git
+.gitignore
+.github
+
+# Dev
+bin
+node_modules
+package.json
+package-lock.json
+*.map
+
+# Build artifacts
+dist
+.release

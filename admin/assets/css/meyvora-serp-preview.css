@@ -1,0 +1,147 @@
+/**
+ * Meyvora SEO – Google-style SERP snippet preview (desktop + mobile, progress bars).
+ *
+ * @package Meyvora_SEO
+ */
+
+/* Container & toggle */
+.meyvora-serp-preview-wrap {
+  margin-top: 6px;
+}
+.mev-serp-container {
+  margin-top: 8px;
+}
+.mev-serp-toggle {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.mev-serp-toggle .mev-serp-mode {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1.5px solid var(--mev-border, #e5e7eb);
+  border-radius: 9999px;
+  background: #fff;
+  cursor: pointer;
+  color: var(--mev-gray-500, #6b7280);
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.mev-serp-toggle .mev-serp-mode:hover {
+  border-color: var(--mev-primary, #7c3aed);
+  color: var(--mev-primary, #7c3aed);
+}
+.mev-serp-toggle .mev-serp-mode.is-active {
+  border-color: var(--mev-primary, #7c3aed);
+  color: var(--mev-primary, #7c3aed);
+  background: var(--mev-primary-light, #ede9fe);
+}
+
+/* Preview block (desktop / mobile) */
+.mev-serp-preview {
+  display: none;
+  margin-bottom: 16px;
+}
+.mev-serp-preview.is-active {
+  display: block;
+}
+.mev-serp-preview--mobile .mev-serp-snippet {
+  max-width: 400px;
+}
+
+/* Progress bar (pixel-width indicator) */
+.mev-serp-progress {
+  margin-bottom: 8px;
+}
+.mev-serp-progress--desc {
+  margin-top: 10px;
+}
+.mev-serp-progress-bar {
+  height: 6px;
+  background: var(--mev-gray-200, #e5e7eb);
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+.mev-serp-progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+.mev-serp-progress-fill.mev-serp-bar--green {
+  background: var(--mev-success, #059669);
+}
+.mev-serp-progress-fill.mev-serp-bar--amber {
+  background: var(--mev-warning, #d97706);
+}
+.mev-serp-progress-fill.mev-serp-bar--red {
+  background: var(--mev-danger, #dc2626);
+}
+.mev-serp-progress-label {
+  font-size: 11px;
+  color: var(--mev-gray-500, #6b7280);
+}
+
+/* Snippet card – Google-style */
+.mev-serp-snippet {
+  background: #fff;
+  border: 1px solid var(--mev-border, #e5e7eb);
+  border-radius: var(--mev-radius, 10px);
+  padding: 12px 14px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-family: arial, sans-serif;
+}
+.mev-serp-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  min-height: 20px;
+}
+.mev-serp-favicon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border-radius: 2px;
+  object-fit: contain;
+}
+.mev-serp-breadcrumb {
+  font-size: 14px;
+  color: #5f6368;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* URL / breadcrumb in green (Google result style) */
+.mev-serp-breadcrumb {
+  color: #006621;
+}
+.mev-serp-title {
+  font-size: 20px;
+  color: #1a0dab;
+  line-height: 1.3;
+  margin: 2px 0 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: default;
+  font-weight: 400;
+}
+.mev-serp-preview--mobile .mev-serp-title {
+  font-size: 16px;
+}
+.mev-serp-desc {
+  font-size: 14px;
+  color: #4d5156;
+  line-height: 1.58;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.mev-serp-preview--mobile .mev-serp-desc {
+  font-size: 13px;
+  -webkit-line-clamp: 2;
+}
