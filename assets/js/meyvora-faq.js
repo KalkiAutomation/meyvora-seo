@@ -1,3 +1,11 @@
+/*
+ * Meyvora SEO – plugin asset.
+ * Canonical source repository: https://github.com/KalkiAutomation/meyvora-seo
+ *
+ * This file ships with the WordPress.org plugin package as readable source (not an opaque compiled bundle).
+ * For the latest version and contribution workflow, clone or browse that repository.
+ */
+
 /**
  * Meyvora FAQ – Frontend accordion JS
  * Vanilla JS, no dependencies. Uses dynamic max-height from content for smooth open/close.

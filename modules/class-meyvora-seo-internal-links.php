@@ -50,6 +50,19 @@ class Meyvora_SEO_Internal_Links {
 	 * Enqueue script for link suggestions panel (post edit).
 	 */
 	public function enqueue_editor_assets( string $hook_suffix ): void {
+		if ( $hook_suffix === 'meyvora-seo_page_' . self::LINK_ANALYSIS_SLUG ) {
+			$js_file = MEYVORA_SEO_PATH . 'admin/assets/js/meyvora-internal-links-analysis.js';
+			if ( file_exists( $js_file ) ) {
+				wp_enqueue_script(
+					'meyvora-internal-links-analysis',
+					MEYVORA_SEO_URL . 'admin/assets/js/meyvora-internal-links-analysis.js',
+					array(),
+					MEYVORA_SEO_VERSION,
+					true
+				);
+			}
+			return;
+		}
 		if ( $hook_suffix !== 'post.php' && $hook_suffix !== 'post-new.php' ) {
 			return;
 		}
@@ -92,7 +105,7 @@ class Meyvora_SEO_Internal_Links {
 			return;
 		}
 		?>
-		<div class="meyvora-field meyvora-link-suggestions-wrap" id="meyvora-link-suggestions-panel" data-post-id="<?php echo (int) $post_id; ?>">
+		<div class="meyvora-field meyvora-link-suggestions-wrap" id="meyvora-link-suggestions-panel" data-post-id="<?php echo esc_attr( (string) (int) $post_id ); ?>">
 			<label><?php esc_html_e( 'Suggested internal links', 'meyvora-seo' ); ?></label>
 			<div id="meyvora-link-suggestions-list" class="meyvora-link-suggestions-list">
 				<span class="meyvora-link-suggestions-loading" id="meyvora-link-suggestions-loading"><?php esc_html_e( 'Loading…', 'meyvora-seo' ); ?></span>
@@ -110,7 +123,7 @@ class Meyvora_SEO_Internal_Links {
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_send_json_error( array( 'message' => 'Forbidden' ) );
 		}
-		$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+		$post_id = isset( $_POST['post_id'] ) ? absint( wp_unslash( $_POST['post_id'] ) ) : 0;
 		if ( ! $post_id || ! get_post( $post_id ) ) {
 			wp_send_json_error( array( 'message' => 'Invalid post' ) );
 		}

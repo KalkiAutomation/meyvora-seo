@@ -67,6 +67,20 @@ class Meyvora_SEO_Taxonomy_Meta {
 		$screen = get_current_screen();
 		if ( $screen && in_array( $screen->base, array( 'edit-tags', 'term' ), true ) ) {
 			wp_enqueue_media();
+			wp_enqueue_script(
+				'meyvora-taxonomy-og',
+				MEYVORA_SEO_URL . 'admin/assets/js/meyvora-taxonomy-og.js',
+				array( 'jquery', 'media-upload', 'media-views' ),
+				MEYVORA_SEO_VERSION,
+				true
+			);
+			wp_localize_script(
+				'meyvora-taxonomy-og',
+				'meyvoraTaxonomyOg',
+				array(
+					'mediaTitle' => __( 'Choose OG Image', 'meyvora-seo' ),
+				)
+			);
 		}
 	}
 
@@ -99,7 +113,6 @@ class Meyvora_SEO_Taxonomy_Meta {
 				<p class="description"><?php esc_html_e( 'Image used when this archive is shared on social media.', 'meyvora-seo' ); ?></p>
 			</div>
 		</div>
-		<?php $this->inline_js(); ?>
 		<?php
 	}
 
@@ -140,10 +153,9 @@ class Meyvora_SEO_Taxonomy_Meta {
 					<?php if ( $og_image_url ) : ?><img src="<?php echo esc_url( $og_image_url ); ?>" style="max-width:150px;display:block;" /><?php endif; ?>
 				</div>
 				<button type="button" class="button meyvora-term-og-pick"><?php esc_html_e( 'Choose image', 'meyvora-seo' ); ?></button>
-				<button type="button" class="button meyvora-term-og-remove" <?php echo $og_image_id ? '' : 'style="display:none;"'; ?>><?php esc_html_e( 'Remove', 'meyvora-seo' ); ?></button>
+				<button type="button" class="button meyvora-term-og-remove"<?php if ( ! $og_image_id ) : ?> style="display:none;"<?php endif; ?>><?php esc_html_e( 'Remove', 'meyvora-seo' ); ?></button>
 			</td>
 		</tr>
-		<?php $this->inline_js(); ?>
 		<?php
 	}
 
@@ -163,7 +175,7 @@ class Meyvora_SEO_Taxonomy_Meta {
 		update_term_meta( $term_id, self::TERM_META_TITLE, $title );
 		$desc = isset( $_POST['meyvora_seo_term_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['meyvora_seo_term_description'] ) ) : '';
 		update_term_meta( $term_id, self::TERM_META_DESCRIPTION, $desc );
-		$og_image = isset( $_POST['meyvora_seo_term_og_image'] ) ? absint( $_POST['meyvora_seo_term_og_image'] ) : 0;
+		$og_image = isset( $_POST['meyvora_seo_term_og_image'] ) ? absint( wp_unslash( $_POST['meyvora_seo_term_og_image'] ) ) : 0;
 		update_term_meta( $term_id, self::TERM_META_OG_IMAGE, $og_image );
 	}
 
@@ -273,50 +285,10 @@ class Meyvora_SEO_Taxonomy_Meta {
 		if ( $img_id > 0 ) {
 			$url = wp_get_attachment_image_url( $img_id, 'full' );
 			if ( $url ) {
-				return esc_url_raw( $url );
+				return esc_url( $url );
 			}
 		}
 		return $image;
 	}
 
-	/** Inline JS for media picker (shared by add/edit forms). Only output once. */
-	private function inline_js(): void {
-		static $printed = false;
-		if ( $printed ) {
-			return;
-		}
-		$printed = true;
-		?>
-		<script>
-		(function(){
-			document.querySelectorAll('.meyvora-term-og-pick').forEach(function(btn){
-				btn.addEventListener('click', function(){
-					var wrap = btn.closest('.form-field, tr');
-					var hiddenInput = document.getElementById('meyvora_seo_term_og_image');
-					var preview = wrap ? wrap.querySelector('.meyvora-seo-og-image-preview') : null;
-					var removeBtn = wrap ? wrap.querySelector('.meyvora-term-og-remove') : null;
-					var frame = wp.media({ title: '<?php echo esc_js( __( 'Choose OG Image', 'meyvora-seo' ) ); ?>', multiple: false, library: { type: 'image' } });
-					frame.on('select', function(){
-						var att = frame.state().get('selection').first().toJSON();
-						if (hiddenInput) hiddenInput.value = att.id;
-						if (preview) { var src = (att.sizes && att.sizes.thumbnail) ? att.sizes.thumbnail.url : att.url; preview.innerHTML = '<img src="'+src+'" style="max-width:150px;display:block;" />'; }
-						if (removeBtn) removeBtn.style.display = '';
-					});
-					frame.open();
-				});
-			});
-			document.querySelectorAll('.meyvora-term-og-remove').forEach(function(btn){
-				btn.addEventListener('click', function(){
-					var hiddenInput = document.getElementById('meyvora_seo_term_og_image');
-					var wrap = btn.closest('.form-field, tr');
-					var preview = wrap ? wrap.querySelector('.meyvora-seo-og-image-preview') : null;
-					if (hiddenInput) hiddenInput.value = '';
-					if (preview) preview.innerHTML = '';
-					btn.style.display = 'none';
-				});
-			});
-		})();
-		</script>
-		<?php
-	}
 }

@@ -96,7 +96,7 @@ class Meyvora_SEO_EEAT {
 			</tr>
 			<tr>
 				<th><?php esc_html_e( 'Publication count', 'meyvora-seo' ); ?></th>
-				<td><em><?php echo (int) $pub_count; ?></em> <?php esc_html_e( '(auto-calculated from published posts)', 'meyvora-seo' ); ?></td>
+				<td><em><?php echo esc_html( (string) (int) $pub_count ); ?></em> <?php esc_html_e( '(auto-calculated from published posts)', 'meyvora-seo' ); ?></td>
 			</tr>
 		</table>
 		<?php
@@ -359,12 +359,11 @@ class Meyvora_SEO_EEAT {
 
 	private function echo_ld_json( array $data ): void {
 		$json = wp_json_encode( $data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
-		if ( $json === false ) {
+		if ( $json === false || ! function_exists( 'meyvora_seo_print_ld_json_script' ) ) {
 			return;
 		}
-		// JSON from wp_json_encode is safe for script context.
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo '<script type="application/ld+json">' . "\n" . wp_strip_all_tags( $json ) . "\n" . '</script>' . "\n";
+		meyvora_seo_print_ld_json_script( wp_strip_all_tags( $json ) );
+		echo "\n";
 	}
 
 	/**

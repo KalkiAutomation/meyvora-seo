@@ -46,7 +46,7 @@ foreach ( $recent_posts as $pid ) {
 					<select id="mev-competitor-post" style="width:100%;margin-top:4px;">
 						<option value=""><?php esc_html_e( '— Select —', 'meyvora-seo' ); ?></option>
 						<?php foreach ( $post_choices as $pid => $title ) : ?>
-							<option value="<?php echo (int) $pid; ?>"><?php echo esc_html( wp_trim_words( $title, 8 ) ); ?> (ID: <?php echo (int) $pid; ?>)</option>
+							<option value="<?php echo esc_attr( (string) (int) $pid ); ?>"><?php echo esc_html( wp_trim_words( $title, 8 ) ); ?> (ID: <?php echo esc_html( (string) (int) $pid ); ?>)</option>
 						<?php endforeach; ?>
 					</select>
 				</div>
@@ -135,14 +135,3 @@ foreach ( $recent_posts as $pid ) {
 	</div><!-- #mev-tab-history -->
 </div>
 
-<style>
-.mev-comp-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--mev-gray-100); }
-.mev-comp-row:last-child { border-bottom: 0; }
-.mev-comp-label { font-weight: 600; color: var(--mev-gray-700); min-width: 120px; }
-.mev-comp-value { flex: 1; word-break: break-word; font-size: 13px; }
-.mev-comp-value.mev-stronger { background: rgba(220, 38, 38, 0.08); color: var(--mev-danger); padding: 2px 6px; border-radius: 4px; }
-.mev-comp-value.mev-weaker { background: rgba(5, 150, 105, 0.08); color: var(--mev-success); padding: 2px 6px; border-radius: 4px; }
-.mev-comp-list { margin: 0; padding-left: 18px; font-size: 13px; }
-.mev-comp-og-list { margin: 0; padding: 0; list-style: none; font-size: 12px; }
-.mev-comp-og-list li { padding: 2px 0; }
-</style>

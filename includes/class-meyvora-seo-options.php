@@ -53,6 +53,7 @@ class Meyvora_SEO_Options {
 			'sitemap_news_enabled'     => false,
 			'sitemap_news_post_type'   => 'post',
 			'sitemap_video_enabled'    => false,
+			'sitemap_ping_google_enabled' => false,
 			'breadcrumbs_enabled'      => true,
 			'schema_organization'      => true,
 			'schema_organization_name'  => '',
@@ -106,6 +107,8 @@ class Meyvora_SEO_Options {
 			'image_seo_ai_alt'           => false,
 			'rank_tracker_enabled'      => false,
 			'rank_tracker_posts_per_run' => 100,
+			'link_checker_background_enabled' => false,
+			'competitor_monitor_enabled' => false,
 			'indexnow_enabled'          => false,
 			'indexnow_api_key'          => '',
 			'pagespeed_api_key'         => '',
@@ -122,6 +125,7 @@ class Meyvora_SEO_Options {
 			'score_alert_enabled'   => false,
 			'score_alert_email'     => '',
 			'score_alert_slack'     => '',
+			'score_alert_slack_enabled' => false,
 			'score_alert_threshold' => 10,
 		);
 	}
@@ -275,6 +279,9 @@ class Meyvora_SEO_Options {
 		if ( in_array( $key, $bool_keys, true ) ) {
 			return (bool) $value;
 		}
+		if ( in_array( $key, array( 'sitemap_ping_google_enabled', 'link_checker_background_enabled', 'competitor_monitor_enabled', 'score_alert_slack_enabled' ), true ) ) {
+			return (bool) $value;
+		}
 		if ( in_array( $key, array( 'sitemap_exclude_ids', 'sitemap_news_post_type' ), true ) ) {
 			return is_string( $value ) ? sanitize_text_field( $value ) : ( $key === 'sitemap_news_post_type' ? 'post' : '' );
 		}
@@ -377,7 +384,7 @@ class Meyvora_SEO_Options {
 			return (bool) $value;
 		}
 		if ( $key === 'ga4_mode' ) {
-			return in_array( $value, array( 'simple', 'advanced' ), true ) ? $value : 'simple';
+			return 'simple';
 		}
 		if ( $key === 'ga4_credentials_encrypted' ) {
 			return is_string( $value ) ? sanitize_text_field( $value ) : '';

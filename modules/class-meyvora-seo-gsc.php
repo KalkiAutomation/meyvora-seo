@@ -62,24 +62,28 @@ class Meyvora_SEO_GSC {
 		if ( ! $screen || ! in_array( $screen->post_type ?? '', $post_types, true ) ) {
 			return;
 		}
-		wp_add_inline_script( 'jquery', $this->get_gsc_keywords_inline_script(), 'after' );
-	}
-
-	/**
-	 * Inline script: fetch GSC keywords for sidebar and render.
-	 *
-	 * @return string
-	 */
-	protected function get_gsc_keywords_inline_script(): string {
-		$ajax_url = admin_url( 'admin-ajax.php' );
-		$nonce = wp_create_nonce( 'meyvora_gsc_keywords' );
-		return sprintf(
-			'document.addEventListener("DOMContentLoaded",function(){ var wrap = document.getElementById("mev-gsc-keywords-wrap"); if (!wrap) return; var postId = wrap.getAttribute("data-post-id"); var url = wrap.getAttribute("data-url"); if (!postId || !url) return; var fd = new FormData(); fd.append("action", "meyvora_gsc_keywords"); fd.append("nonce", %s); fd.append("post_id", postId); fd.append("url", url); fetch("%s", { method: "POST", body: fd, credentials: "same-origin" }).then(function(r){ return r.json(); }).then(function(res){ if (res.success && res.data && res.data.rows) { var rows = res.data.rows; var html = ""; if (rows.length === 0) { html = "<p class=\"mev-gsc-sidebar-text\">%s</p>"; } else { html = "<ul class=\"mev-gsc-keywords-list\">"; for (var i = 0; i < Math.min(10, rows.length); i++) { var row = rows[i]; var q = (row.keys && row.keys[0]) ? row.keys[0] : ""; var clicks = row.clicks || 0; var impr = row.impressions || 0; var pos = row.position !== undefined ? ", pos. " + Number(row.position).toFixed(1) : ""; html += "<li><span class=\"mev-gsc-kw-query\">" + q + "</span> <span class=\"mev-gsc-kw-meta\">" + clicks + " clicks, " + impr + " impr." + pos + "</span></li>"; } html += "</ul>"; } wrap.innerHTML = html; } else { wrap.innerHTML = "<p class=\"mev-gsc-sidebar-text\">%s</p>"; } }).catch(function(){ wrap.innerHTML = "<p class=\"mev-gsc-sidebar-text\">%s</p>"; }); });',
-			wp_json_encode( $nonce ),
-			esc_js( $ajax_url ),
-			esc_js( __( 'No Search Console data for this page yet.', 'meyvora-seo' ) ),
-			esc_js( __( 'Could not load Search Console data.', 'meyvora-seo' ) ),
-			esc_js( __( 'Could not load Search Console data.', 'meyvora-seo' ) )
+		$js_path = MEYVORA_SEO_PATH . 'admin/assets/js/meyvora-gsc-keywords-sidebar.js';
+		if ( ! file_exists( $js_path ) ) {
+			return;
+		}
+		wp_enqueue_script(
+			'meyvora-gsc-keywords-sidebar',
+			MEYVORA_SEO_URL . 'admin/assets/js/meyvora-gsc-keywords-sidebar.js',
+			array(),
+			defined( 'MEYVORA_SEO_VERSION' ) ? MEYVORA_SEO_VERSION : '1.0.0',
+			true
+		);
+		wp_localize_script(
+			'meyvora-gsc-keywords-sidebar',
+			'meyvoraGscSidebar',
+			array(
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'meyvora_gsc_keywords' ),
+				'i18n'    => array(
+					'empty' => __( 'No Search Console data for this page yet.', 'meyvora-seo' ),
+					'error' => __( 'Could not load Search Console data.', 'meyvora-seo' ),
+				),
+			)
 		);
 	}
 
@@ -807,7 +811,7 @@ class Meyvora_SEO_GSC {
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_send_json_error( array( 'message' => 'Forbidden' ) );
 		}
-		$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+		$post_id = isset( $_POST['post_id'] ) ? absint( wp_unslash( $_POST['post_id'] ) ) : 0;
 		$url = isset( $_POST['url'] ) ? esc_url_raw( wp_unslash( $_POST['url'] ) ) : '';
 		if ( $post_id <= 0 || $url === '' ) {
 			wp_send_json_error( array( 'message' => 'Invalid post or URL' ) );
@@ -854,7 +858,7 @@ class Meyvora_SEO_GSC {
 						<?php foreach ( $top_pages as $row ) : ?>
 							<li>
 								<?php echo esc_html( isset( $row['keys'][0] ) ? $row['keys'][0] : '' ); ?>
-								(<?php echo (int) ( $row['clicks'] ?? 0 ); ?> clicks)
+								(<?php echo esc_html( (string) (int) ( $row['clicks'] ?? 0 ) ); ?> clicks)
 							</li>
 						<?php endforeach; ?>
 					</ol>
@@ -869,7 +873,7 @@ class Meyvora_SEO_GSC {
 						<?php foreach ( $top_queries as $row ) : ?>
 							<li>
 								<?php echo esc_html( isset( $row['keys'][0] ) ? $row['keys'][0] : '' ); ?>
-								(<?php echo (int) ( $row['clicks'] ?? 0 ); ?> clicks, pos. <?php echo esc_html( number_format_i18n( (float) ( $row['position'] ?? 0 ), 1 ) ); ?>)
+								(<?php echo esc_html( (string) (int) ( $row['clicks'] ?? 0 ) ); ?> clicks, pos. <?php echo esc_html( number_format_i18n( (float) ( $row['position'] ?? 0 ), 1 ) ); ?>)
 							</li>
 						<?php endforeach; ?>
 					</ol>

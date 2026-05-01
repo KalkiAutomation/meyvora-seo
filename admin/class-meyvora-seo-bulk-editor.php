@@ -5,7 +5,7 @@
  * @package Meyvora_SEO
  */
 
-// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.SlowDBQuery.slow_db_query_meta_query, WordPress.DB.SlowDBQuery.slow_db_query_tax_query, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- GET filters; bulk meta fetch; AJAX nonce in handlers; rows/ids validated.
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.SlowDBQuery.slow_db_query_meta_query, WordPress.DB.SlowDBQuery.slow_db_query_tax_query, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.Security.NonceVerification.Recommended -- GET filters; bulk meta fetch; AJAX nonce in handlers; rows/ids validated.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -295,10 +295,13 @@ class Meyvora_SEO_Bulk_Editor {
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Forbidden', 'meyvora-seo' ) ) );
 		}
-		$payload = isset( $_POST['rows'] ) ? json_decode( (string) wp_unslash( $_POST['rows'] ), true ) : array();
+		$rows_raw = isset( $_POST['rows'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['rows'] ) ) : '';
+		$rows_raw = is_string( $rows_raw ) ? $rows_raw : '';
+		$payload  = json_decode( $rows_raw, true );
 		if ( ! is_array( $payload ) ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid data', 'meyvora-seo' ) ) );
 		}
+		$payload = map_deep( $payload, 'sanitize_text_field' );
 		$updated = 0;
 		foreach ( $payload as $row ) {
 			$post_id = isset( $row['post_id'] ) ? absint( $row['post_id'] ) : 0;
@@ -338,7 +341,10 @@ class Meyvora_SEO_Bulk_Editor {
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Forbidden', 'meyvora-seo' ) ) );
 		}
-		$ids = isset( $_POST['ids'] ) ? array_map( 'absint', (array) json_decode( (string) wp_unslash( $_POST['ids'] ), true ) ) : array();
+		$ids_raw = isset( $_POST['ids'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['ids'] ) ) : '';
+		$ids_raw = is_string( $ids_raw ) ? $ids_raw : '';
+		$ids_dec = json_decode( $ids_raw, true );
+		$ids     = is_array( $ids_dec ) ? array_map( 'absint', $ids_dec ) : array();
 		$ids = array_filter( $ids );
 		if ( empty( $ids ) ) {
 			wp_send_json_error( array( 'message' => __( 'No rows selected', 'meyvora-seo' ) ) );

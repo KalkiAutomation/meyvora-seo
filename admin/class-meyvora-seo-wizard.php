@@ -164,7 +164,7 @@ class Meyvora_SEO_Wizard {
 			</header>
 			<div class="mev-wizard-progress">
 				<?php for ( $i = 1; $i <= self::TOTAL_STEPS; $i++ ) : ?>
-					<span class="mev-wizard-dot <?php echo $i === 1 ? 'is-active' : ''; ?>" data-step="<?php echo (int) $i; ?>" aria-hidden="true"></span>
+					<span class="mev-wizard-dot <?php echo esc_attr( $i === 1 ? 'is-active' : '' ); ?>" data-step="<?php echo esc_attr( (string) (int) $i ); ?>" aria-hidden="true"></span>
 				<?php endfor; ?>
 			</div>
 			<div class="mev-wizard-steps">
@@ -213,7 +213,7 @@ class Meyvora_SEO_Wizard {
 								<?php endif; ?>
 							</div>
 							<button type="button" class="mev-btn mev-btn--secondary" id="mev-wizard-logo-picker"><?php esc_html_e( 'Select image', 'meyvora-seo' ); ?></button>
-							<input type="hidden" id="mev-wizard-org-logo" name="schema_organization_logo" value="<?php echo (int) $org_logo; ?>" />
+							<input type="hidden" id="mev-wizard-org-logo" name="schema_organization_logo" value="<?php echo esc_attr( (string) (int) $org_logo ); ?>" />
 						</div>
 					</div>
 					<div class="mev-wizard-actions">
@@ -312,8 +312,7 @@ class Meyvora_SEO_Wizard {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Forbidden.', 'meyvora-seo' ) ) );
 		}
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized in sanitize_and_merge.
-		$input = isset( $_POST['data'] ) && is_array( $_POST['data'] ) ? wp_unslash( $_POST['data'] ) : array();
+		$input = isset( $_POST['data'] ) && is_array( $_POST['data'] ) ? map_deep( wp_unslash( $_POST['data'] ), 'sanitize_text_field' ) : array();
 		$sanitized = $this->options->sanitize_and_merge( $input );
 		$saved = update_option( MEYVORA_SEO_OPTION_KEY, $sanitized, true );
 		wp_send_json_success( array( 'saved' => $saved ) );
@@ -351,7 +350,7 @@ class Meyvora_SEO_Wizard {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Forbidden.', 'meyvora-seo' ) ) );
 		}
-		do_action( 'meyvora_seo_after_publish' );
+		do_action( 'meyvora_seo_after_publish', true );
 		wp_send_json_success( array( 'message' => __( 'Ping sent.', 'meyvora-seo' ) ) );
 	}
 }

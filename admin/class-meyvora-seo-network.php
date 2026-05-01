@@ -312,15 +312,15 @@ class Meyvora_SEO_Network {
 			<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px;">
 				<div style="background: var(--mev-surface-2, #f9fafb); border: 1px solid var(--mev-border); border-radius: var(--mev-radius-sm, 6px); padding: 16px;">
 					<div style="font-size: 12px; color: var(--mev-gray-500); text-transform: uppercase; letter-spacing: 0.05em;"><?php esc_html_e( 'Sites managed', 'meyvora-seo' ); ?></div>
-					<div style="font-size: 28px; font-weight: 700; color: var(--mev-gray-800, #1f2937);"><?php echo (int) $sites_managed; ?></div>
+					<div style="font-size: 28px; font-weight: 700; color: var(--mev-gray-800, #1f2937);"><?php echo esc_html( (string) (int) $sites_managed ); ?></div>
 				</div>
 				<div style="background: var(--mev-surface-2); border: 1px solid var(--mev-border); border-radius: var(--mev-radius-sm); padding: 16px;">
 					<div style="font-size: 12px; color: var(--mev-gray-500); text-transform: uppercase; letter-spacing: 0.05em;"><?php esc_html_e( 'Average health score', 'meyvora-seo' ); ?></div>
-					<div style="font-size: 28px; font-weight: 700; color: var(--mev-primary, #7c3aed);"><?php echo (int) $avg_health; ?></div>
+					<div style="font-size: 28px; font-weight: 700; color: var(--mev-primary, #7c3aed);"><?php echo esc_html( (string) (int) $avg_health ); ?></div>
 				</div>
 				<div style="background: var(--mev-surface-2); border: 1px solid var(--mev-border); border-radius: var(--mev-radius-sm); padding: 16px;">
 					<div style="font-size: 12px; color: var(--mev-gray-500); text-transform: uppercase; letter-spacing: 0.05em;"><?php esc_html_e( 'Total open issues', 'meyvora-seo' ); ?></div>
-					<div style="font-size: 28px; font-weight: 700; color: var(--mev-danger, #dc2626);"><?php echo (int) $total_issues; ?></div>
+					<div style="font-size: 28px; font-weight: 700; color: var(--mev-danger, #dc2626);"><?php echo esc_html( (string) (int) $total_issues ); ?></div>
 				</div>
 			</div>
 
@@ -369,21 +369,21 @@ class Meyvora_SEO_Network {
 									} else {
 										$pill_style .= ' background: var(--mev-danger-light, #fee2e2); color: var(--mev-danger, #dc2626);';
 									}
-									echo '<span style="' . esc_attr( $pill_style ) . '">' . (int) $score . '</span>';
+									echo '<span style="' . esc_attr( $pill_style ) . '">' . esc_html( (string) (int) $score ) . '</span>';
 								} else {
-									echo '—';
+									echo '&mdash;';
 								}
 								?>
 							</td>
-							<td><?php echo ! empty( $row['plugin_active'] ) ? (int) $row['issue_count'] : '—'; ?></td>
+							<td><?php echo ! empty( $row['plugin_active'] ) ? esc_html( (string) (int) $row['issue_count'] ) : '&mdash;'; ?></td>
 							<td><?php echo ! empty( $row['plugin_active'] ) && ! empty( $row['gsc_connected'] ) ? '✓' : '✗'; ?></td>
-							<td><?php echo ! empty( $row['plugin_active'] ) ? (int) $row['post_count'] : '—'; ?></td>
+							<td><?php echo ! empty( $row['plugin_active'] ) ? esc_html( (string) (int) $row['post_count'] ) : '&mdash;'; ?></td>
 							<td>
 								<?php
 								if ( ! empty( $row['plugin_active'] ) && ! empty( $row['last_audit_ts'] ) ) {
 									echo esc_html( human_time_diff( (int) $row['last_audit_ts'], time() ) . ' ' . __( 'ago', 'meyvora-seo' ) );
 								} else {
-									echo '—';
+									echo '&mdash;';
 								}
 								?>
 							</td>
@@ -392,7 +392,7 @@ class Meyvora_SEO_Network {
 									<a href="<?php echo esc_url( $row['report_url'] ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'View Report', 'meyvora-seo' ); ?></a>
 									| <a href="<?php echo esc_url( $row['audit_url'] ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'View Audit', 'meyvora-seo' ); ?></a>
 								<?php else : ?>
-									—
+									<?php echo '&mdash;'; ?>
 								<?php endif; ?>
 							</td>
 						</tr>

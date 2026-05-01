@@ -109,50 +109,50 @@ class Meyvora_SEO_Serp_Preview {
 				</div>
 
 				<!-- Desktop preview -->
-				<div id="mev-serp-desktop" class="mev-serp-preview mev-serp-preview--desktop is-active" data-title-px="<?php echo (int) $desktop_title_px; ?>" data-title-char="<?php echo (int) $desktop_title_char; ?>" data-desc-px="<?php echo (int) $desktop_desc_px; ?>" data-desc-char="<?php echo (int) $desktop_desc_char; ?>">
+				<div id="mev-serp-desktop" class="mev-serp-preview mev-serp-preview--desktop is-active" data-title-px="<?php echo esc_attr( (string) (int) $desktop_title_px ); ?>" data-title-char="<?php echo esc_attr( (string) (int) $desktop_title_char ); ?>" data-desc-px="<?php echo esc_attr( (string) (int) $desktop_desc_px ); ?>" data-desc-char="<?php echo esc_attr( (string) (int) $desktop_desc_char ); ?>">
 					<div class="mev-serp-progress mev-serp-progress--title">
 						<div class="mev-serp-progress-bar" role="presentation">
 							<div class="mev-serp-progress-fill mev-serp-progress-fill--title mev-serp-bar--green" id="mev-serp-desktop-title-bar"></div>
 						</div>
-						<span class="mev-serp-progress-label" id="mev-serp-desktop-title-label">0 / <?php echo (int) $desktop_title_char; ?> chars · ~0 / <?php echo (int) $desktop_title_px; ?>px</span>
+						<span class="mev-serp-progress-label" id="mev-serp-desktop-title-label">0 / <?php echo esc_html( (string) (int) $desktop_title_char ); ?> chars · ~0 / <?php echo esc_html( (string) (int) $desktop_title_px ); ?>px</span>
 					</div>
 					<div class="mev-serp-snippet mev-serp-snippet--desktop">
 						<div class="mev-serp-header">
 							<img class="mev-serp-favicon" src="<?php echo esc_url( $favicon_url ); ?>" alt="" width="16" height="16" />
 							<span class="mev-serp-breadcrumb" id="mev-serp-desktop-breadcrumb"><?php echo esc_html( $breadcrumb ); ?></span>
 						</div>
-						<div class="mev-serp-title" id="mev-serp-desktop-title" style="max-width:<?php echo (int) $desktop_title_px; ?>px;"><?php echo esc_html( $title ); ?></div>
-						<div class="mev-serp-desc" id="mev-serp-desktop-desc" style="max-width:<?php echo (int) $desktop_desc_px; ?>px;"><?php echo esc_html( $desc ); ?></div>
+						<div class="mev-serp-title" id="mev-serp-desktop-title" style="<?php echo esc_attr( 'max-width:' . (int) $desktop_title_px . 'px;' ); ?>"><?php echo esc_html( $title ); ?></div>
+						<div class="mev-serp-desc" id="mev-serp-desktop-desc" style="<?php echo esc_attr( 'max-width:' . (int) $desktop_desc_px . 'px;' ); ?>"><?php echo esc_html( $desc ); ?></div>
 					</div>
 					<div class="mev-serp-progress mev-serp-progress--desc">
 						<div class="mev-serp-progress-bar" role="presentation">
 							<div class="mev-serp-progress-fill mev-serp-progress-fill--desc mev-serp-bar--green" id="mev-serp-desktop-desc-bar"></div>
 						</div>
-						<span class="mev-serp-progress-label" id="mev-serp-desktop-desc-label">0 / <?php echo (int) $desktop_desc_char; ?> chars · ~0 / <?php echo (int) $desktop_desc_px; ?>px</span>
+						<span class="mev-serp-progress-label" id="mev-serp-desktop-desc-label">0 / <?php echo esc_html( (string) (int) $desktop_desc_char ); ?> chars · ~0 / <?php echo esc_html( (string) (int) $desktop_desc_px ); ?>px</span>
 					</div>
 				</div>
 
 				<!-- Mobile preview -->
-				<div id="mev-serp-mobile" class="mev-serp-preview mev-serp-preview--mobile" hidden data-title-px="<?php echo (int) $mobile_title_px; ?>" data-title-char="<?php echo (int) $mobile_title_char; ?>" data-desc-px="<?php echo (int) $mobile_desc_px; ?>" data-desc-char="<?php echo (int) $mobile_desc_char; ?>">
+				<div id="mev-serp-mobile" class="mev-serp-preview mev-serp-preview--mobile" hidden data-title-px="<?php echo esc_attr( (string) (int) $mobile_title_px ); ?>" data-title-char="<?php echo esc_attr( (string) (int) $mobile_title_char ); ?>" data-desc-px="<?php echo esc_attr( (string) (int) $mobile_desc_px ); ?>" data-desc-char="<?php echo esc_attr( (string) (int) $mobile_desc_char ); ?>">
 					<div class="mev-serp-progress mev-serp-progress--title">
 						<div class="mev-serp-progress-bar" role="presentation">
 							<div class="mev-serp-progress-fill mev-serp-progress-fill--title mev-serp-bar--green" id="mev-serp-mobile-title-bar"></div>
 						</div>
-						<span class="mev-serp-progress-label" id="mev-serp-mobile-title-label">0 / <?php echo (int) $mobile_title_char; ?> chars · ~0 / <?php echo (int) $mobile_title_px; ?>px</span>
+						<span class="mev-serp-progress-label" id="mev-serp-mobile-title-label">0 / <?php echo esc_html( (string) (int) $mobile_title_char ); ?> chars · ~0 / <?php echo esc_html( (string) (int) $mobile_title_px ); ?>px</span>
 					</div>
 					<div class="mev-serp-snippet mev-serp-snippet--mobile">
 						<div class="mev-serp-header">
 							<img class="mev-serp-favicon" src="<?php echo esc_url( $favicon_url ); ?>" alt="" width="16" height="16" />
 							<span class="mev-serp-breadcrumb" id="mev-serp-mobile-breadcrumb"><?php echo esc_html( $breadcrumb ); ?></span>
 						</div>
-						<div class="mev-serp-title" id="mev-serp-mobile-title" style="max-width:<?php echo (int) $mobile_title_px; ?>px;"><?php echo esc_html( $title ); ?></div>
-						<div class="mev-serp-desc" id="mev-serp-mobile-desc" style="max-width:<?php echo (int) $mobile_desc_px; ?>px;"><?php echo esc_html( $desc ); ?></div>
+						<div class="mev-serp-title" id="mev-serp-mobile-title" style="<?php echo esc_attr( 'max-width:' . (int) $mobile_title_px . 'px;' ); ?>"><?php echo esc_html( $title ); ?></div>
+						<div class="mev-serp-desc" id="mev-serp-mobile-desc" style="<?php echo esc_attr( 'max-width:' . (int) $mobile_desc_px . 'px;' ); ?>"><?php echo esc_html( $desc ); ?></div>
 					</div>
 					<div class="mev-serp-progress mev-serp-progress--desc">
 						<div class="mev-serp-progress-bar" role="presentation">
 							<div class="mev-serp-progress-fill mev-serp-progress-fill--desc mev-serp-bar--green" id="mev-serp-mobile-desc-bar"></div>
 						</div>
-						<span class="mev-serp-progress-label" id="mev-serp-mobile-desc-label">0 / <?php echo (int) $mobile_desc_char; ?> chars · ~0 / <?php echo (int) $mobile_desc_px; ?>px</span>
+						<span class="mev-serp-progress-label" id="mev-serp-mobile-desc-label">0 / <?php echo esc_html( (string) (int) $mobile_desc_char ); ?> chars · ~0 / <?php echo esc_html( (string) (int) $mobile_desc_px ); ?>px</span>
 					</div>
 				</div>
 			</div>

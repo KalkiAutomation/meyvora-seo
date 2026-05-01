@@ -79,7 +79,7 @@ $meyvora_seo_i18n = array(
 				<select id="mev-prog-template" class="mev-select">
 					<option value=""><?php echo esc_html( $meyvora_seo_i18n['selectTemplate'] ); ?></option>
 					<?php foreach ( $templates as $meyvora_seo_template ) : ?>
-						<option value="<?php echo (int) $meyvora_seo_template->ID; ?>"><?php echo esc_html( $meyvora_seo_template->post_title ?: __( '(no title)', 'meyvora-seo' ) ); ?></option>
+						<option value="<?php echo esc_attr( (string) (int) $meyvora_seo_template->ID ); ?>"><?php echo esc_html( $meyvora_seo_template->post_title ?: __( '(no title)', 'meyvora-seo' ) ); ?></option>
 					<?php endforeach; ?>
 				</select>
 			</div>
@@ -167,9 +167,9 @@ $meyvora_seo_i18n = array(
 							?>
 							<tr>
 								<td><?php echo esc_html( $term->name ); ?></td>
-								<td><?php echo (int) $meyvora_seo_group_count; ?></td>
+								<td><?php echo esc_html( (string) (int) $meyvora_seo_group_count ); ?></td>
 								<td>
-									<button type="button" class="mev-btn mev-btn--secondary mev-btn--sm mev-prog-delete-group" data-term-id="<?php echo (int) $term->term_id; ?>" data-count="<?php echo (int) $meyvora_seo_group_count; ?>">
+									<button type="button" class="mev-btn mev-btn--secondary mev-btn--sm mev-prog-delete-group" data-term-id="<?php echo esc_attr( (string) (int) $term->term_id ); ?>" data-count="<?php echo esc_attr( (string) (int) $meyvora_seo_group_count ); ?>">
 										<?php echo esc_html( $meyvora_seo_i18n['deleteAll'] ); ?>
 									</button>
 								</td>

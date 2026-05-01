@@ -11,11 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<style>
-.mev-modal { position: fixed; inset: 0; z-index: 100000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-.mev-modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
-.mev-modal-content { position: relative; background: var(--mev-surface, #fff); border-radius: var(--mev-radius, 10px); box-shadow: var(--mev-shadow-xl, 0 20px 25px rgba(0,0,0,0.1)); padding: 24px; width: 100%; }
-</style>
 <div class="wrap meyvora-link-checker-page">
 	<div class="mev-page-header">
 		<div class="mev-page-header-left">
@@ -55,7 +50,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							$edit_link  = get_edit_post_link( $row->post_id, 'raw' );
 							$last       = $row->last_checked ? gmdate( 'Y-m-d H:i', strtotime( $row->last_checked ) ) : '—';
 						?>
-							<tr data-check-id="<?php echo (int) $row->id; ?>" data-old-url="<?php echo esc_attr( $row->url ); ?>">
+							<tr data-check-id="<?php echo esc_attr( (string) (int) $row->id ); ?>" data-old-url="<?php echo esc_attr( $row->url ); ?>">
 								<td>
 									<?php if ( $edit_link ) : ?>
 										<a href="<?php echo esc_url( $edit_link ); ?>"><?php echo esc_html( $post_title ?: __( '(no title)', 'meyvora-seo' ) ); ?></a>
@@ -64,11 +59,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 									<?php endif; ?>
 								</td>
 								<td><a href="<?php echo esc_url( $row->url ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( wp_trim_words( $row->url, 8 ) ); ?></a></td>
-								<td><?php echo esc_html( wp_trim_words( $row->anchor_text, 5 ) ?: '—' ); ?></td>
-								<td><?php echo (int) $row->http_status ? (int) $row->http_status : '—'; ?></td>
+								<td><?php
+								$anchor_trim = wp_trim_words( $row->anchor_text, 5 );
+								echo $anchor_trim !== '' ? esc_html( $anchor_trim ) : '&mdash;';
+								?></td>
+								<td><?php
+								$http_st = (int) $row->http_status;
+								echo $http_st ? esc_html( (string) $http_st ) : '&mdash;';
+								?></td>
 								<td><?php echo esc_html( $last ); ?></td>
 								<td>
-									<button type="button" class="button button-small meyvora-link-checker-fix" data-check-id="<?php echo (int) $row->id; ?>" data-old-url="<?php echo esc_attr( $row->url ); ?>">
+									<button type="button" class="button button-small meyvora-link-checker-fix" data-check-id="<?php echo esc_attr( (string) (int) $row->id ); ?>" data-old-url="<?php echo esc_attr( $row->url ); ?>">
 										<?php esc_html_e( 'Fix', 'meyvora-seo' ); ?>
 									</button>
 								</td>

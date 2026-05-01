@@ -57,32 +57,32 @@ $offset        = $circumference - round( $circumference * $health / 100 );
 				<svg class="mev-audit-ring" viewBox="0 0 120 120" width="110" height="110">
 					<circle cx="60" cy="60" r="50" class="mev-ring-bg"/>
 					<circle cx="60" cy="60" r="50" class="mev-ring-fill"
-						stroke-dasharray="<?php echo (int) $circumference; ?>"
-						stroke-dashoffset="<?php echo (int) $offset; ?>"/>
+						stroke-dasharray="<?php echo esc_attr( (string) (int) $circumference ); ?>"
+						stroke-dashoffset="<?php echo esc_attr( (string) (int) $offset ); ?>"/>
 				</svg>
 				<div class="mev-ring-label">
-					<span class="mev-ring-pct"><?php echo (int) $health; ?></span>
+					<span class="mev-ring-pct"><?php echo esc_html( (string) (int) $health ); ?></span>
 					<span class="mev-ring-unit"><?php esc_html_e( 'Good this page', 'meyvora-seo' ); ?></span>
 				</div>
 			</div>
 			<div class="mev-link-stat-grid">
 				<div class="mev-link-stat mev-link-stat--total">
-					<div class="mev-link-stat-val"><?php echo (int) $total; ?></div>
+					<div class="mev-link-stat-val"><?php echo esc_html( (string) (int) $total ); ?></div>
 					<div class="mev-link-stat-label"><?php esc_html_e( 'Total Pages', 'meyvora-seo' ); ?></div>
 					<div class="mev-link-stat-bar" style="background: var(--mev-accent);"></div>
 				</div>
 				<div class="mev-link-stat mev-link-stat--orphan">
-					<div class="mev-link-stat-val"><?php echo (int) $count_orphan; ?></div>
+					<div class="mev-link-stat-val"><?php echo esc_html( (string) (int) $count_orphan ); ?></div>
 					<div class="mev-link-stat-label"><?php esc_html_e( 'Orphans', 'meyvora-seo' ); ?></div>
 					<div class="mev-link-stat-bar" style="background: var(--mev-danger);"></div>
 				</div>
 				<div class="mev-link-stat mev-link-stat--good">
-					<div class="mev-link-stat-val"><?php echo (int) $count_good; ?></div>
+					<div class="mev-link-stat-val"><?php echo esc_html( (string) (int) $count_good ); ?></div>
 					<div class="mev-link-stat-label"><?php esc_html_e( 'Good', 'meyvora-seo' ); ?></div>
 					<div class="mev-link-stat-bar" style="background: var(--mev-success);"></div>
 				</div>
 				<div class="mev-link-stat mev-link-stat--low">
-					<div class="mev-link-stat-val"><?php echo (int) $count_low; ?></div>
+					<div class="mev-link-stat-val"><?php echo esc_html( (string) (int) $count_low ); ?></div>
 					<div class="mev-link-stat-label"><?php esc_html_e( 'Low Links', 'meyvora-seo' ); ?></div>
 					<div class="mev-link-stat-bar" style="background: var(--mev-warning);"></div>
 				</div>
@@ -130,8 +130,8 @@ $offset        = $circumference - round( $circumference * $health / 100 );
 								<strong><a href="<?php echo esc_url( $edit_url ); ?>"><?php echo esc_html( $row['title'] ); ?></a></strong>
 								<span class="mev-post-type-badge"><?php echo esc_html( $row['type'] ); ?></span>
 							</td>
-							<td class="column-links-in num"><?php echo (int) $row['links_in']; ?></td>
-							<td class="column-links-out num"><?php echo (int) $row['links_out']; ?></td>
+							<td class="column-links-in num"><?php echo esc_html( (string) (int) $row['links_in'] ); ?></td>
+							<td class="column-links-out num"><?php echo esc_html( (string) (int) $row['links_out'] ); ?></td>
 							<td class="column-status">
 								<span class="mev-badge <?php echo esc_attr( $badge_class ); ?>"><?php echo esc_html( $badge_label ); ?></span>
 							</td>
@@ -152,7 +152,7 @@ $offset        = $circumference - round( $circumference * $health / 100 );
 	<?php if ( $total_pages > 1 ) : ?>
 		<div class="mev-link-pagination tablenav bottom">
 			<div class="tablenav-pages">
-				<span class="displaying-num"><?php echo (int) $total; ?> <?php esc_html_e( 'items', 'meyvora-seo' ); ?></span>
+				<span class="displaying-num"><?php echo esc_html( (string) (int) $total ); ?> <?php esc_html_e( 'items', 'meyvora-seo' ); ?></span>
 				<span class="pagination-links">
 					<?php
 					$base_url = add_query_arg( array( 'page' => Meyvora_SEO_Internal_Links::LINK_ANALYSIS_SLUG, 'paged' => '%#%' ), admin_url( 'admin.php' ) );
@@ -170,44 +170,3 @@ $offset        = $circumference - round( $circumference * $health / 100 );
 		</div>
 	<?php endif; ?>
 </div>
-
-<?php if ( ! empty( $rows ) ) : ?>
-<script>
-(function() {
-	function initLinkFilters() {
-		var table = document.getElementById('mev-link-analysis-table');
-		var filterBar = document.getElementById('mev-link-filter');
-		var searchInput = document.getElementById('mev-link-filter-search');
-		if (!table) return;
-		var currentTabFilter = 'all';
-		function applyFilters() {
-			var search = searchInput ? searchInput.value.trim().toLowerCase() : '';
-			var rows = table.querySelectorAll('.mev-link-row');
-			rows.forEach(function(tr) {
-				var rowStatus = tr.getAttribute('data-status') || '';
-				var rowTitle = (tr.getAttribute('data-title') || '').toLowerCase();
-				var showStatus = currentTabFilter === 'all' || rowStatus === currentTabFilter;
-				var showSearch = !search || rowTitle.indexOf(search) !== -1;
-				tr.style.display = showStatus && showSearch ? '' : 'none';
-			});
-		}
-		if (filterBar) {
-			filterBar.querySelectorAll('.mev-ftab').forEach(function(btn) {
-				btn.addEventListener('click', function() {
-					filterBar.querySelectorAll('.mev-ftab').forEach(function(b) { b.classList.remove('mev-ftab--active'); });
-					this.classList.add('mev-ftab--active');
-					currentTabFilter = this.getAttribute('data-filter') || 'all';
-					applyFilters();
-				});
-			});
-		}
-		if (searchInput) searchInput.addEventListener('input', applyFilters);
-	}
-	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', initLinkFilters);
-	} else {
-		initLinkFilters();
-	}
-})();
-</script>
-<?php endif; ?>

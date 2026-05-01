@@ -90,15 +90,15 @@ $base_url = admin_url( 'admin.php?page=meyvora-seo-cannibalization' );
 										</span>
 									</div>
 									<?php if ( $row['score'] !== null ) : ?>
-										<span class="mev-cannibalization-score" style="font-size:13px;color:var(--mev-gray-600);"><?php echo (int) $row['score']; ?>/100</span>
+										<span class="mev-cannibalization-score" style="font-size:13px;color:var(--mev-gray-600);"><?php echo esc_html( (string) (int) $row['score'] ); ?>/100</span>
 									<?php else : ?>
-										<span class="mev-text-muted" style="font-size:13px;">—</span>
+										<span class="mev-text-muted" style="font-size:13px;">&mdash;</span>
 									<?php endif; ?>
 									<a href="<?php echo esc_url( $row['edit_link'] ); ?>" class="mev-btn mev-btn--secondary mev-btn--sm"><?php esc_html_e( 'Edit', 'meyvora-seo' ); ?></a>
 									<?php if ( $row['is_primary'] ) : ?>
 										<span class="mev-badge mev-badge--green" style="font-size:11px;"><?php esc_html_e( 'Primary', 'meyvora-seo' ); ?></span>
 									<?php else : ?>
-										<button type="button" class="mev-btn mev-btn--secondary mev-btn--sm mev-set-primary" data-post-id="<?php echo (int) $row['id']; ?>" data-keyword="<?php echo esc_attr( $keyword ); ?>">
+										<button type="button" class="mev-btn mev-btn--secondary mev-btn--sm mev-set-primary" data-post-id="<?php echo esc_attr( (string) (int) $row['id'] ); ?>" data-keyword="<?php echo esc_attr( $keyword ); ?>">
 											<?php esc_html_e( 'Set as Primary', 'meyvora-seo' ); ?>
 										</button>
 									<?php endif; ?>

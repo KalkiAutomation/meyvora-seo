@@ -46,35 +46,7 @@ if ( ! empty( $trend ) ) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?php echo esc_html( sprintf( /* translators: %s: site name */ __( 'SEO Report — %s', 'meyvora-seo' ), $site_name ) ); ?></title>
-  <style>
-    * { box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, sans-serif; margin: 24px; color: #374151; font-size: 14px; }
-    h1 { font-size: 22px; margin: 0 0 8px; color: #7c3aed; }
-    h2 { font-size: 16px; margin: 20px 0 10px; color: #1f2937; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; }
-    .mev-no-print { margin-bottom: 16px; }
-    .mev-page-break { page-break-after: always; }
-    .header { margin-bottom: 24px; }
-    .header .sub { color: #6b7280; font-size: 13px; }
-    .score-box { display: inline-block; background: #f3f4f6; padding: 12px 20px; border-radius: 10px; margin: 12px 0; }
-    .score-box .num { font-size: 28px; font-weight: 700; color: #7c3aed; }
-    .score-large { font-size: 48px; font-weight: 700; color: #7c3aed; line-height: 1.2; }
-    table { width: 100%; border-collapse: collapse; margin: 8px 0; }
-    th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #e5e7eb; }
-    th { font-weight: 600; color: #6b7280; font-size: 12px; text-transform: uppercase; }
-    .issues-list { list-style: none; margin: 0; padding: 0; }
-    .issues-list li { padding: 6px 0; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; }
-    .footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #9ca3af; }
-    .mev-trend-chart { display: flex; align-items: flex-end; gap: 4px; height: 120px; margin: 16px 0; padding: 0; list-style: none; }
-    .mev-trend-bar { flex: 1; min-width: 0; background: #7c3aed; border-radius: 4px 4px 0 0; min-height: 4px; }
-    .cover-page { text-align: center; padding: 60px 24px; }
-    .cover-page .cover-title { font-size: 28px; font-weight: 700; color: #1f2937; margin: 24px 0 8px; }
-    .cover-page .cover-sub { color: #6b7280; font-size: 15px; margin: 4px 0; }
-    .cover-page .cover-date { margin-top: 32px; font-size: 13px; color: #9ca3af; }
-    @media print {
-      .mev-no-print { display: none !important; }
-      body { font-size: 11pt; margin: 16px; }
-    }
-  </style>
+  <?php wp_print_styles( array( 'meyvora-report-print' ) ); ?>
 </head>
 <body>
   <div class="mev-no-print">
@@ -84,7 +56,8 @@ if ( ! empty( $trend ) ) {
   <!-- A) COVER PAGE -->
   <div class="cover-page mev-page-break">
     <?php if ( $wl_logo_id > 0 ) : ?>
-      <?php echo wp_get_attachment_image( $wl_logo_id, 'medium', false, array( 'style' => 'max-height:80px;width:auto;' ) ); ?>
+      <?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_get_attachment_image() returns safe, escaped HTML.
+      echo wp_get_attachment_image( $wl_logo_id, 'medium', false, array( 'style' => 'max-height:80px;width:auto;' ) ); ?>
     <?php else : ?>
       <div class="cover-title"><?php esc_html_e( 'Meyvora SEO Report', 'meyvora-seo' ); ?></div>
     <?php endif; ?>
@@ -96,7 +69,7 @@ if ( ! empty( $trend ) ) {
   <!-- B) HEALTH SCORE PAGE -->
   <div class="mev-page-break">
     <h1><?php esc_html_e( 'Health Score', 'meyvora-seo' ); ?></h1>
-    <div class="score-large"><?php echo (int) $health_score; ?><span style="font-size:24px;color:#6b7280;">/100</span></div>
+    <div class="score-large"><?php echo esc_html( (string) (int) $health_score ); ?><span style="font-size:24px;color:#6b7280;">/100</span></div>
     <p style="margin:8px 0 16px;color:#6b7280;"><?php echo esc_html( $health_score >= 80 ? __( 'Great', 'meyvora-seo' ) : ( $health_score >= 50 ? __( 'Okay', 'meyvora-seo' ) : __( 'Poor', 'meyvora-seo' ) ) ); ?></p>
 
     <?php if ( ! empty( $trend ) ) : ?>
@@ -104,17 +77,17 @@ if ( ! empty( $trend ) ) {
     <ul class="mev-trend-chart" aria-label="<?php esc_attr_e( 'Score trend', 'meyvora-seo' ); ?>">
       <?php foreach ( $trend as $week ) : ?>
         <?php $s = isset( $week['score'] ) ? (int) $week['score'] : 0; $pct = $max_trend > 0 ? ( $s / $max_trend * 100 ) : 0; ?>
-        <li class="mev-trend-bar" style="height: <?php echo (int) $pct; ?>%;" title="<?php echo esc_attr( (string) $s ); ?>"></li>
+        <li class="mev-trend-bar" style="<?php echo esc_attr( 'height:' . (int) $pct . '%;' ); ?>" title="<?php echo esc_attr( (string) $s ); ?>"></li>
       <?php endforeach; ?>
     </ul>
     <?php endif; ?>
 
     <h2><?php esc_html_e( 'Issue counts', 'meyvora-seo' ); ?></h2>
     <ul class="issues-list">
-      <li><span><?php esc_html_e( 'Missing SEO title', 'meyvora-seo' ); ?></span><strong><?php echo (int) ( $issues['missing_title'] ?? 0 ); ?></strong></li>
-      <li><span><?php esc_html_e( 'Missing description', 'meyvora-seo' ); ?></span><strong><?php echo (int) ( $issues['missing_description'] ?? 0 ); ?></strong></li>
-      <li><span><?php esc_html_e( 'Low score (&lt;50)', 'meyvora-seo' ); ?></span><strong><?php echo (int) ( $issues['low_score'] ?? 0 ); ?></strong></li>
-      <li><span><?php esc_html_e( 'Missing schema', 'meyvora-seo' ); ?></span><strong><?php echo (int) ( $issues['missing_schema'] ?? 0 ); ?></strong></li>
+      <li><span><?php esc_html_e( 'Missing SEO title', 'meyvora-seo' ); ?></span><strong><?php echo esc_html( (string) (int) ( $issues['missing_title'] ?? 0 ) ); ?></strong></li>
+      <li><span><?php esc_html_e( 'Missing description', 'meyvora-seo' ); ?></span><strong><?php echo esc_html( (string) (int) ( $issues['missing_description'] ?? 0 ) ); ?></strong></li>
+      <li><span><?php esc_html_e( 'Low score (&lt;50)', 'meyvora-seo' ); ?></span><strong><?php echo esc_html( (string) (int) ( $issues['low_score'] ?? 0 ) ); ?></strong></li>
+      <li><span><?php esc_html_e( 'Missing schema', 'meyvora-seo' ); ?></span><strong><?php echo esc_html( (string) (int) ( $issues['missing_schema'] ?? 0 ) ); ?></strong></li>
     </ul>
   </div>
 
@@ -124,16 +97,16 @@ if ( ! empty( $trend ) ) {
     <h1><?php esc_html_e( 'Search traffic', 'meyvora-seo' ); ?></h1>
     <p class="sub"><?php esc_html_e( 'Last 28 days — Google Search Console', 'meyvora-seo' ); ?></p>
     <div class="score-box" style="margin-right:16px;">
-      <span class="num"><?php echo (int) ( $gsc_site_summary['clicks'] ?? 0 ); ?></span> <?php esc_html_e( 'clicks', 'meyvora-seo' ); ?>
+      <span class="num"><?php echo esc_html( (string) (int) ( $gsc_site_summary['clicks'] ?? 0 ) ); ?></span> <?php esc_html_e( 'clicks', 'meyvora-seo' ); ?>
     </div>
     <div class="score-box">
-      <span class="num"><?php echo (int) ( $gsc_site_summary['impressions'] ?? 0 ); ?></span> <?php esc_html_e( 'impressions', 'meyvora-seo' ); ?>
+      <span class="num"><?php echo esc_html( (string) (int) ( $gsc_site_summary['impressions'] ?? 0 ) ); ?></span> <?php esc_html_e( 'impressions', 'meyvora-seo' ); ?>
     </div>
 
     <h2><?php esc_html_e( 'Top 5 keywords by clicks', 'meyvora-seo' ); ?></h2>
     <ol style="margin:0;padding-left:20px;">
       <?php foreach ( array_slice( $gsc_top_queries, 0, 5 ) as $row ) : ?>
-        <li style="padding:4px 0;"><?php echo esc_html( isset( $row['keys'][0] ) ? $row['keys'][0] : '' ); ?> (<?php echo (int) ( $row['clicks'] ?? 0 ); ?> <?php esc_html_e( 'clicks', 'meyvora-seo' ); ?>)</li>
+        <li style="padding:4px 0;"><?php echo esc_html( isset( $row['keys'][0] ) ? $row['keys'][0] : '' ); ?> (<?php echo esc_html( (string) (int) ( $row['clicks'] ?? 0 ) ); ?> <?php esc_html_e( 'clicks', 'meyvora-seo' ); ?>)</li>
       <?php endforeach; ?>
       <?php if ( empty( $gsc_top_queries ) ) : ?>
         <li><?php esc_html_e( 'No data yet.', 'meyvora-seo' ); ?></li>
@@ -143,7 +116,7 @@ if ( ! empty( $trend ) ) {
     <h2><?php esc_html_e( 'Top 5 pages by clicks', 'meyvora-seo' ); ?></h2>
     <ol style="margin:0;padding-left:20px;">
       <?php foreach ( $gsc_top_pages as $row ) : ?>
-        <li style="padding:4px 0;word-break:break-all;"><?php echo esc_html( isset( $row['keys'][0] ) ? $row['keys'][0] : '' ); ?> (<?php echo (int) ( $row['clicks'] ?? 0 ); ?> <?php esc_html_e( 'clicks', 'meyvora-seo' ); ?>)</li>
+        <li style="padding:4px 0;word-break:break-all;"><?php echo esc_html( isset( $row['keys'][0] ) ? $row['keys'][0] : '' ); ?> (<?php echo esc_html( (string) (int) ( $row['clicks'] ?? 0 ) ); ?> <?php esc_html_e( 'clicks', 'meyvora-seo' ); ?>)</li>
       <?php endforeach; ?>
       <?php if ( empty( $gsc_top_pages ) ) : ?>
         <li><?php esc_html_e( 'No data yet.', 'meyvora-seo' ); ?></li>
@@ -163,7 +136,7 @@ if ( ! empty( $trend ) ) {
           <tr>
             <td><?php echo esc_html( $row['title'] ?? __( '(no title)', 'meyvora-seo' ) ); ?></td>
             <td><?php echo esc_html( (int) ( $row['score'] ?? 0 ) < 50 ? __( 'Low score', 'meyvora-seo' ) : __( 'Needs improvement', 'meyvora-seo' ) ); ?></td>
-            <td><?php echo (int) ( $row['score'] ?? 0 ); ?></td>
+            <td><?php echo esc_html( (string) (int) ( $row['score'] ?? 0 ) ); ?></td>
             <td><a href="<?php echo esc_url( $row['edit'] ?? '#' ); ?>"><?php esc_html_e( 'Edit', 'meyvora-seo' ); ?></a></td>
           </tr>
         <?php endforeach; ?>
@@ -183,7 +156,7 @@ if ( ! empty( $trend ) ) {
     <ul style="margin:0;padding-left:20px;">
       <?php foreach ( $gsc_opportunities as $opp ) : ?>
         <?php /* translators: 1: position, 2: impressions number, 3: CTR percent */ ?>
-        <li style="padding:4px 0;word-break:break-all;"><?php echo esc_html( wp_parse_url( $opp['url'] ?? '', PHP_URL_PATH ) ?: ( $opp['url'] ?? '' ) ); ?> — <?php echo esc_html( sprintf( __( 'Pos %1$s, %2$s impr, %3$s%% CTR', 'meyvora-seo' ), (string) ( $opp['position'] ?? 0 ), number_format_i18n( (int) ( $opp['impressions'] ?? 0 ) ), (string) ( $opp['ctr'] ?? 0 ) ) ); ?></li>
+        <li style="padding:4px 0;word-break:break-all;"><?php echo esc_html( wp_parse_url( $opp['url'] ?? '', PHP_URL_PATH ) ?: ( $opp['url'] ?? '' ) ); ?> &mdash; <?php echo esc_html( sprintf( __( 'Pos %1$s, %2$s impr, %3$s%% CTR', 'meyvora-seo' ), (string) ( $opp['position'] ?? 0 ), number_format_i18n( (int) ( $opp['impressions'] ?? 0 ) ), (string) ( $opp['ctr'] ?? 0 ) ) ); ?></li>
       <?php endforeach; ?>
     </ul>
     <?php else : ?>
@@ -195,7 +168,7 @@ if ( ! empty( $trend ) ) {
     <ul style="margin:0;padding-left:20px;">
       <?php foreach ( $decaying_pages as $dec ) : ?>
         <?php /* translators: 1: current period clicks, 2: previous period clicks, 3: drop percent */ ?>
-        <li style="padding:4px 0;word-break:break-all;"><?php echo esc_html( wp_parse_url( $dec['url'] ?? '', PHP_URL_PATH ) ?: ( $dec['url'] ?? '' ) ); ?> — <?php echo esc_html( sprintf( __( '%1$s → %2$s clicks, %3$s%% drop', 'meyvora-seo' ), number_format_i18n( (int) ( $dec['curr'] ?? 0 ) ), number_format_i18n( (int) ( $dec['prev'] ?? 0 ) ), (string) ( $dec['drop_pct'] ?? 0 ) ) ); ?></li>
+        <li style="padding:4px 0;word-break:break-all;"><?php echo esc_html( wp_parse_url( $dec['url'] ?? '', PHP_URL_PATH ) ?: ( $dec['url'] ?? '' ) ); ?> &mdash; <?php echo esc_html( sprintf( __( '%1$s → %2$s clicks, %3$s%% drop', 'meyvora-seo' ), number_format_i18n( (int) ( $dec['curr'] ?? 0 ) ), number_format_i18n( (int) ( $dec['prev'] ?? 0 ) ), (string) ( $dec['drop_pct'] ?? 0 ) ) ); ?></li>
       <?php endforeach; ?>
     </ul>
     <?php else : ?>
@@ -207,19 +180,15 @@ if ( ! empty( $trend ) ) {
   <div>
     <h2><?php esc_html_e( 'Content stats', 'meyvora-seo' ); ?></h2>
     <ul class="issues-list">
-      <li><span><?php esc_html_e( 'Total indexed posts', 'meyvora-seo' ); ?></span><strong><?php echo (int) ( $content_stats['total_indexed'] ?? 0 ); ?></strong></li>
-      <li><span><?php esc_html_e( 'With focus keyword', 'meyvora-seo' ); ?></span><strong><?php echo (int) ( $content_stats['total_with_focus_kw'] ?? 0 ); ?></strong></li>
-      <li><span><?php esc_html_e( 'With OG image', 'meyvora-seo' ); ?></span><strong><?php echo (int) ( $content_stats['total_with_og_image'] ?? 0 ); ?></strong></li>
+      <li><span><?php esc_html_e( 'Total indexed posts', 'meyvora-seo' ); ?></span><strong><?php echo esc_html( (string) (int) ( $content_stats['total_indexed'] ?? 0 ) ); ?></strong></li>
+      <li><span><?php esc_html_e( 'With focus keyword', 'meyvora-seo' ); ?></span><strong><?php echo esc_html( (string) (int) ( $content_stats['total_with_focus_kw'] ?? 0 ) ); ?></strong></li>
+      <li><span><?php esc_html_e( 'With OG image', 'meyvora-seo' ); ?></span><strong><?php echo esc_html( (string) (int) ( $content_stats['total_with_og_image'] ?? 0 ) ); ?></strong></li>
     </ul>
     <div class="footer">
       <?php esc_html_e( 'Generated by Meyvora SEO', 'meyvora-seo' ); ?> · <?php echo esc_html( $date ); ?>
     </div>
   </div>
 
-  <?php if ( $is_pdf ) : ?>
-  <script>window.onload=function(){window.print();};</script>
-  <?php else : ?>
-  <script>(function(){ if (window.location.search.indexOf('print=1') !== -1) window.print(); })();</script>
-  <?php endif; ?>
+  <?php wp_print_scripts( array( 'meyvora-report-print' ) ); ?>
 </body>
 </html>

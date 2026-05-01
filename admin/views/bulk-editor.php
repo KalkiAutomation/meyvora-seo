@@ -77,7 +77,7 @@ $categories = get_categories( array( 'hide_empty' => false ) );
 						<select name="cat" id="mev-filter-cat" class="mev-filter-select">
 							<option value="0"><?php esc_html_e( 'All', 'meyvora-seo' ); ?></option>
 							<?php foreach ( $categories as $c ) : ?>
-								<option value="<?php echo (int) $c->term_id; ?>" <?php selected( $cat, $c->term_id ); ?>><?php echo esc_html( $c->name ); ?></option>
+								<option value="<?php echo esc_attr( (string) (int) $c->term_id ); ?>" <?php selected( $cat, $c->term_id ); ?>><?php echo esc_html( $c->name ); ?></option>
 							<?php endforeach; ?>
 						</select>
 					<?php endif; ?>
@@ -163,12 +163,12 @@ $categories = get_categories( array( 'hide_empty' => false ) );
 							}
 						}
 					?>
-						<tr class="mev-bulk-row" data-post-id="<?php echo (int) $pid; ?>" data-post-title="<?php echo esc_attr( $post->post_title ); ?>">
+						<tr class="mev-bulk-row" data-post-id="<?php echo esc_attr( (string) (int) $pid ); ?>" data-post-title="<?php echo esc_attr( $post->post_title ); ?>">
 							<th scope="row" class="check-column">
-								<input type="checkbox" class="mev-bulk-row-cb" value="<?php echo (int) $pid; ?>" />
+								<input type="checkbox" class="mev-bulk-row-cb" value="<?php echo esc_attr( (string) (int) $pid ); ?>" />
 							</th>
 							<td class="column-ai mev-col-ai">
-								<button type="button" class="mev-btn mev-btn--xs mev-ai-fill" data-post-id="<?php echo (int) $pid; ?>" title="<?php esc_attr_e( 'Generate with AI', 'meyvora-seo' ); ?>">&#10022;</button>
+								<button type="button" class="mev-btn mev-btn--xs mev-ai-fill" data-post-id="<?php echo esc_attr( (string) (int) $pid ); ?>" title="<?php esc_attr_e( 'Generate with AI', 'meyvora-seo' ); ?>">&#10022;</button>
 							</td>
 							<td class="column-post-title">
 								<?php if ( $edit_url ) : ?>
@@ -208,24 +208,24 @@ $categories = get_categories( array( 'hide_empty' => false ) );
 							<td class="column-score num">
 								<?php if ( $score_val !== null ) : ?>
 									<span class="<?php echo esc_attr( $pill ); ?>">
-										<?php echo (int) $score_val; ?></span>
+										<?php echo esc_html( (string) (int) $score_val ); ?></span>
 								<?php else : ?>&mdash;<?php endif; ?>
 							</td>
 							<td class="column-gsc-clicks num">
 								<?php
 								if ( $gsc_connected && isset( $rows[ $pid ] ) ) {
-									echo (int) ( $rows[ $pid ]['gsc_clicks'] ?? 0 );
+									echo esc_html( (string) (int) ( $rows[ $pid ]['gsc_clicks'] ?? 0 ) );
 								} else {
-									echo '—';
+									echo '&mdash;';
 								}
 								?>
 							</td>
 							<td class="column-gsc-impressions num">
 								<?php
 								if ( $gsc_connected && isset( $rows[ $pid ] ) ) {
-									echo (int) ( $rows[ $pid ]['gsc_impressions'] ?? 0 );
+									echo esc_html( (string) (int) ( $rows[ $pid ]['gsc_impressions'] ?? 0 ) );
 								} else {
-									echo '—';
+									echo '&mdash;';
 								}
 								?>
 							</td>
@@ -242,7 +242,7 @@ $categories = get_categories( array( 'hide_empty' => false ) );
 
 	<?php if ( $pages > 1 ) : ?>
 		<div class="mev-bulk-pagination tablenav bottom">
-			<span class="displaying-num"><?php echo (int) $total; ?> <?php esc_html_e( 'items', 'meyvora-seo' ); ?></span>
+			<span class="displaying-num"><?php echo esc_html( (string) (int) $total ); ?> <?php esc_html_e( 'items', 'meyvora-seo' ); ?></span>
 			<span class="pagination-links">
 				<?php
 				$query_args = array( 'page' => Meyvora_SEO_Bulk_Editor::PAGE_SLUG );

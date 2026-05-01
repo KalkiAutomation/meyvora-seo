@@ -51,23 +51,30 @@ class Meyvora_SEO_Topic_Clusters {
 		if ( $hook_suffix !== 'meyvora-seo_page_meyvora-seo-topic-clusters' ) {
 			return;
 		}
+		$ver = defined( 'MEYVORA_SEO_VERSION' ) ? MEYVORA_SEO_VERSION : '1.0.0';
 		$css = ( defined( 'MEYVORA_SEO_URL' ) ? MEYVORA_SEO_URL : '' ) . 'admin/assets/css/meyvora-admin.css';
-		wp_enqueue_style( 'meyvora-seo-admin', $css, array(), defined( 'MEYVORA_SEO_VERSION' ) ? MEYVORA_SEO_VERSION : '1.0.0' );
-		wp_add_inline_script( 'jquery', $this->get_inline_script(), 'after' );
-	}
+		wp_enqueue_style( 'meyvora-seo-admin', $css, array(), $ver );
 
-	/**
-	 * Inline script for topic clusters UI (save, analyse, search).
-	 *
-	 * @return string
-	 */
-	protected function get_inline_script(): string {
-		$ajax_url = admin_url( 'admin-ajax.php' );
-		$nonce    = wp_create_nonce( 'meyvora_seo_cluster' );
-		return sprintf(
-			'window.meyvoraTopicClusters = { ajaxUrl: %s, nonce: %s };',
-			wp_json_encode( $ajax_url ),
-			wp_json_encode( $nonce )
+		wp_enqueue_script(
+			'meyvora-topic-clusters-page',
+			MEYVORA_SEO_URL . 'admin/assets/js/meyvora-topic-clusters-page.js',
+			array(),
+			$ver,
+			true
+		);
+		wp_localize_script(
+			'meyvora-topic-clusters-page',
+			'meyvoraTopicClusters',
+			array(
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'    => wp_create_nonce( 'meyvora_seo_cluster' ),
+				'clusters' => $this->get_clusters(),
+				'i18n'     => array(
+					'enterNameAndPillar' => __( 'Enter a name and select a pillar post.', 'meyvora-seo' ),
+					'saveFailed'         => __( 'Save failed.', 'meyvora-seo' ),
+					'confirmRemove'      => __( 'Remove this cluster from the list?', 'meyvora-seo' ),
+				),
+			)
 		);
 	}
 
@@ -196,6 +203,70 @@ class Meyvora_SEO_Topic_Clusters {
 	}
 
 	/**
+	 * Normalize cluster definitions after json_decode().
+	 *
+	 * @param array<int, mixed> $raw Raw decoded rows.
+	 * @return array<int, array{name: string, pillar_id: int, cluster_ids: int[]}>
+	 */
+	protected function sanitize_clusters_from_decoded( array $raw ): array {
+		$out = array();
+		foreach ( $raw as $item ) {
+			if ( ! is_array( $item ) ) {
+				continue;
+			}
+			$name        = isset( $item['name'] ) ? sanitize_text_field( (string) $item['name'] ) : '';
+			$pillar_id   = isset( $item['pillar_id'] ) ? absint( $item['pillar_id'] ) : 0;
+			$cluster_ids = array();
+			if ( ! empty( $item['cluster_ids'] ) && is_array( $item['cluster_ids'] ) ) {
+				foreach ( $item['cluster_ids'] as $id ) {
+					$cid = absint( $id );
+					if ( $cid > 0 && ! in_array( $cid, $cluster_ids, true ) ) {
+						$cluster_ids[] = $cid;
+					}
+				}
+			}
+			if ( $name !== '' && $pillar_id > 0 ) {
+				$out[] = array(
+					'name'        => $name,
+					'pillar_id'   => $pillar_id,
+					'cluster_ids' => array_values( $cluster_ids ),
+				);
+			}
+		}
+		return $out;
+	}
+
+	/**
+	 * Normalize a single cluster payload for analyse_cluster().
+	 *
+	 * @param mixed $decoded json_decode result.
+	 * @return array{name?: string, pillar_id: int, cluster_ids: int[]}|null
+	 */
+	protected function sanitize_cluster_for_analysis_payload( $decoded ): ?array {
+		if ( ! is_array( $decoded ) ) {
+			return null;
+		}
+		$pillar_id = isset( $decoded['pillar_id'] ) ? absint( $decoded['pillar_id'] ) : 0;
+		if ( $pillar_id <= 0 ) {
+			return null;
+		}
+		$cluster_ids = array();
+		if ( ! empty( $decoded['cluster_ids'] ) && is_array( $decoded['cluster_ids'] ) ) {
+			foreach ( $decoded['cluster_ids'] as $id ) {
+				$cid = absint( $id );
+				if ( $cid > 0 && ! in_array( $cid, $cluster_ids, true ) ) {
+					$cluster_ids[] = $cid;
+				}
+			}
+		}
+		return array(
+			'name'        => isset( $decoded['name'] ) ? sanitize_text_field( (string) $decoded['name'] ) : '',
+			'pillar_id'   => $pillar_id,
+			'cluster_ids' => array_values( $cluster_ids ),
+		);
+	}
+
+	/**
 	 * AJAX: Save clusters (JSON body or post data).
 	 */
 	public function ajax_save(): void {
@@ -203,12 +274,14 @@ class Meyvora_SEO_Topic_Clusters {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Forbidden', 'meyvora-seo' ) ) );
 		}
-		$input = isset( $_POST['clusters'] ) ? wp_unslash( $_POST['clusters'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$input = isset( $_POST['clusters'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['clusters'] ) ) : '';
 		if ( is_string( $input ) ) {
-			$decoded = json_decode( $input, true );
-			$clusters = is_array( $decoded ) ? $decoded : array();
+			$decoded  = json_decode( $input, true );
+			$clusters = is_array( $decoded ) ? $this->sanitize_clusters_from_decoded( $decoded ) : array();
+		} elseif ( is_array( $input ) ) {
+			$clusters = $this->sanitize_clusters_from_decoded( $input );
 		} else {
-			$clusters = is_array( $input ) ? $input : array();
+			$clusters = array();
 		}
 		$ok = $this->save_clusters( $clusters );
 		if ( $ok ) {
@@ -225,16 +298,16 @@ class Meyvora_SEO_Topic_Clusters {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Forbidden', 'meyvora-seo' ) ) );
 		}
-		$index = isset( $_POST['index'] ) ? (int) $_POST['index'] : -1;
+		$index = isset( $_POST['index'] ) ? absint( wp_unslash( $_POST['index'] ) ) : -1;
 		$cluster = null;
 		if ( $index >= 0 ) {
 			$all = $this->get_clusters();
 			$cluster = isset( $all[ $index ] ) ? $all[ $index ] : null;
 		}
 		if ( $cluster === null && isset( $_POST['cluster'] ) ) {
-			$raw = wp_unslash( $_POST['cluster'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$raw = sanitize_text_field( wp_unslash( (string) $_POST['cluster'] ) );
 			$decoded = is_string( $raw ) ? json_decode( $raw, true ) : $raw;
-			$cluster = is_array( $decoded ) ? $decoded : null;
+			$cluster = $this->sanitize_cluster_for_analysis_payload( $decoded );
 		}
 		if ( $cluster === null ) {
 			wp_send_json_error( array( 'message' => __( 'Cluster not found.', 'meyvora-seo' ) ) );

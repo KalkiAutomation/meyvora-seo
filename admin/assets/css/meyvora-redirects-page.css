@@ -1,0 +1,35 @@
+/*
+== Source Code == https://github.com/KalkiAutomation/meyvora-seo (admin/assets/css/meyvora-redirects-page.css)
+*/
+
+.mev-chain-row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 0;
+	border-bottom: 1px solid var(--mev-border);
+	flex-wrap: wrap;
+}
+.mev-chain-row:last-child {
+	border-bottom: none;
+}
+.mev-chain-path {
+	flex: 1;
+	min-width: 0;
+	font-size: 12px;
+	font-family: monospace;
+	color: var(--mev-gray-800);
+	word-break: break-all;
+}
+.mev-chain-meta {
+	font-size: 11px;
+	color: var(--mev-gray-500);
+	white-space: nowrap;
+}
+.mev-chain-empty {
+	margin: 0;
+	padding: 24px;
+	text-align: center;
+	color: var(--mev-gray-500);
+	font-size: 13px;
+}

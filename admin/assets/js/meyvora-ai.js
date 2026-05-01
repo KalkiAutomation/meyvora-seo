@@ -1,3 +1,11 @@
+/*
+ * Meyvora SEO – plugin asset.
+ * Canonical source repository: https://github.com/KalkiAutomation/meyvora-seo
+ *
+ * This file ships with the WordPress.org plugin package as readable source (not an opaque compiled bundle).
+ * For the latest version and contribution workflow, clone or browse that repository.
+ */
+
 /**
  * Meyvora SEO – AI assistant: generate title/description, suggest keywords, improve content.
  * All requests go through PHP proxy; API key never sent to frontend.

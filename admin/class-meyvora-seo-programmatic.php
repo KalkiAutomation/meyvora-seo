@@ -226,10 +226,8 @@ class Meyvora_SEO_Programmatic {
 			'meyvora_prog_slug_pattern'    => self::META_SLUG_PATTERN,
 		);
 		foreach ( $keys as $post_key => $meta_key ) {
-			if ( isset( $_POST[ $post_key ] ) ) {
-				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized in next line.
-				$raw = wp_unslash( $_POST[ $post_key ] );
-				$val = is_string( $raw ) ? sanitize_text_field( $raw ) : '';
+			if ( isset( $_POST[ $post_key ] ) && ! is_array( $_POST[ $post_key ] ) ) {
+				$val = sanitize_text_field( wp_unslash( (string) $_POST[ $post_key ] ) );
 				update_post_meta( $post_id, $meta_key, $val );
 			}
 		}
@@ -323,6 +321,43 @@ class Meyvora_SEO_Programmatic {
 	}
 
 	/**
+	 * Decode and sanitize programmatic data-source config from AJAX JSON.
+	 *
+	 * @param mixed $decoded Value from json_decode(..., true).
+	 * @return array{type?: string, csv_key?: string, cpt?: string, mapping?: array<string, string>}
+	 */
+	protected function sanitize_data_source_post_config( $decoded ): array {
+		if ( ! is_array( $decoded ) ) {
+			return array();
+		}
+		$type = isset( $decoded['type'] ) ? sanitize_text_field( (string) $decoded['type'] ) : '';
+		if ( $type !== 'csv' && $type !== 'cpt' ) {
+			return array();
+		}
+		$config = array( 'type' => $type );
+		if ( $type === 'csv' ) {
+			$config['csv_key'] = isset( $decoded['csv_key'] ) ? sanitize_text_field( (string) $decoded['csv_key'] ) : '';
+		} else {
+			$config['cpt'] = isset( $decoded['cpt'] ) ? sanitize_key( (string) $decoded['cpt'] ) : '';
+			$mapping_raw   = isset( $decoded['mapping'] ) && is_array( $decoded['mapping'] ) ? $decoded['mapping'] : array();
+			$mapping       = array();
+			foreach ( $mapping_raw as $var_key => $field_spec ) {
+				$var = sanitize_key( (string) $var_key );
+				if ( $var === '' ) {
+					continue;
+				}
+				$spec = sanitize_text_field( (string) $field_spec );
+				if ( $spec === '' ) {
+					continue;
+				}
+				$mapping[ $var ] = $spec;
+			}
+			$config['mapping'] = $mapping;
+		}
+		return $config;
+	}
+
+	/**
 	 * Get data rows from CSV transient or from CPT.
 	 *
 	 * @param array $config { type: 'csv'|'cpt', csv_key?: string, cpt?: string, mapping?: array }
@@ -402,8 +437,19 @@ class Meyvora_SEO_Programmatic {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => 'Forbidden' ) );
 		}
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Validated by is_uploaded_file, read via file_get_contents.
-		$file = isset( $_FILES['file'] ) ? $_FILES['file'] : null;
+		$file = null;
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Multipart upload: build a sanitized copy; tmp_name is verified with is_uploaded_file().
+		if ( isset( $_FILES['file'] ) && is_array( $_FILES['file'] ) ) {
+			$f = wp_unslash( $_FILES['file'] );
+			$file = array(
+				'name'     => isset( $f['name'] ) ? sanitize_file_name( (string) $f['name'] ) : '',
+				'type'     => isset( $f['type'] ) ? sanitize_mime_type( (string) $f['type'] ) : '',
+				'tmp_name' => isset( $f['tmp_name'] ) ? (string) $f['tmp_name'] : '',
+				'error'    => isset( $f['error'] ) ? absint( $f['error'] ) : UPLOAD_ERR_NO_FILE,
+				'size'     => isset( $f['size'] ) ? absint( $f['size'] ) : 0,
+			);
+		}
+		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		if ( ! $file || empty( $file['tmp_name'] ) || ! is_uploaded_file( $file['tmp_name'] ) ) {
 			wp_send_json_error( array( 'message' => __( 'No file uploaded.', 'meyvora-seo' ) ) );
 		}
@@ -450,10 +496,10 @@ class Meyvora_SEO_Programmatic {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => 'Forbidden' ) );
 		}
-		$template_id = isset( $_POST['template_id'] ) ? absint( $_POST['template_id'] ) : 0;
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- JSON decoded, not output directly.
-		$config = isset( $_POST['data_source'] ) ? json_decode( (string) wp_unslash( $_POST['data_source'] ), true ) : array();
-		if ( ! $template_id || ! is_array( $config ) ) {
+		$template_id = isset( $_POST['template_id'] ) ? absint( wp_unslash( $_POST['template_id'] ) ) : 0;
+		$raw_json    = isset( $_POST['data_source'] ) ? sanitize_textarea_field( wp_unslash( (string) $_POST['data_source'] ) ) : '';
+		$config      = $this->sanitize_data_source_post_config( json_decode( $raw_json, true ) );
+		if ( ! $template_id || empty( $config['type'] ) ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid request.', 'meyvora-seo' ) ) );
 		}
 		$rows = $this->get_data_rows( $config );
@@ -493,10 +539,10 @@ class Meyvora_SEO_Programmatic {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => 'Forbidden' ) );
 		}
-		$template_id = isset( $_POST['template_id'] ) ? absint( $_POST['template_id'] ) : 0;
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- JSON decoded, not output directly.
-		$config = isset( $_POST['data_source'] ) ? json_decode( (string) wp_unslash( $_POST['data_source'] ), true ) : array();
-		if ( ! $template_id || ! is_array( $config ) ) {
+		$template_id = isset( $_POST['template_id'] ) ? absint( wp_unslash( $_POST['template_id'] ) ) : 0;
+		$raw_json    = isset( $_POST['data_source'] ) ? sanitize_textarea_field( wp_unslash( (string) $_POST['data_source'] ) ) : '';
+		$config      = $this->sanitize_data_source_post_config( json_decode( $raw_json, true ) );
+		if ( ! $template_id || empty( $config['type'] ) ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid request.', 'meyvora-seo' ) ) );
 		}
 
@@ -662,7 +708,7 @@ class Meyvora_SEO_Programmatic {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => 'Forbidden' ) );
 		}
-		$term_id = isset( $_POST['term_id'] ) ? absint( $_POST['term_id'] ) : 0;
+		$term_id = isset( $_POST['term_id'] ) ? absint( wp_unslash( $_POST['term_id'] ) ) : 0;
 		if ( ! $term_id ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid group.', 'meyvora-seo' ) ) );
 		}

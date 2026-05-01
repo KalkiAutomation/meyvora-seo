@@ -333,8 +333,8 @@ class Meyvora_SEO_Elementor_FAQ_Widget extends \Elementor\Widget_Base {
         if ( $inject_schema ) {
             $main_entity = array();
             foreach ( $items as $item ) {
-                $q = trim( wp_strip_all_tags( (string) ( $item['question'] ?? '' ) ) );
-                $a = trim( wp_strip_all_tags( (string) ( $item['answer'] ?? '' ) ) );
+                $q = sanitize_text_field( trim( wp_strip_all_tags( (string) ( $item['question'] ?? '' ) ) ) );
+                $a = sanitize_text_field( trim( wp_strip_all_tags( (string) ( $item['answer'] ?? '' ) ) ) );
                 if ( $q === '' || $a === '' ) continue;
                 $main_entity[] = array(
                     '@type'          => 'Question',
@@ -348,21 +348,24 @@ class Meyvora_SEO_Elementor_FAQ_Widget extends \Elementor\Widget_Base {
                     '@type'      => 'FAQPage',
                     'mainEntity' => $main_entity,
                 );
-                echo '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) . '</script>';
+				$ld = wp_json_encode( $schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+				if ( is_string( $ld ) && function_exists( 'meyvora_seo_print_ld_json_script' ) ) {
+					meyvora_seo_print_ld_json_script( $ld );
+				}
             }
         }
         ?>
         <div class="meyvora-faq-wrapper">
             <ol
                 class="<?php echo esc_attr( implode( ' ', $list_classes ) ); ?>"
-                data-open-first="<?php echo $open_first ? 'true' : 'false'; ?>"
-                data-multiple="<?php echo $allow_multiple ? 'true' : 'false'; ?>"
+                data-open-first="<?php echo esc_attr( $open_first ? 'true' : 'false' ); ?>"
+                data-multiple="<?php echo esc_attr( $allow_multiple ? 'true' : 'false' ); ?>"
                 itemscope
                 itemtype="https://schema.org/FAQPage"
             >
                 <?php foreach ( $items as $idx => $item ) :
                     $q = trim( (string) ( $item['question'] ?? '' ) );
-                    $a = trim( (string) ( $item['answer']   ?? '' ) );
+                    $a = trim( (string) ( $item['answer'] ?? '' ) );
                     if ( $q === '' || $a === '' ) continue;
                     $item_id  = 'meyvora-faq-el-' . esc_attr( $widget_id ) . '-' . $idx;
                     $panel_id = $item_id . '-panel';

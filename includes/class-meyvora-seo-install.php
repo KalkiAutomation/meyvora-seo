@@ -88,7 +88,7 @@ class Meyvora_SEO_Install {
 			KEY post_variant_date (post_id, variant, snapshot_date)
 		) $charset;";
 
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		require_once trailingslashit( get_home_path() ) . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql_rank );
 		dbDelta( $sql_audit );
 		dbDelta( $sql_link_checks );

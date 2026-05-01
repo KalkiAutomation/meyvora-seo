@@ -1,0 +1,28 @@
+/*
+== Source Code == https://github.com/KalkiAutomation/meyvora-seo (admin/assets/css/meyvora-automation-page.css)
+*/
+
+.mev-condition-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 8px;
+	flex-wrap: wrap;
+}
+.mev-condition-row .mev-condition-field {
+	width: 160px;
+}
+.mev-condition-row .mev-condition-operator {
+	width: 130px;
+}
+.mev-condition-row .mev-condition-value {
+	flex: 1;
+	min-width: 120px;
+}
+.mev-label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 8px;
+	font-size: 13px;
+	color: var(--mev-gray-700);
+}

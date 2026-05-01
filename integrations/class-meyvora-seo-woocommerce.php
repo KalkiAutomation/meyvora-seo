@@ -204,7 +204,7 @@ class Meyvora_SEO_WooCommerce {
 			update_term_meta( $term_id, self::TERM_META_DESCRIPTION, sanitize_textarea_field( wp_unslash( $_POST['meyvora_seo_term_description'] ) ) );
 		}
 		if ( isset( $_POST['meyvora_seo_term_og_image'] ) ) {
-			update_term_meta( $term_id, self::TERM_META_OG_IMAGE, absint( $_POST['meyvora_seo_term_og_image'] ) );
+			update_term_meta( $term_id, self::TERM_META_OG_IMAGE, absint( wp_unslash( $_POST['meyvora_seo_term_og_image'] ) ) );
 		}
 	}
 
@@ -408,12 +408,14 @@ class Meyvora_SEO_WooCommerce {
 			return;
 		}
 
+		$product_url = get_permalink( $post );
+		$product_url = is_string( $product_url ) ? esc_url_raw( $product_url ) : '';
 		$data = array(
 			'@context'    => 'https://schema.org',
 			'@type'       => 'Product',
 			'name'        => $product->get_name(),
 			'description' => wp_strip_all_tags( $product->get_description() ?: $product->get_short_description() ),
-			'url'         => get_permalink( $post ),
+			'url'         => $product_url,
 			'sku'         => $product->get_sku(),
 		);
 
@@ -435,12 +437,14 @@ class Meyvora_SEO_WooCommerce {
 		}
 
 		// Offers: required for Rich Results; price fields only when product has a price.
+		$offer_url = get_permalink( $post->ID );
+		$offer_url = is_string( $offer_url ) ? esc_url_raw( $offer_url ) : '';
 		$data['offers'] = array(
 			'@type'         => 'Offer',
 			'availability'  => $product->is_in_stock()
 				? 'https://schema.org/InStock'
 				: 'https://schema.org/OutOfStock',
-			'url'           => get_permalink( $post->ID ),
+			'url'           => $offer_url,
 		);
 		if ( $product->get_price() !== '' ) {
 			$data['offers']['price']          = (string) $product->get_price();
@@ -458,8 +462,9 @@ class Meyvora_SEO_WooCommerce {
 		$json = wp_json_encode( array_filter( $data, function ( $v ) {
 			return $v !== null && $v !== '';
 		} ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
-		if ( $json !== false ) {
-			echo '<script type="application/ld+json">' . $json . "</script>\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		if ( $json !== false && function_exists( 'meyvora_seo_print_ld_json_script' ) ) {
+			meyvora_seo_print_ld_json_script( $json );
+			echo "\n";
 		}
 	}
 

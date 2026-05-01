@@ -260,6 +260,31 @@ class Meyvora_SEO_Rank_Tracker {
 	public function enqueue_assets( string $hook_suffix ): void {
 		if ( $hook_suffix === 'meyvora-seo_page_' . self::PAGE_SLUG ) {
 			wp_enqueue_style( 'meyvora-admin', MEYVORA_SEO_URL . 'admin/assets/css/meyvora-admin.css', array(), MEYVORA_SEO_VERSION );
+			wp_enqueue_script(
+				'meyvora-rank-tracker-page',
+				MEYVORA_SEO_URL . 'admin/assets/js/meyvora-rank-tracker-page.js',
+				array(),
+				MEYVORA_SEO_VERSION,
+				true
+			);
+			wp_localize_script(
+				'meyvora-rank-tracker-page',
+				'meyvoraRankTrackerPage',
+				array(
+					'ajaxUrl'         => admin_url( 'admin-ajax.php' ),
+					'runAction'       => self::AJAX_RUN,
+					'runNonce'       => wp_create_nonce( self::NONCE_ACTION ),
+					'manualRunAction' => 'meyvora_seo_rank_tracker_manual_run',
+					'i18n'            => array(
+						'running'    => __( 'Running…', 'meyvora-seo' ),
+						'done'       => __( 'Done', 'meyvora-seo' ),
+						'trackNow'   => __( 'Track Now', 'meyvora-seo' ),
+						'runNow'     => __( 'Run Now', 'meyvora-seo' ),
+						'runComplete' => __( 'Rank tracking run complete.', 'meyvora-seo' ),
+						'error'      => __( 'Error', 'meyvora-seo' ),
+					),
+				)
+			);
 		}
 		if ( ! $this->is_gsc_connected() ) {
 			return;
@@ -330,9 +355,12 @@ class Meyvora_SEO_Rank_Tracker {
 									<td><?php echo esc_html( $row['keyword'] ); ?></td>
 									<td><a href="<?php echo esc_url( get_edit_post_link( $row['post_id'], 'raw' ) ); ?>"><?php echo esc_html( $row['post_title'] ); ?></a></td>
 									<td><?php echo esc_html( $row['current_position'] ); ?></td>
-									<td><?php echo $this->render_serp_feature_badges( $row['serp_feature'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
-									<td><?php echo $row['change_7']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
-									<td><?php echo $row['sparkline']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
+									<td><?php echo $this->render_serp_feature_badges( $row['serp_feature'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- render_serp_feature_badges() returns hardcoded HTML with all dynamic values escaped via esc_html()/esc_attr() internally.
+									?></td>
+									<td><?php echo $row['change_7']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_7day_change() returns only: '&mdash;', hardcoded '<span>' with esc_html( delta ) inside, or literal '0'. No user input reaches this value.
+									?></td>
+									<td><?php echo $row['sparkline']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_sparkline_svg() returns only hardcoded SVG markup with numeric values cast to (int) and esc_attr() on polyline points. No user input reaches this value.
+									?></td>
 								</tr>
 							<?php endforeach; ?>
 						</tbody>
@@ -356,54 +384,6 @@ class Meyvora_SEO_Rank_Tracker {
 				</div>
 			</div>
 		</div>
-		<script>
-		(function(){
-			document.getElementById('mev-rank-track-now')?.addEventListener('click', function(){
-				var btn = this;
-				btn.disabled = true;
-				btn.textContent = '<?php echo esc_js( __( 'Running…', 'meyvora-seo' ) ); ?>';
-				var fd = new FormData();
-				fd.append('action', '<?php echo esc_js( self::AJAX_RUN ); ?>');
-				fd.append('nonce', '<?php echo esc_js( wp_create_nonce( self::NONCE_ACTION ) ); ?>');
-				fetch(ajaxurl, { method: 'POST', body: fd, credentials: 'same-origin' })
-					.then(function(r){ return r.json(); })
-					.then(function(res){
-						btn.disabled = false;
-						btn.textContent = res && res.success ? '<?php echo esc_js( __( 'Done', 'meyvora-seo' ) ); ?>' : '<?php echo esc_js( __( 'Track Now', 'meyvora-seo' ) ); ?>';
-						if (res && res.success) location.reload();
-					})
-					.catch(function(){ btn.disabled = false; btn.textContent = '<?php echo esc_js( __( 'Track Now', 'meyvora-seo' ) ); ?>'; });
-			});
-			document.getElementById('meyvora-rank-tracker-run-now')?.addEventListener('click', function(){
-				var btn = this;
-				var url = btn.getAttribute('data-url');
-				var nonce = btn.getAttribute('data-nonce');
-				if (!url || !nonce) return;
-				btn.disabled = true;
-				btn.textContent = '<?php echo esc_js( __( 'Running…', 'meyvora-seo' ) ); ?>';
-				var fd = new FormData();
-				fd.append('action', 'meyvora_seo_rank_tracker_manual_run');
-				fd.append('nonce', nonce);
-				fetch(url, { method: 'POST', body: fd, credentials: 'same-origin' })
-					.then(function(r){ return r.json(); })
-					.then(function(res){
-						btn.disabled = false;
-						btn.textContent = '<?php echo esc_js( __( 'Run Now', 'meyvora-seo' ) ); ?>';
-						if (res && res.success) {
-							alert(res.data && res.data.message ? res.data.message : '<?php echo esc_js( __( 'Rank tracking run complete.', 'meyvora-seo' ) ); ?>');
-							location.reload();
-						} else {
-							alert(res.data && res.data.message ? res.data.message : '<?php echo esc_js( __( 'Error', 'meyvora-seo' ) ); ?>');
-						}
-					})
-					.catch(function(){
-						btn.disabled = false;
-						btn.textContent = '<?php echo esc_js( __( 'Run Now', 'meyvora-seo' ) ); ?>';
-						alert('<?php echo esc_js( __( 'Error', 'meyvora-seo' ) ); ?>');
-					});
-			});
-		})();
-		</script>
 		<?php
 	}
 
@@ -470,7 +450,7 @@ class Meyvora_SEO_Rank_Tracker {
 	protected function render_serp_feature_badges( string $serp_feature ): string {
 		$serp_feature = trim( $serp_feature );
 		if ( $serp_feature === '' ) {
-			return '<span class="mev-serp-dash" style="color:#999">—</span>';
+			return '<span class="mev-serp-dash" style="color:#999">&mdash;</span>';
 		}
 		$labels = array(
 			'FEATURED_SNIPPET' => array( '★ Snippet', '#d4a017', 'mev-badge-snippet' ),
@@ -488,7 +468,7 @@ class Meyvora_SEO_Rank_Tracker {
 			$cfg = $labels[ $code ] ?? array( $code, '#50575e', 'mev-badge-other' );
 			$out[] = '<span class="mev-serp-badge ' . esc_attr( $cfg[2] ) . '" style="background:' . esc_attr( $cfg[1] ) . ';color:#fff;padding:2px 6px;border-radius:3px;font-size:11px;white-space:nowrap">' . esc_html( $cfg[0] ) . '</span>';
 		}
-		return empty( $out ) ? '<span class="mev-serp-dash" style="color:#999">—</span>' : implode( ' ', $out );
+		return empty( $out ) ? '<span class="mev-serp-dash" style="color:#999">&mdash;</span>' : implode( ' ', $out );
 	}
 
 	/**
@@ -553,7 +533,7 @@ class Meyvora_SEO_Rank_Tracker {
 			$keyword
 		), ARRAY_A );
 		if ( count( $rows ) < 2 ) {
-			return '—';
+			return '&mdash;';
 		}
 		$current = (float) $rows[0]['position'];
 		$week_ago = null;
@@ -566,7 +546,7 @@ class Meyvora_SEO_Rank_Tracker {
 			}
 		}
 		if ( $week_ago === null ) {
-			return '—';
+			return '&mdash;';
 		}
 		$delta = round( $current - $week_ago, 1 );
 		if ( $delta > 0 ) {
@@ -593,7 +573,7 @@ class Meyvora_SEO_Rank_Tracker {
 			$positions[] = (float) ( $r['position'] ?? 0 );
 		}
 		if ( empty( $positions ) ) {
-			return '—';
+			return '&mdash;';
 		}
 		$w = 120;
 		$h = 24;
@@ -737,7 +717,7 @@ class Meyvora_SEO_Rank_Tracker {
 		?>
 		<div id="mev-rank-history-panel"
 			class="mev-rank-history-panel"
-			data-post-id="<?php echo (int) $post->ID; ?>"
+			data-post-id="<?php echo esc_attr( (string) (int) $post->ID ); ?>"
 			data-nonce="<?php echo esc_attr( $nonce ); ?>"
 			data-ajax="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>">
 			<p class="mev-rank-loading"><?php esc_html_e( 'Loading rank history...', 'meyvora-seo' ); ?></p>

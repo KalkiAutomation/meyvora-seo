@@ -44,17 +44,17 @@ $issues_map = Meyvora_SEO_Audit::ISSUES;
 
 	<nav class="mev-insights-tabs" aria-label="Insights navigation">
 		<a href="<?php echo esc_url( admin_url( 'admin.php?page=meyvora-seo-reports' ) ); ?>"
-		   class="mev-itab <?php echo ( $current_page === 'reports' ) ? 'mev-itab--active' : ''; ?>">
+		   class="mev-itab <?php echo esc_attr( ( $current_page === 'reports' ) ? 'mev-itab--active' : '' ); ?>">
 			<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
 			Reports
 		</a>
 		<a href="<?php echo esc_url( admin_url( 'admin.php?page=meyvora-seo-audit' ) ); ?>"
-		   class="mev-itab <?php echo ( $current_page === 'content-audit' ) ? 'mev-itab--active' : ''; ?>">
+		   class="mev-itab <?php echo esc_attr( ( $current_page === 'content-audit' ) ? 'mev-itab--active' : '' ); ?>">
 			<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
 			Content Audit
 		</a>
 		<a href="<?php echo esc_url( admin_url( 'admin.php?page=meyvora-seo-site-audit' ) ); ?>"
-		   class="mev-itab <?php echo ( $current_page === 'site-audit' ) ? 'mev-itab--active' : ''; ?>">
+		   class="mev-itab <?php echo esc_attr( ( $current_page === 'site-audit' ) ? 'mev-itab--active' : '' ); ?>">
 			<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
 			Site Audit
 		</a>
@@ -73,29 +73,29 @@ $issues_map = Meyvora_SEO_Audit::ISSUES;
 			<svg class="mev-audit-ring" viewBox="0 0 120 120" width="110" height="110">
 				<circle cx="60" cy="60" r="50" class="mev-ring-bg"/>
 				<circle cx="60" cy="60" r="50" class="mev-ring-fill"
-					stroke-dasharray="<?php echo (int) $circumference; ?>"
-					stroke-dashoffset="<?php echo (int) $offset; ?>"/>
+					stroke-dasharray="<?php echo esc_attr( (string) (int) $circumference ); ?>"
+					stroke-dashoffset="<?php echo esc_attr( (string) (int) $offset ); ?>"/>
 			</svg>
 			<div class="mev-ring-label">
-				<span class="mev-ring-pct"><?php echo (int) $health; ?></span>
+				<span class="mev-ring-pct"><?php echo esc_html( (string) (int) $health ); ?></span>
 				<span class="mev-ring-unit"><?php esc_html_e( 'Health', 'meyvora-seo' ); ?></span>
 			</div>
 		</div>
 		<div class="mev-audit-hero-stats">
 			<div class="mev-astat mev-astat-clean">
-				<span class="mev-astat-val"><?php echo (int) count( $clean ); ?></span>
+				<span class="mev-astat-val"><?php echo esc_html( (string) (int) count( $clean ) ); ?></span>
 				<span class="mev-astat-label"><?php esc_html_e( 'Clean', 'meyvora-seo' ); ?></span>
 			</div>
 			<div class="mev-astat mev-astat-warn">
-				<span class="mev-astat-val"><?php echo (int) ( $by_severity['warning'] ?? 0 ); ?></span>
+				<span class="mev-astat-val"><?php echo esc_html( (string) (int) ( $by_severity['warning'] ?? 0 ) ); ?></span>
 				<span class="mev-astat-label"><?php esc_html_e( 'Warnings', 'meyvora-seo' ); ?></span>
 			</div>
 			<div class="mev-astat mev-astat-info">
-				<span class="mev-astat-val"><?php echo (int) ( $by_severity['info'] ?? 0 ); ?></span>
+				<span class="mev-astat-val"><?php echo esc_html( (string) (int) ( $by_severity['info'] ?? 0 ) ); ?></span>
 				<span class="mev-astat-label"><?php esc_html_e( 'Info', 'meyvora-seo' ); ?></span>
 			</div>
 			<div class="mev-astat mev-astat-total">
-				<span class="mev-astat-val"><?php echo (int) $total_issues; ?></span>
+				<span class="mev-astat-val"><?php echo esc_html( (string) (int) $total_issues ); ?></span>
 				<span class="mev-astat-label"><?php esc_html_e( 'Total Issues', 'meyvora-seo' ); ?></span>
 			</div>
 		</div>
@@ -146,11 +146,11 @@ $issues_map = Meyvora_SEO_Audit::ISSUES;
 				<div class="mev-issue-bar-meta">
 					<span class="mev-issue-bar-label"><?php echo esc_html( $label ); ?></span>
 					<span class="mev-issue-bar-count mev-sev-badge-<?php echo esc_attr( $sev ); ?>">
-						<?php echo (int) $count; ?></span>
+						<?php echo esc_html( (string) (int) $count ); ?></span>
 				</div>
 				<div class="mev-issue-bar-track">
 					<div class="mev-issue-bar-fill mev-bar-<?php echo esc_attr( $sev ); ?>"
-						style="width:<?php echo (int) $pct; ?>%"></div>
+						style="<?php echo esc_attr( 'width:' . (int) $pct . '%' ); ?>"></div>
 				</div>
 				<a href="<?php echo esc_url( $fix_url ); ?>"
 					class="mev-btn mev-btn--secondary mev-btn--sm">
@@ -186,19 +186,19 @@ $issues_map = Meyvora_SEO_Audit::ISSUES;
 	<?php if ( ! empty( $results ) ) : ?>
 		<div class="mev-audit-scorecard">
 			<div class="mev-audit-scorecard-item mev-severity-critical">
-				<span class="mev-audit-scorecard-value"><?php echo (int) ( $by_severity['critical'] ?? 0 ); ?></span>
+				<span class="mev-audit-scorecard-value"><?php echo esc_html( (string) (int) ( $by_severity['critical'] ?? 0 ) ); ?></span>
 				<span class="mev-audit-scorecard-label"><?php esc_html_e( 'Critical', 'meyvora-seo' ); ?></span>
 			</div>
 			<div class="mev-audit-scorecard-item">
-				<span class="mev-audit-scorecard-value" id="mev-audit-total-issues"><?php echo (int) $total_issues; ?></span>
+				<span class="mev-audit-scorecard-value" id="mev-audit-total-issues"><?php echo esc_html( (string) (int) $total_issues ); ?></span>
 				<span class="mev-audit-scorecard-label"><?php esc_html_e( 'Total issues', 'meyvora-seo' ); ?></span>
 			</div>
 			<div class="mev-audit-scorecard-item mev-severity-warning">
-				<span class="mev-audit-scorecard-value" id="mev-audit-warnings"><?php echo (int) ( $by_severity['warning'] ?? 0 ); ?></span>
+				<span class="mev-audit-scorecard-value" id="mev-audit-warnings"><?php echo esc_html( (string) (int) ( $by_severity['warning'] ?? 0 ) ); ?></span>
 				<span class="mev-audit-scorecard-label"><?php esc_html_e( 'Warnings', 'meyvora-seo' ); ?></span>
 			</div>
 			<div class="mev-audit-scorecard-item mev-severity-info">
-				<span class="mev-audit-scorecard-value" id="mev-audit-info"><?php echo (int) ( $by_severity['info'] ?? 0 ); ?></span>
+				<span class="mev-audit-scorecard-value" id="mev-audit-info"><?php echo esc_html( (string) (int) ( $by_severity['info'] ?? 0 ) ); ?></span>
 				<span class="mev-audit-scorecard-label"><?php esc_html_e( 'Info', 'meyvora-seo' ); ?></span>
 			</div>
 		</div>
@@ -258,7 +258,7 @@ $issues_map = Meyvora_SEO_Audit::ISSUES;
 						$issue_labels[] = array( 'id' => $id, 'label' => $label, 'severity' => $issue['severity'] ?? 'warning' );
 					}
 					?>
-					<tr class="mev-audit-row" data-post-id="<?php echo (int) $row['post_id']; ?>" data-issues="<?php echo esc_attr( wp_json_encode( $issue_labels ) ); ?>">
+					<tr class="mev-audit-row" data-post-id="<?php echo esc_attr( (string) (int) $row['post_id'] ); ?>" data-issues="<?php echo esc_attr( wp_json_encode( $issue_labels ) ); ?>">
 						<td class="column-expand">
 							<button type="button" class="mev-row-expand-btn" aria-expanded="false">&#9654;</button>
 						</td>
@@ -268,7 +268,7 @@ $issues_map = Meyvora_SEO_Audit::ISSUES;
 						</td>
 						<td class="column-issues">
 							<?php if ( empty( $issue_labels ) ) : ?>
-								<span class="mev-no-issues">—</span>
+								<span class="mev-no-issues">&mdash;</span>
 							<?php else : ?>
 								<ul class="mev-audit-issues-list">
 									<?php foreach ( $issue_labels as $i ) : ?>
@@ -277,7 +277,7 @@ $issues_map = Meyvora_SEO_Audit::ISSUES;
 								</ul>
 							<?php endif; ?>
 						</td>
-						<td class="column-score num"><?php echo (int) ( $row['seo_score'] ?? 0 ); ?></td>
+						<td class="column-score num"><?php echo esc_html( (string) (int) ( $row['seo_score'] ?? 0 ) ); ?></td>
 						<td class="column-action">
 							<a href="<?php echo esc_url( $edit_url ); ?>" class="button button-small"><?php esc_html_e( 'Quick Fix', 'meyvora-seo' ); ?></a>
 						</td>
@@ -287,7 +287,7 @@ $issues_map = Meyvora_SEO_Audit::ISSUES;
 					$sc_cls = $sc >= 80 ? 'good' : ( $sc >= 50 ? 'okay' : 'poor' );
 					?>
 					<tr class="mev-audit-detail-row"
-						id="mev-detail-<?php echo (int) $row['post_id']; ?>"
+						id="mev-detail-<?php echo esc_attr( (string) (int) $row['post_id'] ); ?>"
 						style="display:none;">
 						<td colspan="5" class="mev-audit-detail-cell">
 							<div class="mev-audit-detail-inner">
@@ -297,10 +297,10 @@ $issues_map = Meyvora_SEO_Audit::ISSUES;
 										<span style="font-size:12px;"><?php esc_html_e( 'Score:', 'meyvora-seo' ); ?></span>
 										<div class="mev-detail-score-track">
 											<div class="mev-detail-score-fill mev-score-<?php echo esc_attr( $sc_cls ); ?>"
-												style="width:<?php echo (int) $sc; ?>%"></div>
+												style="<?php echo esc_attr( 'width:' . (int) $sc . '%' ); ?>"></div>
 										</div>
 										<strong class="mev-score-num mev-score-<?php echo esc_attr( $sc_cls ); ?>">
-											<?php echo (int) $sc; ?></strong>
+											<?php echo esc_html( (string) (int) $sc ); ?></strong>
 									</div>
 								</div>
 								<?php if ( empty( $issue_labels ) ) : ?>

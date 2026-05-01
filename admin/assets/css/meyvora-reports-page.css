@@ -1,0 +1,89 @@
+/*
+== Source Code == https://github.com/KalkiAutomation/meyvora-seo (admin/assets/css/meyvora-reports-page.css)
+*/
+
+.mev-sparkline-bar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	max-width: 120px;
+}
+.mev-sparkline-bar .mev-sparkline-fill {
+	width: 60px;
+	height: 8px;
+	background: var(--mev-gray-200);
+	border-radius: 4px;
+	overflow: hidden;
+}
+.mev-sparkline-bar .mev-sparkline-fill::before {
+	content: "";
+	display: block;
+	height: 100%;
+	width: var(--pct, 0);
+	background: var(--mev-success);
+	border-radius: 4px;
+	transition: width 0.5s var(--mev-ease);
+}
+.mev-sparkline-bar--low .mev-sparkline-fill::before {
+	background: var(--mev-warning);
+}
+.mev-sparkline-value {
+	font-weight: 600;
+	font-size: 13px;
+	color: var(--mev-gray-700);
+	min-width: 24px;
+}
+.mev-issues-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.mev-issues-list li {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px 0;
+	border-bottom: 1px solid var(--mev-border);
+}
+.mev-issues-list li:last-child {
+	border-bottom: none;
+}
+.mev-issues-label {
+	font-size: 13px;
+	color: var(--mev-gray-700);
+}
+.mev-issues-count {
+	font-weight: 600;
+	color: var(--mev-primary);
+}
+.mev-trend-chart {
+	display: flex;
+	align-items: flex-end;
+	gap: 4px;
+	height: 120px;
+	padding: 8px 0;
+}
+.mev-trend-bar-wrap {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-width: 0;
+}
+.mev-trend-bar {
+	width: 100%;
+	max-width: 24px;
+	min-height: 4px;
+	background: var(--mev-primary);
+	border-radius: 4px 4px 0 0;
+	transition: height 0.4s var(--mev-ease);
+}
+.mev-trend-label {
+	font-size: 10px;
+	color: var(--mev-gray-500);
+	margin-top: 4px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
+}

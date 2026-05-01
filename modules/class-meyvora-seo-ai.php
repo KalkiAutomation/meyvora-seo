@@ -188,10 +188,9 @@ class Meyvora_SEO_AI {
 		if ( $api_key === '' ) {
 			wp_send_json_error( array( 'message' => __( 'Add an API key in Settings → AI.', 'meyvora-seo' ), 'code' => 'no_api_key' ) );
 		}
-		$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+		$post_id = isset( $_POST['post_id'] ) ? absint( wp_unslash( $_POST['post_id'] ) ) : 0;
 		$post = $post_id ? get_post( $post_id ) : null;
-		$content = isset( $_POST['content'] ) ? wp_unslash( $_POST['content'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$content = is_string( $content ) ? wp_kses_post( $content ) : '';
+		$content = isset( $_POST['content'] ) ? wp_kses_post( wp_unslash( (string) $_POST['content'] ) ) : '';
 		$focus_keyword = isset( $_POST['focus_keyword'] ) ? sanitize_text_field( wp_unslash( $_POST['focus_keyword'] ) ) : '';
 		$title = $post ? $post->post_title : ( isset( $_POST['title'] ) ? sanitize_text_field( wp_unslash( $_POST['title'] ) ) : '' );
 		$excerpt = $post && $post->post_excerpt ? $post->post_excerpt : ( isset( $_POST['excerpt'] ) ? sanitize_textarea_field( wp_unslash( $_POST['excerpt'] ) ) : '' );
@@ -247,30 +246,29 @@ class Meyvora_SEO_AI {
 				wp_send_json_success( array( 'text' => $raw ) );
 				break;
 			case 'expand_paragraph':
-				$input = isset( $_POST['assistant_input'] ) ? wp_unslash( $_POST['assistant_input'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-				$input = is_string( $input ) ? wp_kses_post( $input ) : '';
+				$input = isset( $_POST['assistant_input'] ) ? wp_kses_post( wp_unslash( (string) $_POST['assistant_input'] ) ) : '';
 				$input = wp_strip_all_tags( $input );
 				$prompt = $this->build_expand_paragraph_prompt( $input );
 				$raw = $this->call_ai( $api_key, $prompt );
 				wp_send_json_success( array( 'text' => $raw ) );
 				break;
 			case 'rewrite_intro':
-				$intro = $content !== '' ? ( mb_strlen( $content ) > 800 ? mb_substr( $content, 0, 800 ) . '…' : $content ) : ( isset( $_POST['assistant_input'] ) ? wp_kses_post( wp_unslash( $_POST['assistant_input'] ) ) : '' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+				$intro = $content !== '' ? ( mb_strlen( $content ) > 800 ? mb_substr( $content, 0, 800 ) . '…' : $content ) : ( isset( $_POST['assistant_input'] ) ? wp_kses_post( wp_unslash( (string) $_POST['assistant_input'] ) ) : '' );
 				$intro = is_string( $intro ) ? wp_strip_all_tags( $intro ) : '';
 				$prompt = $this->build_rewrite_intro_prompt( $intro, $title, $focus_keyword );
 				$raw = $this->call_ai( $api_key, $prompt );
 				wp_send_json_success( array( 'text' => $raw ) );
 				break;
 			case 'improve_readability':
-				$input = isset( $_POST['assistant_input'] ) ? wp_unslash( $_POST['assistant_input'] ) : ( $content ?: '' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-				$input = is_string( $input ) ? wp_strip_all_tags( wp_kses_post( $input ) ) : '';
+				$input = isset( $_POST['assistant_input'] ) ? wp_strip_all_tags( wp_kses_post( wp_unslash( (string) $_POST['assistant_input'] ) ) ) : ( $content ?: '' );
+				$input = is_string( $input ) ? $input : '';
 				$prompt = $this->build_improve_readability_prompt( $input );
 				$raw = $this->call_ai( $api_key, $prompt );
 				wp_send_json_success( array( 'text' => $raw ) );
 				break;
 			case 'check_tone':
-				$input = isset( $_POST['assistant_input'] ) ? wp_unslash( $_POST['assistant_input'] ) : ( $content ?: '' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-				$input = is_string( $input ) ? wp_strip_all_tags( wp_kses_post( $input ) ) : '';
+				$input = isset( $_POST['assistant_input'] ) ? wp_strip_all_tags( wp_kses_post( wp_unslash( (string) $_POST['assistant_input'] ) ) ) : ( $content ?: '' );
+				$input = is_string( $input ) ? $input : '';
 				$prompt = $this->build_check_tone_prompt( $input );
 				$raw = $this->call_ai( $api_key, $prompt );
 				wp_send_json_success( array( 'text' => $raw ) );

@@ -5,7 +5,6 @@
  * @package Meyvora_SEO
  */
 
-// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- REQUEST_URI used for URL comparison only; escaped on output.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -194,7 +193,7 @@ class Meyvora_SEO_Open_Graph {
 	}
 
 	/**
-	 * @return string OG image URL or empty.
+	 * @return string OG image URL or empty (sanitized with esc_url() for meta output).
 	 * Fallback order: (1) filter, (2) post OG image meta, (3) featured image, (4) site-level default from settings, (5) nothing.
 	 * No "first attachment" fallback — that could be a PDF/audio and would produce invalid og:image.
 	 */
@@ -202,7 +201,7 @@ class Meyvora_SEO_Open_Graph {
 		$this->og_image_attachment_id = 0;
 		$pre = apply_filters( 'meyvora_seo_og_image', '', get_queried_object() );
 		if ( is_string( $pre ) && $pre !== '' ) {
-			return esc_url_raw( $pre );
+			return esc_url( $pre );
 		}
 		if ( is_singular() ) {
 			$pid     = get_queried_object_id();
@@ -212,7 +211,7 @@ class Meyvora_SEO_Open_Graph {
 				$url = wp_get_attachment_image_url( (int) $img_id, 'full' );
 				if ( $url ) {
 					$this->og_image_attachment_id = (int) $img_id;
-					return esc_url_raw( $url );
+					return esc_url( $url );
 				}
 			}
 			// Featured image (post thumbnail) — always an image, never PDF/audio.
@@ -221,7 +220,7 @@ class Meyvora_SEO_Open_Graph {
 				$url = wp_get_attachment_image_url( $thumb_id, 'full' );
 				if ( $url ) {
 					$this->og_image_attachment_id = $thumb_id;
-					return esc_url_raw( $url );
+					return esc_url( $url );
 				}
 			}
 		}
@@ -231,7 +230,7 @@ class Meyvora_SEO_Open_Graph {
 			$url = wp_get_attachment_image_url( (int) $default_id, 'full' );
 			if ( $url ) {
 				$this->og_image_attachment_id = (int) $default_id;
-				return esc_url_raw( $url );
+				return esc_url( $url );
 			}
 		}
 		return '';
@@ -263,7 +262,7 @@ class Meyvora_SEO_Open_Graph {
 		if ( is_singular() ) {
 			return (string) get_permalink();
 		}
-		$uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+		$uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( (string) $_SERVER['REQUEST_URI'] ) ) : '';
 		return esc_url( home_url( $uri ) );
 	}
 }

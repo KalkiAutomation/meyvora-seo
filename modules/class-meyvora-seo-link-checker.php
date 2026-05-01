@@ -66,6 +66,13 @@ class Meyvora_SEO_Link_Checker {
 	 * Schedule cron if not already scheduled.
 	 */
 	public function schedule_cron(): void {
+		if ( ! $this->options->is_enabled( 'link_checker_background_enabled' ) ) {
+			$timestamp = wp_next_scheduled( self::CRON_HOOK );
+			if ( $timestamp ) {
+				wp_unschedule_event( $timestamp, self::CRON_SCHEDULE, self::CRON_HOOK );
+			}
+			return;
+		}
 		if ( ! wp_next_scheduled( self::CRON_HOOK ) ) {
 			wp_schedule_event( time(), self::CRON_SCHEDULE, self::CRON_HOOK );
 		}
@@ -75,6 +82,9 @@ class Meyvora_SEO_Link_Checker {
 	 * Cron callback: process up to URLS_PER_RUN external URLs.
 	 */
 	public function run_cron(): void {
+		if ( ! $this->options->is_enabled( 'link_checker_background_enabled' ) ) {
+			return;
+		}
 		global $wpdb;
 		$table = $wpdb->prefix . Meyvora_SEO_Install::TABLE_LINK_CHECKS;
 
@@ -327,6 +337,12 @@ class Meyvora_SEO_Link_Checker {
 			return;
 		}
 		wp_enqueue_style( 'meyvora-admin', MEYVORA_SEO_URL . 'admin/assets/css/meyvora-admin.css', array(), MEYVORA_SEO_VERSION );
+		wp_enqueue_style(
+			'meyvora-link-checker-modal',
+			MEYVORA_SEO_URL . 'admin/assets/css/meyvora-link-checker-modal.css',
+			array( 'meyvora-admin' ),
+			MEYVORA_SEO_VERSION
+		);
 		wp_enqueue_script(
 			'meyvora-link-checker',
 			MEYVORA_SEO_URL . 'admin/assets/js/meyvora-link-checker.js',
@@ -386,9 +402,11 @@ class Meyvora_SEO_Link_Checker {
 		if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), self::NONCE_ACTION ) ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'meyvora-seo' ) ), 403 );
 		}
-		$check_id = isset( $_POST['check_id'] ) ? absint( $_POST['check_id'] ) : 0;
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized via esc_url_raw.
-		$new_url  = isset( $_POST['new_url'] ) ? esc_url_raw( trim( (string) wp_unslash( $_POST['new_url'] ) ) ) : '';
+		$check_id = isset( $_POST['check_id'] ) ? absint( wp_unslash( $_POST['check_id'] ) ) : 0;
+		/*
+		 * sanitize_url + wp_unslash: replacement URL before DB / post_content; not echoed raw as HTML here.
+		 */
+		$new_url = isset( $_POST['new_url'] ) ? trim( sanitize_url( wp_unslash( $_POST['new_url'] ) ) ) : '';
 		if ( ! $check_id || ! $new_url ) {
 			wp_send_json_error( array( 'message' => __( 'Missing check ID or replacement URL.', 'meyvora-seo' ) ) );
 		}
@@ -413,6 +431,7 @@ class Meyvora_SEO_Link_Checker {
 
 		$content   = $post->post_content;
 		$old_url_escaped = preg_quote( $old_url, '#' );
+		// esc_url_raw() intentional: href value persisted in post_content; sanitize for storage (esc_url() is for HTML output).
 		$new_url_escaped = esc_url_raw( $new_url );
 		$new_content = preg_replace(
 			'#href=["\']' . $old_url_escaped . '["\']#i',
@@ -420,7 +439,7 @@ class Meyvora_SEO_Link_Checker {
 			$content
 		);
 		if ( $new_content === null ) {
-			// preg_replace failed, fall back to str_replace
+			// preg_replace failed, fall back to str_replace — esc_url_raw() for stored URL fragment, same as above.
 			$new_content = str_replace( $old_url, esc_url_raw( $new_url ), $content );
 		}
 

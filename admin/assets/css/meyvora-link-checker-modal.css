@@ -1,0 +1,26 @@
+/*
+== Source Code == https://github.com/KalkiAutomation/meyvora-seo (admin/assets/css/meyvora-link-checker-modal.css)
+*/
+
+.mev-modal {
+	position: fixed;
+	inset: 0;
+	z-index: 100000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+}
+.mev-modal-backdrop {
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.4);
+}
+.mev-modal-content {
+	position: relative;
+	background: var(--mev-surface, #fff);
+	border-radius: var(--mev-radius, 10px);
+	box-shadow: var(--mev-shadow-xl, 0 20px 25px rgba(0, 0, 0, 0.1));
+	padding: 24px;
+	width: 100%;
+}

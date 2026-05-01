@@ -75,8 +75,8 @@ class Meyvora_SEO_Social_Preview {
 				<div id="mev-social-subpanel-facebook" class="mev-social-subpanel is-active" role="tabpanel">
 					<div class="mev-fb-card mev-social-preview-fb" data-domain="<?php echo esc_attr( $domain ); ?>">
 						<div class="mev-fb-card-image mev-social-preview-fb-image">
-							<img src="<?php echo $has_og_image ? esc_url( $og_image_url ) : ''; ?>" alt="" id="mev-preview-fb-img"<?php echo $has_og_image ? '' : ' style="display:none;"'; ?> />
-							<span class="mev-social-preview-placeholder" id="mev-preview-fb-placeholder"<?php echo $has_og_image ? ' style="display:none;"' : ''; ?>>
+							<img src="<?php echo $has_og_image ? esc_url( $og_image_url ) : ''; ?>" alt="" id="mev-preview-fb-img"<?php if ( ! $has_og_image ) : ?> style="display:none;"<?php endif; ?> />
+							<span class="mev-social-preview-placeholder" id="mev-preview-fb-placeholder"<?php if ( $has_og_image ) : ?> style="display:none;"<?php endif; ?>>
 								<?php echo function_exists( 'meyvora_seo_icon' ) ? wp_kses_post( meyvora_seo_icon( 'alert_triangle', array( 'width' => 32, 'height' => 32 ) ) ) : ''; ?>
 								<span><?php esc_html_e( 'No OG image set', 'meyvora-seo' ); ?></span>
 							</span>
@@ -88,16 +88,16 @@ class Meyvora_SEO_Social_Preview {
 						</div>
 					</div>
 					<div class="mev-social-char-counts">
-						<span class="mev-social-char-count" id="mev-og-title-count"><?php echo (int) $og_title_len; ?> / <?php echo (int) self::OG_TITLE_MAX; ?></span>
-						<span class="mev-social-char-count" id="mev-og-desc-count"><?php echo (int) $og_desc_len; ?> / <?php echo (int) self::OG_DESC_MAX; ?></span>
+						<span class="mev-social-char-count" id="mev-og-title-count"><?php echo esc_html( sprintf( '%d / %d', (int) $og_title_len, (int) self::OG_TITLE_MAX ) ); ?></span>
+						<span class="mev-social-char-count" id="mev-og-desc-count"><?php echo esc_html( sprintf( '%d / %d', (int) $og_desc_len, (int) self::OG_DESC_MAX ) ); ?></span>
 					</div>
 				</div>
 
 				<div id="mev-social-subpanel-twitter" class="mev-social-subpanel" role="tabpanel" hidden>
 					<div class="mev-tw-card mev-social-preview-tw">
 						<div class="mev-tw-card-image mev-social-preview-tw-image">
-							<img src="<?php echo $has_tw_image ? esc_url( $tw_image_display ) : ''; ?>" alt="" id="mev-preview-tw-img"<?php echo $has_tw_image ? '' : ' style="display:none;"'; ?> />
-							<span class="mev-social-preview-placeholder" id="mev-preview-tw-placeholder"<?php echo $has_tw_image ? ' style="display:none;"' : ''; ?>>
+							<img src="<?php echo $has_tw_image ? esc_url( $tw_image_display ) : ''; ?>" alt="" id="mev-preview-tw-img"<?php if ( ! $has_tw_image ) : ?> style="display:none;"<?php endif; ?> />
+							<span class="mev-social-preview-placeholder" id="mev-preview-tw-placeholder"<?php if ( $has_tw_image ) : ?> style="display:none;"<?php endif; ?>>
 								<?php echo function_exists( 'meyvora_seo_icon' ) ? wp_kses_post( meyvora_seo_icon( 'alert_triangle', array( 'width' => 32, 'height' => 32 ) ) ) : ''; ?>
 								<span><?php esc_html_e( 'No image set', 'meyvora-seo' ); ?></span>
 							</span>

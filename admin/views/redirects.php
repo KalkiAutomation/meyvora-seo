@@ -25,8 +25,9 @@ if ( isset( $_GET['delete_redirect'] ) && isset( $_GET['meyvora_redirect_nonce']
 }
 
 if ( isset( $_POST['meyvora_redirect_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['meyvora_redirect_nonce'] ) ), 'meyvora_redirects' ) && current_user_can( 'manage_options' ) ) {
-	if ( isset( $_POST['action'] ) && $_POST['action'] === 'add' && isset( $_POST['source_url'], $_POST['target_url'] ) ) {
-		$is_regex = ! empty( $_POST['is_regex'] );
+	$redirect_form_action = isset( $_POST['action'] ) ? sanitize_key( wp_unslash( (string) $_POST['action'] ) ) : '';
+	if ( $redirect_form_action === 'add' && isset( $_POST['source_url'], $_POST['target_url'] ) ) {
+		$is_regex = ! empty( sanitize_key( wp_unslash( $_POST['is_regex'] ?? '' ) ) );
 		$src = sanitize_text_field( wp_unslash( $_POST['source_url'] ) );
 		if ( ! $is_regex ) {
 			$src = '/' . trim( $src, '/' );
@@ -35,7 +36,7 @@ if ( isset( $_POST['meyvora_redirect_nonce'] ) && wp_verify_nonce( sanitize_text
 			}
 		}
 		$tgt = sanitize_text_field( wp_unslash( $_POST['target_url'] ) );
-		$type = isset( $_POST['redirect_type'] ) ? absint( $_POST['redirect_type'] ) : 301;
+		$type = isset( $_POST['redirect_type'] ) ? absint( wp_unslash( $_POST['redirect_type'] ) ) : 301;
 		$notes = isset( $_POST['notes'] ) ? sanitize_textarea_field( wp_unslash( $_POST['notes'] ) ) : '';
 		// Warn about redirect chains.
 		$chain_path = Meyvora_SEO_Redirects::detect_chain( $src, $tgt );
@@ -50,31 +51,34 @@ if ( isset( $_POST['meyvora_redirect_nonce'] ) && wp_verify_nonce( sanitize_text
 		}
 		Meyvora_SEO_Redirects::add_redirect( $src, $tgt, $type, $notes, $is_regex );
 	}
-	if ( isset( $_POST['action'] ) && $_POST['action'] === 'import_csv' && ! empty( $_POST['csv_data'] ) ) {
-		$lines = array_filter( array_map( 'trim', explode( "\n", sanitize_textarea_field( wp_unslash( $_POST['csv_data'] ) ) ) ) );
-		$imported = 0;
-		foreach ( $lines as $line ) {
-			$parts = str_getcsv( $line );
-			if ( count( $parts ) >= 2 ) {
-				$is_regex = isset( $parts[3] ) ? ( (int) $parts[3] === 1 ) : false;
-				$src = $parts[0];
-				if ( ! $is_regex ) {
-					$src = '/' . trim( $src, '/' );
-					if ( $src === '//' ) {
-						$src = '/';
+	if ( $redirect_form_action === 'import_csv' && isset( $_POST['csv_data'] ) ) {
+		$csv_raw = sanitize_textarea_field( wp_unslash( (string) $_POST['csv_data'] ) );
+		if ( $csv_raw !== '' ) {
+			$lines = array_filter( array_map( 'trim', explode( "\n", $csv_raw ) ) );
+			$imported = 0;
+			foreach ( $lines as $line ) {
+				$parts = str_getcsv( $line );
+				if ( count( $parts ) >= 2 ) {
+					$is_regex = isset( $parts[3] ) ? ( (int) $parts[3] === 1 ) : false;
+					$src = $parts[0];
+					if ( ! $is_regex ) {
+						$src = '/' . trim( $src, '/' );
+						if ( $src === '//' ) {
+							$src = '/';
+						}
+					}
+					$tgt = $parts[1];
+					$type = isset( $parts[2] ) ? absint( $parts[2] ) : 301;
+					if ( Meyvora_SEO_Redirects::add_redirect( $src, $tgt, $type, '', $is_regex ) ) {
+						$imported++;
 					}
 				}
-				$tgt = $parts[1];
-				$type = isset( $parts[2] ) ? absint( $parts[2] ) : 301;
-				if ( Meyvora_SEO_Redirects::add_redirect( $src, $tgt, $type, '', $is_regex ) ) {
-					$imported++;
-				}
 			}
+			// Redirect to avoid re-post — esc_url_raw() intentional: sanitizing path for wp_safe_redirect() Location context, not HTML output.
+			$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+			wp_safe_redirect( add_query_arg( 'imported', $imported, $request_uri ) );
+			exit;
 		}
-		// Redirect to avoid re-post.
-		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
-		wp_safe_redirect( add_query_arg( 'imported', $imported, $request_uri ) );
-		exit;
 	}
 }
 
@@ -243,13 +247,13 @@ $count_410  = count( array_filter( (array) $redirects, fn( $r ) => (int) $r['red
       <button class="mev-rdrtab active" data-target="mev-rdr-redirects" type="button"
         style="flex:1;padding:9px 14px;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;background:var(--mev-surface);color:var(--mev-gray-900);box-shadow:var(--mev-shadow-sm);">
         <?php echo wp_kses_post( meyvora_seo_icon( 'rotate_ccw', array( 'width' => 16, 'height' => 16 ) ) ); ?> <?php esc_html_e( 'Active Redirects', 'meyvora-seo' ); ?>
-        <span style="display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;border-radius:9999px;font-size:11px;font-weight:700;background:var(--mev-primary-light);color:var(--mev-primary);margin-left:6px;"><?php echo (int) count( (array) $redirects ); ?></span>
+        <span style="display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;border-radius:9999px;font-size:11px;font-weight:700;background:var(--mev-primary-light);color:var(--mev-primary);margin-left:6px;"><?php echo esc_html( (string) (int) count( (array) $redirects ) ); ?></span>
       </button>
       <button class="mev-rdrtab" data-target="mev-rdr-404" type="button"
         style="flex:1;padding:9px 14px;border:none;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;background:none;color:var(--mev-gray-500);">
         <?php echo wp_kses_post( meyvora_seo_icon( 'alert_triangle', array( 'width' => 16, 'height' => 16 ) ) ); ?> <?php esc_html_e( '404 Monitor', 'meyvora-seo' ); ?>
         <?php if ( count( (array) $log_404 ) > 0 ) : ?>
-        <span style="display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;border-radius:9999px;font-size:11px;font-weight:700;background:var(--mev-danger-light);color:var(--mev-danger);margin-left:6px;"><?php echo (int) count( (array) $log_404 ); ?></span>
+        <span style="display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;border-radius:9999px;font-size:11px;font-weight:700;background:var(--mev-danger-light);color:var(--mev-danger);margin-left:6px;"><?php echo esc_html( (string) (int) count( (array) $log_404 ) ); ?></span>
         <?php endif; ?>
       </button>
     </div>
@@ -302,7 +306,7 @@ $count_410  = count( array_filter( (array) $redirects, fn( $r ) => (int) $r['red
             <td>
               <span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:monospace;background:<?php echo esc_attr( $tc[0] ); ?>;color:<?php echo esc_attr( $tc[1] ); ?>;"><?php echo esc_html( $type_label ); ?></span>
             </td>
-            <td style="text-align:center;font-weight:700;font-size:13px;"><?php echo number_format( (int) $r['hit_count'] ); ?></td>
+            <td style="text-align:center;font-weight:700;font-size:13px;"><?php echo esc_html( number_format( (int) $r['hit_count'] ) ); ?></td>
             <td style="font-size:11px;color:var(--mev-gray-400);"><?php echo esc_html( $last ); ?></td>
             <td>
               <a href="<?php echo esc_url( $del_url ); ?>"
@@ -343,7 +347,7 @@ $count_410  = count( array_filter( (array) $redirects, fn( $r ) => (int) $r['red
           ?>
           <tr>
             <td><code class="mev-code" style="color:var(--mev-danger);"><?php echo esc_html( $row['url'] ); ?></code></td>
-            <td style="text-align:center;font-weight:700;font-size:13px;color:var(--mev-danger);"><?php echo number_format( (int) $row['hit_count'] ); ?></td>
+            <td style="text-align:center;font-weight:700;font-size:13px;color:var(--mev-danger);"><?php echo esc_html( number_format( (int) $row['hit_count'] ) ); ?></td>
             <td style="font-size:11px;color:var(--mev-gray-400);"><?php echo esc_html( $last404 ); ?></td>
             <td>
               <a href="<?php echo esc_url( $fix_url ); ?>" class="mev-btn mev-btn--secondary mev-btn--sm">
@@ -362,13 +366,6 @@ $count_410  = count( array_filter( (array) $redirects, fn( $r ) => (int) $r['red
 </div><!-- /.grid -->
 
 <!-- Chain scan modal -->
-<style>
-.mev-chain-row { display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--mev-border);flex-wrap:wrap; }
-.mev-chain-row:last-child { border-bottom:none; }
-.mev-chain-path { flex:1;min-width:0;font-size:12px;font-family:monospace;color:var(--mev-gray-800);word-break:break-all; }
-.mev-chain-meta { font-size:11px;color:var(--mev-gray-500);white-space:nowrap; }
-.mev-chain-empty { margin:0;padding:24px;text-align:center;color:var(--mev-gray-500);font-size:13px; }
-</style>
 <div id="mev-chain-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:100000;align-items:center;justify-content:center;padding:20px;">
   <div style="background:var(--mev-surface);border-radius:var(--mev-radius);box-shadow:var(--mev-shadow-lg);max-width:640px;width:100%;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;">
     <div style="padding:16px 20px;border-bottom:1px solid var(--mev-border);display:flex;align-items:center;justify-content:space-between;">
@@ -386,27 +383,3 @@ $count_410  = count( array_filter( (array) $redirects, fn( $r ) => (int) $r['red
 </div>
 
 </div><!-- /.wrap -->
-<script>
-(function(){
-  var tabs = document.querySelectorAll('.mev-rdrtab');
-  tabs.forEach(function(btn){
-    btn.addEventListener('click', function(){
-      tabs.forEach(function(b){
-        b.style.background = 'none';
-        b.style.color = 'var(--mev-gray-500)';
-        b.style.fontWeight = '500';
-        b.style.boxShadow = 'none';
-        b.classList.remove('active');
-      });
-      this.style.background = 'var(--mev-surface)';
-      this.style.color = 'var(--mev-gray-900)';
-      this.style.fontWeight = '600';
-      this.style.boxShadow = 'var(--mev-shadow-sm)';
-      this.classList.add('active');
-      document.querySelectorAll('[id^="mev-rdr-"]').forEach(function(p){ p.style.display = 'none'; });
-      var target = document.getElementById(btn.dataset.target);
-      if (target) target.style.display = 'block';
-    });
-  });
-})();
-</script>

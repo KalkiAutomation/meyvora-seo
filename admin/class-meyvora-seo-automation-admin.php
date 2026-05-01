@@ -180,6 +180,12 @@ class Meyvora_SEO_Automation_Admin {
 			return;
 		}
 		wp_enqueue_style( 'meyvora-admin', MEYVORA_SEO_URL . 'admin/assets/css/meyvora-admin.css', array(), MEYVORA_SEO_VERSION );
+		wp_enqueue_style(
+			'meyvora-automation-page',
+			MEYVORA_SEO_URL . 'admin/assets/css/meyvora-automation-page.css',
+			array( 'meyvora-admin' ),
+			MEYVORA_SEO_VERSION
+		);
 		wp_enqueue_script(
 			'meyvora-automation',
 			MEYVORA_SEO_URL . 'admin/assets/js/meyvora-automation.js',

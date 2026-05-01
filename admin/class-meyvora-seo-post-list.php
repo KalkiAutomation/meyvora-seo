@@ -84,7 +84,7 @@ class Meyvora_SEO_Post_List {
 			if ( $kw !== '' ) {
 				echo '<span title="' . esc_attr( $kw ) . '">' . esc_html( wp_trim_words( $kw, 4 ) ) . '</span>';
 			} else {
-				echo '<span style="color:#8c8f94; font-style:italic;">—</span>';
+				echo '<span style="color:#8c8f94; font-style:italic;">&mdash;</span>';
 			}
 			return;
 		}
@@ -111,14 +111,14 @@ class Meyvora_SEO_Post_List {
 				$class = $read >= 60 ? 'good' : ( $read >= 40 ? 'fair' : 'poor' );
 				echo '<span class="meyvora-readability-badge meyvora-readability-' . esc_attr( $class ) . '" title="' . esc_attr( (string) $read ) . '">' . esc_html( $label ) . '</span>';
 			} else {
-				echo '<span style="color:#8c8f94;">—</span>';
+				echo '<span style="color:#8c8f94;">&mdash;</span>';
 			}
 			return;
 		}
 		if ( $column === 'meyvora_seo_intent' ) {
 			$intent = get_post_meta( $post_id, MEYVORA_SEO_META_SEARCH_INTENT, true );
 			if ( $intent === '' || ! $intent ) {
-				echo '<span style="color:#9ca3af;font-size:11px;">—</span>';
+				echo '<span style="color:#9ca3af;font-size:11px;">&mdash;</span>';
 			} else {
 				$colors = array(
 					'informational' => '#2563eb',
@@ -213,7 +213,7 @@ class Meyvora_SEO_Post_List {
 			}
 			return;
 		}
-		echo '<span class="meyvora-cwv-empty" aria-hidden="true">—</span> ';
+		echo '<span class="meyvora-cwv-empty" aria-hidden="true">&mdash;</span> ';
 		echo '<a href="#" class="meyvora-cwv-test-now" data-post-id="' . esc_attr( (string) $post_id ) . '" style="font-size:11px;">' . esc_html__( 'Test now', 'meyvora-seo' ) . '</a>';
 	}
 
@@ -229,13 +229,13 @@ class Meyvora_SEO_Post_List {
 			$color = $status === 'good' ? '#00a32a' : ( $status === 'okay' ? '#dba617' : '#d63638' );
 			$label = $status === 'good' ? __( 'Good', 'meyvora-seo' ) : ( $status === 'okay' ? __( 'Okay', 'meyvora-seo' ) : __( 'Poor', 'meyvora-seo' ) );
 			$edit_url = get_edit_post_link( $post_id, 'raw' );
-			echo '<a href="' . esc_url( $edit_url ?: '#' ) . '" title="' . esc_attr( $label ) . '" style="font-weight:600;">' . (int) $score . '</a>';
+			echo '<a href="' . esc_url( $edit_url ?: '#' ) . '" title="' . esc_attr( $label ) . '" style="font-weight:600;">' . esc_html( (string) (int) $score ) . '</a>';
 			echo ' <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:' . esc_attr( $color ) . ';" aria-hidden="true"></span>';
 			if ( $cornerstone ) {
 				echo ' <span class="dashicons dashicons-star-filled" style="font-size:14px;width:14px;height:14px;color:#dba617;" title="' . esc_attr__( 'Cornerstone content', 'meyvora-seo' ) . '" aria-label="' . esc_attr__( 'Cornerstone content', 'meyvora-seo' ) . '"></span>';
 			}
 		} else {
-			echo '<span aria-hidden="true">—</span>';
+			echo '<span aria-hidden="true">&mdash;</span>';
 			if ( $cornerstone ) {
 				echo ' <span class="dashicons dashicons-star-filled" style="font-size:14px;width:14px;height:14px;color:#dba617;" title="' . esc_attr__( 'Cornerstone content', 'meyvora-seo' ) . '" aria-label="' . esc_attr__( 'Cornerstone content', 'meyvora-seo' ) . '"></span>';
 			}

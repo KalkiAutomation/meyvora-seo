@@ -103,9 +103,9 @@ $inactive_rules = $total_rules - $active_rules;
 			</div>
 			<div class="mev-card-body">
 				<div class="mev-auto-stats">
-					<div class="mev-auto-stat"><span class="mev-auto-stat-val"><?php echo (int) $total_rules; ?></span><span class="mev-auto-stat-lbl"><?php esc_html_e( 'Total Rules', 'meyvora-seo' ); ?></span></div>
-					<div class="mev-auto-stat mev-auto-stat--active"><span class="mev-auto-stat-val"><?php echo (int) $active_rules; ?></span><span class="mev-auto-stat-lbl"><?php esc_html_e( 'Active', 'meyvora-seo' ); ?></span></div>
-					<div class="mev-auto-stat mev-auto-stat--inactive"><span class="mev-auto-stat-val"><?php echo (int) $inactive_rules; ?></span><span class="mev-auto-stat-lbl"><?php esc_html_e( 'Inactive', 'meyvora-seo' ); ?></span></div>
+					<div class="mev-auto-stat"><span class="mev-auto-stat-val"><?php echo esc_html( (string) (int) $total_rules ); ?></span><span class="mev-auto-stat-lbl"><?php esc_html_e( 'Total Rules', 'meyvora-seo' ); ?></span></div>
+					<div class="mev-auto-stat mev-auto-stat--active"><span class="mev-auto-stat-val"><?php echo esc_html( (string) (int) $active_rules ); ?></span><span class="mev-auto-stat-lbl"><?php esc_html_e( 'Active', 'meyvora-seo' ); ?></span></div>
+					<div class="mev-auto-stat mev-auto-stat--inactive"><span class="mev-auto-stat-val"><?php echo esc_html( (string) (int) $inactive_rules ); ?></span><span class="mev-auto-stat-lbl"><?php esc_html_e( 'Inactive', 'meyvora-seo' ); ?></span></div>
 				</div>
 				<div id="mev-rules-list">
 					<?php foreach ( $rules as $rule ) : ?>
@@ -117,7 +117,7 @@ $inactive_rules = $total_rules - $active_rules;
 						$conds     = $rule['conditions'] ?? array();
 						$acts      = $rule['actions'] ?? array();
 						?>
-						<div class="mev-rule-card mev-rule-card2 <?php echo $enabled ? 'mev-rule-card2--active mev-rule-active' : 'mev-rule-card2--inactive mev-rule-inactive'; ?>"
+						<div class="mev-rule-card mev-rule-card2 <?php echo esc_attr( $enabled ? 'mev-rule-card2--active mev-rule-active' : 'mev-rule-card2--inactive mev-rule-inactive' ); ?>"
 							data-rule="<?php echo esc_attr( $rule_attr ); ?>"
 							data-id="<?php echo esc_attr( (string) $rid ); ?>">
 							<div class="mev-rule-card2-head">
@@ -227,7 +227,7 @@ $inactive_rules = $total_rules - $active_rules;
 	</form>
 </div>
 
-<script type="text/template" id="mev-condition-row-tpl">
+<template id="mev-condition-row-tpl">
 	<div class="mev-condition-row">
 		<select class="mev-condition-field">
 			<?php foreach ( $fields as $key => $label ) : ?>
@@ -242,12 +242,4 @@ $inactive_rules = $total_rules - $active_rules;
 		<input type="text" class="mev-condition-value regular-text" placeholder="<?php esc_attr_e( 'Value', 'meyvora-seo' ); ?>" />
 		<button type="button" class="mev-condition-remove mev-btn mev-btn--secondary mev-btn--sm"><?php esc_html_e( 'Remove', 'meyvora-seo' ); ?></button>
 	</div>
-</script>
-
-<style>
-.mev-condition-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap; }
-.mev-condition-row .mev-condition-field { width:160px; }
-.mev-condition-row .mev-condition-operator { width:130px; }
-.mev-condition-row .mev-condition-value { flex:1; min-width:120px; }
-.mev-label { display:block; font-weight:600; margin-bottom:8px; font-size:13px; color:var(--mev-gray-700); }
-</style>
+</template>

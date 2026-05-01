@@ -1,3 +1,11 @@
+/*
+ * Meyvora SEO – plugin asset.
+ * Canonical source repository: https://github.com/KalkiAutomation/meyvora-seo
+ *
+ * This file ships with the WordPress.org plugin package as readable source (not an opaque compiled bundle).
+ * For the latest version and contribution workflow, clone or browse that repository.
+ */
+
 /**
  * Meyvora SEO – Google-style SERP preview: real-time desktop & mobile, pixel progress bars.
  * Binds to #meyvora_seo_title, #meyvora_seo_description, #meyvora_seo_canonical.

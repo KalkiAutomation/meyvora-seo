@@ -140,7 +140,7 @@ if ( ! function_exists( 'meyvora_seo_breadcrumbs' ) ) {
 						<?php else : ?>
 							<span itemprop="name"><?php echo esc_html( $item['label'] ); ?></span>
 						<?php endif; ?>
-						<meta itemprop="position" content="<?php echo (int) $pos; ?>">
+						<meta itemprop="position" content="<?php echo esc_attr( (string) (int) $pos ); ?>">
 						<?php if ( ! $last ) : ?><span class="meyvora-breadcrumb-sep" aria-hidden="true"><?php echo esc_html( $sep ); ?></span><?php endif; ?>
 					</li>
 					<?php

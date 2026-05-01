@@ -94,7 +94,7 @@ class Meyvora_SEO_Twitter_Cards {
 	/**
 	 * Get Twitter card image URL: twitter image meta → OG image meta → featured image.
 	 *
-	 * @return string
+	 * @return string URL or empty string (sanitized with esc_url() for meta output).
 	 */
 	protected function get_twitter_image_url(): string {
 		$this->twitter_image_attachment_id = 0;
@@ -108,7 +108,7 @@ class Meyvora_SEO_Twitter_Cards {
 			$url = wp_get_attachment_image_url( (int) $img_id, 'full' );
 			if ( $url ) {
 				$this->twitter_image_attachment_id = (int) $img_id;
-				return esc_url_raw( $url );
+				return esc_url( $url );
 			}
 		}
 		$img_id = $get_meta( $pid, MEYVORA_SEO_META_OG_IMAGE, true );
@@ -116,7 +116,7 @@ class Meyvora_SEO_Twitter_Cards {
 			$url = wp_get_attachment_image_url( (int) $img_id, 'full' );
 			if ( $url ) {
 				$this->twitter_image_attachment_id = (int) $img_id;
-				return esc_url_raw( $url );
+				return esc_url( $url );
 			}
 		}
 		$thumb_id = get_post_thumbnail_id( $pid );
@@ -124,7 +124,7 @@ class Meyvora_SEO_Twitter_Cards {
 			$url = wp_get_attachment_image_url( $thumb_id, 'full' );
 			if ( $url ) {
 				$this->twitter_image_attachment_id = (int) $thumb_id;
-				return esc_url_raw( $url );
+				return esc_url( $url );
 			}
 		}
 		return '';

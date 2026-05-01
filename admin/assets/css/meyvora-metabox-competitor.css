@@ -1,0 +1,49 @@
+/*
+== Source Code == https://github.com/KalkiAutomation/meyvora-seo (admin/assets/css/meyvora-metabox-competitor.css)
+Competitor tab in post SEO meta box.
+*/
+
+.meyvora-competitor-tabpanel .mev-comp-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 6px 0;
+	border-bottom: 1px solid var(--mev-gray-100);
+}
+.meyvora-competitor-tabpanel .mev-comp-row:last-child {
+	border-bottom: 0;
+}
+.meyvora-competitor-tabpanel .mev-comp-label {
+	font-weight: 600;
+	color: var(--mev-gray-700);
+	min-width: 100px;
+	font-size: 12px;
+}
+.meyvora-competitor-tabpanel .mev-comp-value {
+	flex: 1;
+	word-break: break-word;
+	font-size: 12px;
+}
+.meyvora-competitor-tabpanel .mev-comp-value.mev-stronger {
+	background: rgba(220, 38, 38, 0.08);
+	color: var(--mev-danger);
+	padding: 2px 6px;
+	border-radius: 4px;
+}
+.meyvora-competitor-tabpanel .mev-comp-value.mev-weaker {
+	background: rgba(5, 150, 105, 0.08);
+	color: var(--mev-success);
+	padding: 2px 6px;
+	border-radius: 4px;
+}
+.meyvora-competitor-tabpanel .mev-comp-list,
+.meyvora-competitor-tabpanel .mev-comp-og-list {
+	margin: 0;
+	padding-left: 18px;
+	font-size: 12px;
+}
+.meyvora-competitor-tabpanel .mev-comp-og-list {
+	padding-left: 0;
+	list-style: none;
+}

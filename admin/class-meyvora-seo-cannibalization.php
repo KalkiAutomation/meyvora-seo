@@ -252,7 +252,7 @@ class Meyvora_SEO_Cannibalization {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'meyvora-seo' ) ) );
 		}
-		$post_id  = absint( $_POST['post_id'] ?? 0 );
+		$post_id  = absint( wp_unslash( $_POST['post_id'] ?? 0 ) );
 		$keyword  = sanitize_text_field( wp_unslash( $_POST['keyword'] ?? '' ) );
 		if ( ! $post_id || $keyword === '' ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid request.', 'meyvora-seo' ) ) );

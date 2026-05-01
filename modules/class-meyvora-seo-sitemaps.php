@@ -2,6 +2,9 @@
 /**
  * XML Sitemap: index, post-type and taxonomy sitemaps, image support, ping on publish.
  *
+ * URLs embedded in emitted XML (<loc>, <image:loc>, video thumbnail_loc/content_loc) use esc_url(), not esc_url_raw().
+ * esc_url() sanitizes schemes/characters for output and is suitable for UTF-8 XML text nodes while satisfying Plugin Check.
+ *
  * @package Meyvora_SEO
  */
 
@@ -39,7 +42,7 @@ class Meyvora_SEO_Sitemaps {
 		$this->loader->add_action( 'template_redirect', $this, 'serve_sitemap', 1, 0 );
 		$this->loader->add_action( 'save_post', $this, 'clear_sitemap_cache_on_save', 10, 1 );
 		$this->loader->add_action( 'transition_post_status', $this, 'on_publish', 10, 3 );
-		add_action( 'meyvora_seo_after_publish', array( $this, 'ping_google' ), 10, 0 );
+		add_action( 'meyvora_seo_after_publish', array( $this, 'maybe_ping_google_after_publish' ), 10, 1 );
 		add_action( 'meyvora_seo_clear_sitemap_cache', array( $this, 'clear_sitemap_transients' ), 10, 0 );
 		$this->loader->add_action( 'do_robots', $this, 'inject_sitemap_into_robots_txt', 99, 0 );
 	}
@@ -50,8 +53,7 @@ class Meyvora_SEO_Sitemaps {
 	 */
 	public function inject_sitemap_into_robots_txt(): void {
 		$sitemap_url = home_url( '/sitemap.xml' );
-		// XML output: use esc_url_raw() not esc_url() to avoid double-encoding &
-		echo 'Sitemap: ' . esc_url_raw( $sitemap_url ) . "\n";
+		echo 'Sitemap: ' . esc_url( $sitemap_url ) . "\n";
 	}
 
 	public function on_publish( string $new_status, string $old_status, WP_Post $post ): void {
@@ -65,7 +67,7 @@ class Meyvora_SEO_Sitemaps {
 		if ( ! in_array( $post->post_type, $sitemap_post_types, true ) ) {
 			return;
 		}
-		do_action( 'meyvora_seo_after_publish' );
+		do_action( 'meyvora_seo_after_publish', false );
 	}
 
 	public function add_rewrite_rules(): void {
@@ -165,7 +167,7 @@ class Meyvora_SEO_Sitemaps {
 		}
 		$out = '<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 		foreach ( $urls as $loc ) {
-			$out .= '<sitemap><loc>' . esc_url_raw( $loc ) . '</loc><lastmod>' . esc_html( gmdate( 'c' ) ) . '</lastmod></sitemap>';
+			$out .= '<sitemap><loc>' . esc_url( $loc ) . '</loc><lastmod>' . esc_html( gmdate( 'c' ) ) . '</lastmod></sitemap>';
 		}
 		$out .= '</sitemapindex>';
 		return $out;
@@ -223,13 +225,13 @@ class Meyvora_SEO_Sitemaps {
 			$custom_changefreq = get_post_meta( $post->ID, MEYVORA_SEO_META_SITEMAP_CHANGEFREQ, true );
 			$changefreq = ( is_string( $custom_changefreq ) && $custom_changefreq !== '' ) ? $custom_changefreq : ( $age < 86400 * 7 ? 'weekly' : ( $age < 86400 * 30 ? 'monthly' : 'yearly' ) );
 			$priority   = ( is_string( $custom_priority ) && $custom_priority !== '' ) ? $custom_priority : ( $age < 86400 * 180 ? '0.8' : '0.6' );
-			$entry = '<url><loc>' . esc_url_raw( $loc ) . '</loc><lastmod>' . esc_html( $lastmod ) . '</lastmod><changefreq>' . esc_html( $changefreq ) . '</changefreq><priority>' . esc_html( $priority ) . '</priority>';
+			$entry = '<url><loc>' . esc_url( $loc ) . '</loc><lastmod>' . esc_html( $lastmod ) . '</lastmod><changefreq>' . esc_html( $changefreq ) . '</changefreq><priority>' . esc_html( $priority ) . '</priority>';
 			if ( $this->options->get( 'sitemap_images', true ) ) {
 				$thumb_id = (int) get_post_thumbnail_id( $post->ID );
 				if ( $thumb_id > 0 ) {
 					$img_url = wp_get_attachment_image_url( $thumb_id, 'full' );
 					if ( $img_url ) {
-						$entry .= '<image:image xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"><image:loc>' . esc_url_raw( $img_url ) . '</image:loc></image:image>';
+						$entry .= '<image:image xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"><image:loc>' . esc_url( $img_url ) . '</image:loc></image:image>';
 					}
 				}
 			}
@@ -255,7 +257,7 @@ class Meyvora_SEO_Sitemaps {
 			if ( is_wp_error( $url ) ) {
 				continue;
 			}
-			$entry = '<url><loc>' . esc_url_raw( $url ) . '</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>';
+			$entry = '<url><loc>' . esc_url( $url ) . '</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>';
 			$entry = apply_filters( 'meyvora_seo_sitemap_url_entry', $entry, null, $term, $taxonomy );
 			$entries[] = $entry;
 		}
@@ -308,7 +310,7 @@ class Meyvora_SEO_Sitemaps {
 			$title = $post->post_title;
 			$title = wp_strip_all_tags( $title );
 			$title = ent2ncr( $title );
-			$entries[] = '<url><loc>' . esc_url_raw( $loc ) . '</loc><news:news><news:publication><news:name>' . esc_html( $pub_name ) . '</news:name><news:language>' . esc_html( $lang ) . '</news:language></news:publication><news:publication_date>' . esc_html( $pub_date ) . '</news:publication_date><news:title>' . esc_html( $title ) . '</news:title></news:news></url>';
+			$entries[] = '<url><loc>' . esc_url( $loc ) . '</loc><news:news><news:publication><news:name>' . esc_html( $pub_name ) . '</news:name><news:language>' . esc_html( $lang ) . '</news:language></news:publication><news:publication_date>' . esc_html( $pub_date ) . '</news:publication_date><news:title>' . esc_html( $title ) . '</news:title></news:news></url>';
 		}
 		return '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">' . implode( '', $entries ) . '</urlset>';
 	}
@@ -361,16 +363,16 @@ class Meyvora_SEO_Sitemaps {
 				$desc = wp_trim_words( wp_strip_all_tags( $post->post_content ), 30 );
 			}
 			$desc = ent2ncr( $desc );
-			$entry = '<url><loc>' . esc_url_raw( $loc ) . '</loc>';
+			$entry = '<url><loc>' . esc_url( $loc ) . '</loc>';
 			foreach ( $videos as $video ) {
 				if ( empty( $video['content_loc'] ) ) {
 					continue;
 				}
 				$entry .= '<video:video xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">';
 				if ( ! empty( $video['thumbnail_loc'] ) ) {
-					$entry .= '<video:thumbnail_loc>' . esc_url_raw( $video['thumbnail_loc'] ) . '</video:thumbnail_loc>';
+					$entry .= '<video:thumbnail_loc>' . esc_url( $video['thumbnail_loc'] ) . '</video:thumbnail_loc>';
 				}
-				$entry .= '<video:title>' . esc_html( $title ) . '</video:title><video:description>' . esc_html( $desc ) . '</video:description><video:content_loc>' . esc_url_raw( $video['content_loc'] ) . '</video:content_loc></video:video>';
+				$entry .= '<video:title>' . esc_html( $title ) . '</video:title><video:description>' . esc_html( $desc ) . '</video:description><video:content_loc>' . esc_url( $video['content_loc'] ) . '</video:content_loc></video:video>';
 			}
 			$entry .= '</url>';
 			$entries[] = $entry;
@@ -459,6 +461,22 @@ class Meyvora_SEO_Sitemaps {
 		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_meyvora_sitemap_%' OR option_name LIKE '_transient_timeout_meyvora_sitemap_%'" );
 	}
 
+	/**
+	 * Ping Google with sitemap after publish, only if enabled (or when wizard passes $manual_ping true).
+	 *
+	 * @param bool $manual_ping When true (e.g. wizard button), runs even if automatic ping is disabled.
+	 */
+	public function maybe_ping_google_after_publish( $manual_ping = false ): void {
+		$manual_ping = (bool) $manual_ping;
+		if ( ! $manual_ping && ! $this->options->is_enabled( 'sitemap_ping_google_enabled' ) ) {
+			return;
+		}
+		$this->ping_google();
+	}
+
+	/**
+	 * Notify Google of the sitemap URL (rate-limited to once per hour per site).
+	 */
 	public function ping_google(): void {
 		$last_ping = (int) get_option( 'meyvora_seo_last_sitemap_ping', 0 );
 		if ( ( time() - $last_ping ) < 3600 ) {

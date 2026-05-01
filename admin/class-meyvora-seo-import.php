@@ -281,6 +281,7 @@ class Meyvora_SEO_Import {
 		}
 		$canonical = get_post_meta( $post_id, '_yoast_wpseo_canonical', true );
 		if ( (string) $canonical !== '' ) {
+			// esc_url_raw() intentional: canonical for import into Meyvora meta (DB storage), not browser output.
 			$out[ MEYVORA_SEO_META_CANONICAL ] = esc_url_raw( $canonical );
 		}
 		$og_id = get_post_meta( $post_id, '_yoast_wpseo_opengraph-image-id', true );
@@ -354,6 +355,7 @@ class Meyvora_SEO_Import {
 		}
 		$canonical = get_post_meta( $post_id, 'rank_math_canonical_url', true );
 		if ( (string) $canonical !== '' ) {
+			// esc_url_raw() intentional: canonical for import into Meyvora meta (DB storage), not browser output.
 			$out[ MEYVORA_SEO_META_CANONICAL ] = esc_url_raw( $canonical );
 		}
 		$og = get_post_meta( $post_id, 'rank_math_og_image', true );
@@ -430,6 +432,7 @@ class Meyvora_SEO_Import {
 		}
 		$canonical = get_post_meta( $post_id, '_aioseop_custom_link', true );
 		if ( (string) $canonical !== '' ) {
+			// esc_url_raw() intentional: canonical for import into Meyvora meta (DB storage), not browser output.
 			$out[ MEYVORA_SEO_META_CANONICAL ] = esc_url_raw( (string) $canonical );
 		}
 		// Also import noindex setting.

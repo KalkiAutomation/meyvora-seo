@@ -292,7 +292,7 @@ if ( $title_text !== '' ) {
           cx="40" cy="40" r="32" stroke-width="7"
           stroke-dasharray="<?php echo esc_attr( $circumference ); ?>"
           stroke-dashoffset="<?php echo esc_attr( $offset ); ?>"/>
-        <text class="mev-gauge-inner" x="40" y="41" text-anchor="middle"><?php echo (int) $avg_score; ?></text>
+        <text class="mev-gauge-inner" x="40" y="41" text-anchor="middle"><?php echo esc_html( (string) (int) $avg_score ); ?></text>
         <text class="mev-gauge-inner-label" x="40" y="56" text-anchor="middle">/100</text>
       </svg>
       <div>
@@ -306,7 +306,7 @@ if ( $title_text !== '' ) {
   <div class="mev-stat-card mev-stat-card--cyan">
     <div class="mev-stat-icon" style="--mev-stat-icon-bg:#CFFAFE;--mev-stat-color:#0891B2;"><?php echo wp_kses_post( meyvora_seo_icon( 'file_text', array( 'width' => 22, 'height' => 22 ) ) ); ?></div>
     <div class="mev-stat-label"><?php esc_html_e( 'Total Content', 'meyvora-seo' ); ?></div>
-    <div class="mev-stat-value"><?php echo (int) $total_posts; ?></div>
+    <div class="mev-stat-value"><?php echo esc_html( (string) (int) $total_posts ); ?></div>
     <div class="mev-stat-subvalue"><?php printf( /* translators: %d: number of posts analyzed */ esc_html__( '%d analyzed', 'meyvora-seo' ), (int) $with_score ); ?></div>
   </div>
 
@@ -314,10 +314,10 @@ if ( $title_text !== '' ) {
   <div class="mev-stat-card mev-stat-card--green">
     <div class="mev-stat-icon" style="--mev-stat-icon-bg:#D1FAE5;--mev-stat-color:#059669;"><?php echo wp_kses_post( meyvora_seo_icon( 'circle_check', array( 'width' => 22, 'height' => 22 ) ) ); ?></div>
     <div class="mev-stat-label"><?php esc_html_e( 'Score 80+', 'meyvora-seo' ); ?></div>
-    <div class="mev-stat-value"><?php echo (int) $good_count; ?></div>
-    <div class="mev-stat-subvalue"><?php echo (int) $good_pct; ?>% <?php esc_html_e( 'of total', 'meyvora-seo' ); ?></div>
+    <div class="mev-stat-value"><?php echo esc_html( (string) (int) $good_count ); ?></div>
+    <div class="mev-stat-subvalue"><?php echo esc_html( (string) (int) $good_pct ); ?>% <?php esc_html_e( 'of total', 'meyvora-seo' ); ?></div>
     <div style="margin-top:8px;height:4px;background:var(--mev-success-light);border-radius:2px;overflow:hidden;">
-      <div style="height:100%;width:<?php echo (int) $good_pct; ?>%;background:var(--mev-success);border-radius:2px;transition:width 1s var(--mev-ease);"></div>
+      <div style="<?php echo esc_attr( 'height:100%;width:' . (int) $good_pct . '%;background:var(--mev-success);border-radius:2px;transition:width 1s var(--mev-ease);' ); ?>"></div>
     </div>
   </div>
 
@@ -325,7 +325,7 @@ if ( $title_text !== '' ) {
   <div class="mev-stat-card mev-stat-card--red">
     <div class="mev-stat-icon" style="--mev-stat-icon-bg:#FEE2E2;--mev-stat-color:#DC2626;"><?php echo wp_kses_post( meyvora_seo_icon( 'alert_triangle', array( 'width' => 22, 'height' => 22 ) ) ); ?></div>
     <div class="mev-stat-label"><?php esc_html_e( 'Need Attention', 'meyvora-seo' ); ?></div>
-    <div class="mev-stat-value"><?php echo (int) $poor_count; ?></div>
+    <div class="mev-stat-value"><?php echo esc_html( (string) (int) $poor_count ); ?></div>
     <div class="mev-stat-subvalue"><?php esc_html_e( 'Score below 50', 'meyvora-seo' ); ?></div>
   </div>
 
@@ -333,7 +333,7 @@ if ( $title_text !== '' ) {
   <div class="mev-stat-card mev-stat-card--orange">
     <div class="mev-stat-icon" style="--mev-stat-icon-bg:#FEF3C7;--mev-stat-color:#D97706;"><?php echo wp_kses_post( meyvora_seo_icon( 'key', array( 'width' => 22, 'height' => 22 ) ) ); ?></div>
     <div class="mev-stat-label"><?php esc_html_e( 'Missing Data', 'meyvora-seo' ); ?></div>
-    <div class="mev-stat-value"><?php echo (int) max( $no_keyword, $no_desc ); ?></div>
+    <div class="mev-stat-value"><?php echo esc_html( (string) (int) max( $no_keyword, $no_desc ) ); ?></div>
     <div class="mev-stat-subvalue"><?php printf( /* translators: 1: count of posts with no keyword, 2: count of posts with no description */ esc_html__( '%1$d no keyword · %2$d no desc', 'meyvora-seo' ), (int) $no_keyword, (int) $no_desc ); ?></div>
   </div>
 
@@ -341,7 +341,7 @@ if ( $title_text !== '' ) {
   <div class="mev-stat-card mev-stat-card--cyan">
     <div class="mev-stat-icon" style="--mev-stat-icon-bg:#E0F2FE;--mev-stat-color:#0284C7;"><?php echo wp_kses_post( meyvora_seo_icon( 'link', array( 'width' => 22, 'height' => 22 ) ) ); ?></div>
     <div class="mev-stat-label"><?php esc_html_e( 'Orphan pages', 'meyvora-seo' ); ?></div>
-    <div class="mev-stat-value"><?php echo (int) $orphan_count; ?></div>
+    <div class="mev-stat-value"><?php echo esc_html( (string) (int) $orphan_count ); ?></div>
     <div class="mev-stat-subvalue"><a href="<?php echo esc_url( admin_url( 'admin.php?page=meyvora-seo-link-analysis' ) ); ?>"><?php esc_html_e( 'View all orphans →', 'meyvora-seo' ); ?></a></div>
   </div>
 
@@ -351,52 +351,33 @@ if ( $title_text !== '' ) {
 $traffic_data = isset( $data ) && is_array( $data ) ? $data : array();
 $stale_posts  = isset( $data['stale_posts'] ) ? $data['stale_posts'] : array();
 $gsc_connected = ! empty( $traffic_data['gsc_connected'] );
-$ga4_connected = ! empty( $traffic_data['ga4_connected'] );
-$traffic_has_any = $gsc_connected || $ga4_connected;
+$traffic_has_any = $gsc_connected;
 $gsc_summary = isset( $traffic_data['gsc_summary'] ) && is_array( $traffic_data['gsc_summary'] ) ? $traffic_data['gsc_summary'] : null;
-$ga4_top_posts = isset( $traffic_data['ga4_top_posts'] ) && is_array( $traffic_data['ga4_top_posts'] ) ? $traffic_data['ga4_top_posts'] : array();
 $ctr_opportunities = isset( $traffic_data['ctr_opportunities'] ) && is_array( $traffic_data['ctr_opportunities'] ) ? $traffic_data['ctr_opportunities'] : array();
 $decaying_pages_count = isset( $traffic_data['decaying_pages_count'] ) ? (int) $traffic_data['decaying_pages_count'] : 0;
 $rank_tracker_url = admin_url( 'admin.php?page=meyvora-seo-rank-tracker' );
 $reports_decay_url = admin_url( 'admin.php?page=meyvora-seo-reports#content-decay' );
 ?>
 
-<!-- Traffic Insights (only when GA4 or GSC connected) -->
+<!-- Traffic Insights (Search Console) -->
 <?php if ( $traffic_has_any ) : ?>
 <h2 class="mev-dashboard-section-title" style="margin:24px 0 12px;font-size:16px;font-weight:600;color:var(--mev-gray-800);"><?php esc_html_e( 'Traffic Insights', 'meyvora-seo' ); ?></h2>
 <div class="mev-dashboard-grid mev-dashboard-grid--traffic" style="margin-top:12px;">
   <div class="mev-stat-card mev-stat-card--cyan">
     <?php if ( $gsc_connected && $gsc_summary !== null ) : ?>
     <div class="mev-stat-label"><?php esc_html_e( 'Search Console (28 days)', 'meyvora-seo' ); ?></div>
-    <div class="mev-stat-value"><?php echo (int) $gsc_summary['clicks']; ?> <?php esc_html_e( 'clicks', 'meyvora-seo' ); ?></div>
-    <div class="mev-stat-subvalue"><?php echo (int) $gsc_summary['impressions']; ?> <?php esc_html_e( 'impressions', 'meyvora-seo' ); ?></div>
+    <div class="mev-stat-value"><?php echo esc_html( (string) (int) $gsc_summary['clicks'] ); ?> <?php esc_html_e( 'clicks', 'meyvora-seo' ); ?></div>
+    <div class="mev-stat-subvalue"><?php echo esc_html( (string) (int) $gsc_summary['impressions'] ); ?> <?php esc_html_e( 'impressions', 'meyvora-seo' ); ?></div>
     <?php else : ?>
     <div class="mev-stat-label"><?php esc_html_e( 'Search Console', 'meyvora-seo' ); ?></div>
     <div class="mev-stat-subvalue"><?php esc_html_e( 'No data yet.', 'meyvora-seo' ); ?></div>
-    <?php endif; ?>
-  </div>
-  <div class="mev-stat-card" style="grid-column: span 2;">
-    <div class="mev-stat-label"><?php esc_html_e( 'Top 5 pages by views (GA4)', 'meyvora-seo' ); ?></div>
-    <?php if ( $ga4_connected && ! empty( $ga4_top_posts ) ) : ?>
-    <ol class="mev-top-pages-list" style="margin:8px 0 0;padding-left:20px;font-size:13px;">
-      <?php foreach ( $ga4_top_posts as $i => $item ) : ?>
-      <li style="margin-bottom:4px;">
-        <span class="mev-top-pages-path"><?php echo esc_html( $item['path'] ?: '/' ); ?></span>
-        <span style="color:var(--mev-gray-500);"> — <?php echo (int) $item['views']; ?> <?php esc_html_e( 'views', 'meyvora-seo' ); ?></span>
-      </li>
-      <?php endforeach; ?>
-    </ol>
-    <?php elseif ( $ga4_connected ) : ?>
-    <div class="mev-stat-subvalue" style="margin-top:8px;"><?php esc_html_e( 'No pageviews data yet.', 'meyvora-seo' ); ?></div>
-    <?php else : ?>
-    <div class="mev-stat-subvalue" style="margin-top:8px;"><?php esc_html_e( 'Connect GA4 (Advanced) in Settings → Integrations.', 'meyvora-seo' ); ?></div>
     <?php endif; ?>
   </div>
   <?php if ( $gsc_connected ) : ?>
   <div class="mev-stat-card mev-stat-card--orange">
     <div class="mev-stat-icon" style="--mev-stat-icon-bg:#FEF3C7;--mev-stat-color:#D97706;"><?php echo wp_kses_post( meyvora_seo_icon( 'activity', array( 'width' => 22, 'height' => 22 ) ) ); ?></div>
     <div class="mev-stat-label"><?php esc_html_e( 'Content Decay', 'meyvora-seo' ); ?></div>
-    <div class="mev-stat-value"><?php echo (int) $decaying_pages_count; ?></div>
+    <div class="mev-stat-value"><?php echo esc_html( (string) (int) $decaying_pages_count ); ?></div>
     <div class="mev-stat-subvalue"><a href="<?php echo esc_url( $reports_decay_url ); ?>"><?php esc_html_e( 'View in Reports →', 'meyvora-seo' ); ?></a></div>
   </div>
   <?php endif; ?>
@@ -446,7 +427,7 @@ $reports_decay_url = admin_url( 'admin.php?page=meyvora-seo-reports#content-deca
 <?php else : ?>
 <h2 class="mev-dashboard-section-title" style="margin:24px 0 12px;font-size:16px;font-weight:600;color:var(--mev-gray-800);"><?php esc_html_e( 'Traffic Insights', 'meyvora-seo' ); ?></h2>
 <div class="mev-card mev-empty-state" style="margin-top:12px;padding:24px 20px;">
-  <div class="mev-empty-state-desc"><?php esc_html_e( 'Connect Google Search Console or GA4 in Settings → Integrations to see traffic data here.', 'meyvora-seo' ); ?></div>
+  <div class="mev-empty-state-desc"><?php esc_html_e( 'Connect Google Search Console in Settings → Integrations to see traffic data here.', 'meyvora-seo' ); ?></div>
 </div>
 <?php endif; ?>
 
@@ -459,7 +440,7 @@ $reports_decay_url = admin_url( 'admin.php?page=meyvora-seo-reports#content-deca
     <div class="mev-card">
       <div class="mev-card-header">
         <span class="mev-card-title"><?php esc_html_e( 'Score Distribution', 'meyvora-seo' ); ?></span>
-        <span class="mev-badge mev-badge--violet"><?php echo (int) $total_posts; ?> posts</span>
+        <span class="mev-badge mev-badge--violet"><?php echo esc_html( (string) (int) $total_posts ); ?> posts</span>
       </div>
       <div class="mev-card-body">
         <?php
@@ -474,9 +455,9 @@ $reports_decay_url = admin_url( 'admin.php?page=meyvora-seo-reports#content-deca
         <div class="mev-chart-row">
           <div class="mev-chart-label"><?php echo esc_html( $label ); ?></div>
           <div class="mev-chart-track">
-            <div class="mev-chart-bar mev-chart-bar--<?php echo esc_attr( str_replace( ' ', '', $label ) ); ?>" style="--bar-pct:<?php echo (int) $pct; ?>%;--bar-delay:<?php echo esc_attr( $delay ); ?>s;background:<?php echo esc_attr( $bg ); ?>;"></div>
+            <div class="mev-chart-bar mev-chart-bar--<?php echo esc_attr( str_replace( ' ', '', $label ) ); ?>" style="<?php echo esc_attr( '--bar-pct:' . (int) $pct . '%;--bar-delay:' . $delay . 's;background:' . $bg . ';' ); ?>"></div>
           </div>
-          <div class="mev-chart-count"><?php echo (int) $count; ?></div>
+          <div class="mev-chart-count"><?php echo esc_html( (string) (int) $count ); ?></div>
         </div>
         <?php endforeach; ?>
       </div>
@@ -500,7 +481,7 @@ $reports_decay_url = admin_url( 'admin.php?page=meyvora-seo-reports#content-deca
           $edit_url = $item['edit'] ?? get_edit_post_link( $pid, 'raw' ) ?: '#';
         ?>
         <div class="mev-attention-card">
-          <span class="mev-score-pill <?php echo esc_attr( $pill_class ); ?>"><?php echo $sc > 0 ? esc_html( (string) (int) $sc ) : '—'; ?></span>
+          <span class="mev-score-pill <?php echo esc_attr( $pill_class ); ?>"><?php echo $sc > 0 ? esc_html( (string) (int) $sc ) : '&mdash;'; ?></span>
           <div class="mev-attention-card-body">
             <a href="<?php echo esc_url( $edit_url ); ?>" class="mev-attention-card-title"><?php echo esc_html( $item['title'] ); ?></a>
             <?php if ( $action_label !== '' ) : ?>
@@ -537,7 +518,7 @@ $reports_decay_url = admin_url( 'admin.php?page=meyvora-seo-reports#content-deca
               stroke-dasharray="94.2"
               stroke-dashoffset="<?php echo esc_attr( 94.2 - ( $setup_pct / 100 ) * 94.2 ); ?>"/>
           </svg>
-          <span style="font-size:11px;font-weight:700;color:var(--mev-primary);"><?php echo (int) $setup_done; ?>/<?php echo (int) $setup_total; ?></span>
+          <span style="font-size:11px;font-weight:700;color:var(--mev-primary);"><?php echo esc_html( (string) (int) $setup_done ); ?>/<?php echo esc_html( (string) (int) $setup_total ); ?></span>
         </div>
       </div>
       <div class="mev-card-body" style="padding-top:12px;">
@@ -572,15 +553,15 @@ $reports_decay_url = admin_url( 'admin.php?page=meyvora-seo-reports#content-deca
         <div style="display:flex;flex-direction:column;gap:10px;">
           <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--mev-border);">
             <span style="font-size:13px;color:var(--mev-gray-700);"><?php esc_html_e( 'Products with SEO score &lt; 50', 'meyvora-seo' ); ?></span>
-            <a href="<?php echo esc_url( $bulk_editor_products_poor ); ?>" style="font-size:14px;font-weight:700;color:var(--mev-primary);text-decoration:none;"><?php echo (int) $wc_seo_stats['poor_score']; ?></a>
+            <a href="<?php echo esc_url( $bulk_editor_products_poor ); ?>" style="font-size:14px;font-weight:700;color:var(--mev-primary);text-decoration:none;"><?php echo esc_html( (string) (int) $wc_seo_stats['poor_score'] ); ?></a>
           </div>
           <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--mev-border);">
             <span style="font-size:13px;color:var(--mev-gray-700);"><?php esc_html_e( 'Products missing OG image', 'meyvora-seo' ); ?></span>
-            <span style="font-size:14px;font-weight:700;color:var(--mev-gray-800);"><?php echo (int) $wc_seo_stats['no_og_image']; ?></span>
+            <span style="font-size:14px;font-weight:700;color:var(--mev-gray-800);"><?php echo esc_html( (string) (int) $wc_seo_stats['no_og_image'] ); ?></span>
           </div>
           <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--mev-border);">
             <span style="font-size:13px;color:var(--mev-gray-700);"><?php esc_html_e( 'Products missing focus keyword', 'meyvora-seo' ); ?></span>
-            <span style="font-size:14px;font-weight:700;color:var(--mev-gray-800);"><?php echo (int) $wc_seo_stats['no_keyword']; ?></span>
+            <span style="font-size:14px;font-weight:700;color:var(--mev-gray-800);"><?php echo esc_html( (string) (int) $wc_seo_stats['no_keyword'] ); ?></span>
           </div>
         </div>
         <div style="margin-top:14px;">
@@ -600,7 +581,7 @@ $reports_decay_url = admin_url( 'admin.php?page=meyvora-seo-reports#content-deca
       <div class="mev-card-body" style="padding-top:8px;padding-bottom:8px;">
         <?php foreach ( $quick_wins as $pid => $win ) : ?>
         <div class="mev-quick-win-item">
-          <div class="mev-quick-win-pts">+<?php echo (int) $win['gain']; ?></div>
+          <div class="mev-quick-win-pts">+<?php echo esc_html( (string) (int) $win['gain'] ); ?></div>
           <div class="mev-quick-win-body">
             <div class="mev-quick-win-title"><?php echo esc_html( $win['title'] ); ?></div>
             <div class="mev-quick-win-action"><?php echo esc_html( $win['action'] ); ?></div>
@@ -665,14 +646,14 @@ $top_scored = array_slice( $top_scored, 0, 5, true );
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
           <span style="font-size:12px;font-weight:600;color:var(--mev-gray-700);text-transform:capitalize;"><?php echo esc_html( $ptype ); ?></span>
           <div style="display:flex;gap:5px;">
-            <span style="background:var(--mev-primary-light);color:var(--mev-primary);padding:1px 7px;border-radius:9999px;font-size:10px;font-weight:700;"><?php echo (int) $stat['total']; ?> total</span>
-            <span style="background:var(--mev-success-light);color:var(--mev-success);padding:1px 7px;border-radius:9999px;font-size:10px;font-weight:700;"><?php echo (int) $stat['good']; ?> good</span>
+            <span style="background:var(--mev-primary-light);color:var(--mev-primary);padding:1px 7px;border-radius:9999px;font-size:10px;font-weight:700;"><?php echo esc_html( (string) (int) $stat['total'] ); ?> total</span>
+            <span style="background:var(--mev-success-light);color:var(--mev-success);padding:1px 7px;border-radius:9999px;font-size:10px;font-weight:700;"><?php echo esc_html( (string) (int) $stat['good'] ); ?> good</span>
           </div>
         </div>
         <div style="background:var(--mev-gray-100);border-radius:4px;height:7px;overflow:hidden;">
-          <div style="width:<?php echo (int) $good_pct; ?>%;height:100%;background:linear-gradient(90deg,var(--mev-success),var(--mev-accent));border-radius:4px;transition:width 1s var(--mev-ease);"></div>
+          <div style="<?php echo esc_attr( 'width:' . (int) $good_pct . '%;height:100%;background:linear-gradient(90deg,var(--mev-success),var(--mev-accent));border-radius:4px;transition:width 1s var(--mev-ease);' ); ?>"></div>
         </div>
-        <div style="font-size:10px;color:var(--mev-gray-400);margin-top:3px;"><?php echo (int) $good_pct; ?>% <?php esc_html_e( 'scoring 80+', 'meyvora-seo' ); ?></div>
+        <div style="font-size:10px;color:var(--mev-gray-400);margin-top:3px;"><?php echo esc_html( (string) (int) $good_pct ); ?>% <?php esc_html_e( 'scoring 80+', 'meyvora-seo' ); ?></div>
       </div>
       <?php endforeach; ?>
     </div>
@@ -688,7 +669,7 @@ $top_scored = array_slice( $top_scored, 0, 5, true );
         $rsc_cls = $rsc !== null ? ( $rsc >= 80 ? 'good' : ( $rsc >= 50 ? 'okay' : 'poor' ) ) : 'none';
       ?>
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--mev-border);">
-        <span class="mev-score-pill mev-score-pill--<?php echo esc_attr( $rsc_cls ); ?>" style="min-width:34px;font-size:11px;"><?php echo $rsc !== null ? (int) $rsc : '—'; ?></span>
+        <span class="mev-score-pill mev-score-pill--<?php echo esc_attr( $rsc_cls ); ?>" style="min-width:34px;font-size:11px;"><?php echo $rsc !== null ? esc_html( (string) (int) $rsc ) : '&mdash;'; ?></span>
         <div style="flex:1;min-width:0;">
           <a href="<?php echo esc_url( get_edit_post_link( $rp->ID, 'raw' ) ?: '#' ); ?>" style="font-size:12px;font-weight:600;color:var(--mev-gray-800);text-decoration:none;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
             <?php echo esc_html( $rp->post_title ?: '(no title)' ); ?>
@@ -713,7 +694,7 @@ $top_scored = array_slice( $top_scored, 0, 5, true );
         <?php foreach ( $stale_posts as $item ) : ?>
         <tr>
           <td style="padding:8px 0;border-bottom:1px solid var(--mev-border);"><?php echo esc_html( $item['title'] ); ?></td>
-          <td style="padding:8px 0;border-bottom:1px solid var(--mev-border);"><?php echo (int) $item['days_old']; ?> <?php esc_html_e( 'days', 'meyvora-seo' ); ?></td>
+          <td style="padding:8px 0;border-bottom:1px solid var(--mev-border);"><?php echo esc_html( (string) (int) $item['days_old'] ); ?> <?php esc_html_e( 'days', 'meyvora-seo' ); ?></td>
           <td style="padding:8px 0;border-bottom:1px solid var(--mev-border);"><a href="<?php echo esc_url( $item['edit_link'] ?: '#' ); ?>"><?php esc_html_e( 'Edit', 'meyvora-seo' ); ?></a></td>
         </tr>
         <?php endforeach; ?>
@@ -740,10 +721,10 @@ $top_scored = array_slice( $top_scored, 0, 5, true );
       <div style="margin-bottom:12px;">
         <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
           <span style="font-size:12px;font-weight:500;color:var(--mev-gray-700);"><?php echo esc_html( $hi['label'] ); ?></span>
-          <span style="font-size:12px;font-weight:700;color:var(--mev-gray-900);"><?php echo (int) $hi['count']; ?><span style="color:var(--mev-gray-400);font-weight:400;">/<?php echo (int) $total_posts; ?></span></span>
+          <span style="font-size:12px;font-weight:700;color:var(--mev-gray-900);"><?php echo esc_html( (string) (int) $hi['count'] ); ?><span style="color:var(--mev-gray-400);font-weight:400;">/<?php echo esc_html( (string) (int) $total_posts ); ?></span></span>
         </div>
         <div style="background:var(--mev-gray-100);border-radius:4px;height:6px;overflow:hidden;">
-          <div style="width:<?php echo (int) $pct; ?>%;height:100%;background:<?php echo esc_attr( $hi['color'] ); ?>;border-radius:4px;transition:width 1s;"></div>
+          <div style="<?php echo esc_attr( 'width:' . (int) $pct . '%;height:100%;background:' . $hi['color'] . ';border-radius:4px;transition:width 1s;' ); ?>"></div>
         </div>
       </div>
       <?php endforeach; ?>
@@ -789,22 +770,22 @@ $lb_phone = $options->get( 'schema_lb_phone', '' );
       </div>
       <?php else : ?>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;">
-        <div class="mev-local-check <?php echo $lb_name ? 'is-good' : 'is-bad'; ?>">
+        <div class="mev-local-check <?php echo esc_attr( $lb_name ? 'is-good' : 'is-bad' ); ?>">
           <div class="mev-local-check-icon"><?php echo wp_kses_post( $lb_name ? meyvora_seo_icon( 'circle_check', array( 'width' => 20, 'height' => 20 ) ) : meyvora_seo_icon( 'circle_x', array( 'width' => 20, 'height' => 20 ) ) ); ?></div>
           <div class="mev-local-check-label"><?php esc_html_e( 'Business Name', 'meyvora-seo' ); ?></div>
           <div class="mev-local-check-value"><?php echo $lb_name ? esc_html( mb_substr( $lb_name, 0, 24 ) ) : esc_html__( 'Not set', 'meyvora-seo' ); ?></div>
         </div>
-        <div class="mev-local-check <?php echo $lb_addr ? 'is-good' : 'is-bad'; ?>">
+        <div class="mev-local-check <?php echo esc_attr( $lb_addr ? 'is-good' : 'is-bad' ); ?>">
           <div class="mev-local-check-icon"><?php echo wp_kses_post( $lb_addr ? meyvora_seo_icon( 'circle_check', array( 'width' => 20, 'height' => 20 ) ) : meyvora_seo_icon( 'circle_x', array( 'width' => 20, 'height' => 20 ) ) ); ?></div>
           <div class="mev-local-check-label"><?php esc_html_e( 'Address', 'meyvora-seo' ); ?></div>
           <div class="mev-local-check-value"><?php echo $lb_addr ? esc_html( mb_substr( $lb_addr, 0, 30 ) ) : esc_html__( 'Not set', 'meyvora-seo' ); ?></div>
         </div>
-        <div class="mev-local-check <?php echo ( $lb_lat && $lb_lng ) ? 'is-good' : 'is-warn'; ?>">
+        <div class="mev-local-check <?php echo esc_attr( ( $lb_lat && $lb_lng ) ? 'is-good' : 'is-warn' ); ?>">
           <div class="mev-local-check-icon"><?php echo wp_kses_post( ( $lb_lat && $lb_lng ) ? meyvora_seo_icon( 'circle_check', array( 'width' => 20, 'height' => 20 ) ) : meyvora_seo_icon( 'alert_triangle', array( 'width' => 20, 'height' => 20 ) ) ); ?></div>
           <div class="mev-local-check-label"><?php esc_html_e( 'GEO Coordinates', 'meyvora-seo' ); ?></div>
           <div class="mev-local-check-value"><?php echo ( $lb_lat && $lb_lng ) ? esc_html( round( (float) $lb_lat, 4 ) . ', ' . round( (float) $lb_lng, 4 ) ) : esc_html__( 'Not set', 'meyvora-seo' ); ?></div>
         </div>
-        <div class="mev-local-check <?php echo $lb_phone ? 'is-good' : 'is-warn'; ?>">
+        <div class="mev-local-check <?php echo esc_attr( $lb_phone ? 'is-good' : 'is-warn' ); ?>">
           <div class="mev-local-check-icon"><?php echo wp_kses_post( $lb_phone ? meyvora_seo_icon( 'circle_check', array( 'width' => 20, 'height' => 20 ) ) : meyvora_seo_icon( 'alert_triangle', array( 'width' => 20, 'height' => 20 ) ) ); ?></div>
           <div class="mev-local-check-label"><?php esc_html_e( 'Phone', 'meyvora-seo' ); ?></div>
           <div class="mev-local-check-value"><?php echo $lb_phone ? esc_html( $lb_phone ) : esc_html__( 'Not set', 'meyvora-seo' ); ?></div>
@@ -833,7 +814,7 @@ $lb_phone = $options->get( 'schema_lb_phone', '' );
         if ( ! $post_obj ) { continue; }
       ?>
       <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--mev-border);">
-        <span class="mev-score-pill mev-score-pill--<?php echo esc_attr( $sc_cls ); ?>" style="min-width:40px;font-size:13px;"><?php echo (int) $sc; ?></span>
+        <span class="mev-score-pill mev-score-pill--<?php echo esc_attr( $sc_cls ); ?>" style="min-width:40px;font-size:13px;"><?php echo esc_html( (string) (int) $sc ); ?></span>
         <div style="flex:1;min-width:0;">
           <a href="<?php echo esc_url( get_edit_post_link( $pid, 'raw' ) ?: '#' ); ?>" style="font-size:13px;font-weight:600;color:var(--mev-gray-800);text-decoration:none;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
             <?php echo esc_html( $post_obj->post_title ?: '(no title)' ); ?>
@@ -841,7 +822,7 @@ $lb_phone = $options->get( 'schema_lb_phone', '' );
           <span class="mev-post-type mev-post-type--<?php echo esc_attr( $post_obj->post_type ); ?>"><?php echo esc_html( $post_obj->post_type ); ?></span>
         </div>
         <div style="width:120px;height:6px;background:var(--mev-gray-100);border-radius:3px;overflow:hidden;flex-shrink:0;">
-          <div style="width:<?php echo (int) $sc; ?>%;height:100%;background:<?php echo $sc >= 80 ? 'var(--mev-success)' : 'var(--mev-warning)'; ?>;border-radius:3px;"></div>
+          <div style="width:<?php echo esc_attr( (string) (int) $sc ); ?>%;height:100%;background:<?php echo esc_attr( $sc >= 80 ? 'var(--mev-success)' : 'var(--mev-warning)' ); ?>;border-radius:3px;"></div>
         </div>
       </div>
       <?php endforeach; ?>

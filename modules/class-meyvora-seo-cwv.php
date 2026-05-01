@@ -157,8 +157,9 @@ class Meyvora_SEO_CWV {
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'meyvora-seo' ) ) );
 		}
-		$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
-		$strategy = isset( $_POST['strategy'] ) && $_POST['strategy'] === 'desktop' ? 'desktop' : 'mobile';
+		$post_id = isset( $_POST['post_id'] ) ? absint( wp_unslash( $_POST['post_id'] ) ) : 0;
+		$strategy_raw = isset( $_POST['strategy'] ) ? sanitize_key( wp_unslash( (string) $_POST['strategy'] ) ) : '';
+		$strategy     = ( $strategy_raw === 'desktop' ) ? 'desktop' : 'mobile';
 		if ( $post_id <= 0 || ! get_post( $post_id ) ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid post.', 'meyvora-seo' ) ) );
 		}

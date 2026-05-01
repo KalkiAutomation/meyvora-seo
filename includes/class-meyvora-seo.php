@@ -48,6 +48,7 @@ class Meyvora_SEO {
 	 */
 	public function run(): void {
 		$this->load_textdomain();
+		self::migrate_legacy_storage_keys();
 		$this->maybe_upgrade();
 		$this->load_dependencies();
 		$options = $this->options;
@@ -73,7 +74,7 @@ class Meyvora_SEO {
 				wp_mail( $email, $subject, $message );
 			}
 			$slack_url = $options->get( 'score_alert_slack', '' );
-			if ( $slack_url !== '' && filter_var( $slack_url, FILTER_VALIDATE_URL ) ) {
+			if ( $options->is_enabled( 'score_alert_slack_enabled' ) && $slack_url !== '' && filter_var( $slack_url, FILTER_VALIDATE_URL ) ) {
 				wp_remote_post(
 					$slack_url,
 					array(
@@ -106,7 +107,7 @@ class Meyvora_SEO {
 				wp_mail( $email, $subject, $message );
 			}
 			$slack_url = $options->get( 'score_alert_slack', '' );
-			if ( $slack_url !== '' && filter_var( $slack_url, FILTER_VALIDATE_URL ) ) {
+			if ( $options->is_enabled( 'score_alert_slack_enabled' ) && $slack_url !== '' && filter_var( $slack_url, FILTER_VALIDATE_URL ) ) {
 				wp_remote_post(
 					$slack_url,
 					array(
@@ -136,7 +137,7 @@ class Meyvora_SEO {
 				wp_mail( $email, $subject, $message );
 			}
 			$slack_url = $options->get( 'score_alert_slack', '' );
-			if ( $slack_url !== '' && filter_var( $slack_url, FILTER_VALIDATE_URL ) ) {
+			if ( $options->is_enabled( 'score_alert_slack_enabled' ) && $slack_url !== '' && filter_var( $slack_url, FILTER_VALIDATE_URL ) ) {
 				wp_remote_post(
 					$slack_url,
 					array(
@@ -169,7 +170,7 @@ class Meyvora_SEO {
 					wp_mail( $email, $subject, $message );
 				}
 				$slack = $options->get( 'score_alert_slack', '' );
-				if ( $slack !== '' && filter_var( $slack, FILTER_VALIDATE_URL ) ) {
+				if ( $options->is_enabled( 'score_alert_slack_enabled' ) && $slack !== '' && filter_var( $slack, FILTER_VALIDATE_URL ) ) {
 					wp_remote_post( $slack, array(
 						'body'    => wp_json_encode( array( 'text' => $subject . "\n" . $message ) ),
 						'headers' => array( 'Content-Type' => 'application/json' ),
@@ -220,6 +221,19 @@ class Meyvora_SEO {
 		$url   = admin_url( 'admin.php?page=meyvora-seo-settings' );
 		$label = esc_html__( 'Settings', 'meyvora-seo' );
 		return array_merge( array( '<a href="' . esc_url( $url ) . '">' . $label . '</a>' ), $links );
+	}
+
+	/**
+	 * One-time renames for options / keys stored without the meyvora_ prefix.
+	 */
+	public static function migrate_legacy_storage_keys(): void {
+		// IndexNow ping log used to be stored as indexnow_ping_log (no prefix).
+		$new_ping_log_key = 'meyvora_indexnow_ping_log';
+		$legacy_ping_log  = get_option( 'indexnow_ping_log', false );
+		if ( $legacy_ping_log !== false && get_option( $new_ping_log_key, false ) === false ) {
+			update_option( $new_ping_log_key, $legacy_ping_log, false );
+			delete_option( 'indexnow_ping_log' );
+		}
 	}
 
 	/**
@@ -276,6 +290,11 @@ class Meyvora_SEO {
 	 * Load admin and frontend modules. Only loads files that exist for scalable rollout.
 	 */
 	protected function load_dependencies(): void {
+		$ld_json_file = MEYVORA_SEO_PATH . 'includes/meyvora-seo-ld-json.php';
+		if ( file_exists( $ld_json_file ) ) {
+			require_once $ld_json_file;
+		}
+
 		// Install class is required by Link Checker and Rank Tracker (table name constants).
 		$install_file = MEYVORA_SEO_PATH . 'includes/class-meyvora-seo-install.php';
 		if ( file_exists( $install_file ) ) {
@@ -485,6 +504,8 @@ class Meyvora_SEO {
 	 * Fired on plugin activation. Create all custom DB tables with dbDelta.
 	 */
 	public static function activation(): void {
+		self::migrate_legacy_storage_keys();
+
 		$options = new Meyvora_SEO_Options();
 		if ( get_option( MEYVORA_SEO_OPTION_KEY, false ) === false ) {
 			$options->reset();

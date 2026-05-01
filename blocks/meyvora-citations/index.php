@@ -53,14 +53,15 @@ function meyvora_citations_render_block( array $attrs ): string {
 	$out .= '<h3 class="meyvora-citations-title">' . esc_html( $title ) . '</h3>';
 	$out .= '<ol class="meyvora-citations-list">';
 	foreach ( $citations as $c ) {
-		$url   = isset( $c['url'] ) ? esc_url_raw( trim( (string) $c['url'] ) ) : '';
-		$label = isset( $c['title'] ) ? trim( (string) $c['title'] ) : $url;
+		$url_trim = isset( $c['url'] ) ? trim( (string) $c['url'] ) : '';
+		$href     = $url_trim !== '' ? esc_url( $url_trim ) : '';
+		$label    = isset( $c['title'] ) ? trim( (string) $c['title'] ) : $url_trim;
 		if ( $label === '' ) {
-			$label = $url;
+			$label = $url_trim;
 		}
 		$out .= '<li class="meyvora-citations-item">';
-		if ( $url !== '' ) {
-			$out .= '<cite><a href="' . esc_url( $url ) . '" rel="noopener noreferrer" target="_blank">' . esc_html( $label ) . '</a></cite>';
+		if ( $href !== '' ) {
+			$out .= '<cite><a href="' . $href . '" rel="noopener noreferrer" target="_blank">' . esc_html( $label ) . '</a></cite>';
 		} else {
 			$out .= '<cite>' . esc_html( $label ) . '</cite>';
 		}

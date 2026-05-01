@@ -97,6 +97,29 @@ class Meyvora_SEO_Meta_Box {
 			}
 			$dataforseo_key = $this->options->get( 'dataforseo_api_key', '' );
 			$keyword_research_enabled = is_string( $dataforseo_key ) && $dataforseo_key !== '';
+			wp_enqueue_style(
+				'meyvora-seo-metabox-competitor',
+				MEYVORA_SEO_URL . 'admin/assets/css/meyvora-metabox-competitor.css',
+				array( 'meyvora-seo-admin' ),
+				MEYVORA_SEO_VERSION
+			);
+			wp_enqueue_script(
+				'meyvora-seo-metabox-advanced',
+				MEYVORA_SEO_URL . 'admin/assets/js/meyvora-metabox-advanced.js',
+				array(),
+				MEYVORA_SEO_VERSION,
+				true
+			);
+			wp_localize_script(
+				'meyvora-seo-metabox-advanced',
+				'meyvoraSeoMetaboxAdvanced',
+				array(
+					'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+					'i18n'    => array(
+						'genericError' => __( 'Error.', 'meyvora-seo' ),
+					),
+				)
+			);
 			wp_localize_script( 'meyvora-seo-meta-box', 'meyvoraSeo', array(
 				'ajaxUrl'                => admin_url( 'admin-ajax.php' ),
 				'nonce'                  => wp_create_nonce( self::AJAX_NONCE_ACTION ),
@@ -311,7 +334,7 @@ class Meyvora_SEO_Meta_Box {
 		$results_fail   = array_filter( $results, function ( $r ) { return ( $r['status'] ?? '' ) === 'fail'; } );
 		$status_label   = $status === 'good' ? __( 'Great!', 'meyvora-seo' ) : ( $status === 'okay' ? __( 'Almost There', 'meyvora-seo' ) : __( 'Needs Work', 'meyvora-seo' ) );
 		?>
-		<div class="meyvora-seo-panel" data-post-id="<?php echo (int) $post->ID; ?>">
+		<div class="meyvora-seo-panel" data-post-id="<?php echo esc_attr( (string) (int) $post->ID ); ?>">
 			<ul class="meyvora-seo-tabs" role="tablist" aria-label="<?php esc_attr_e( 'SEO Settings', 'meyvora-seo' ); ?>">
 				<li><button type="button" class="meyvora-seo-tab is-active" role="tab" aria-selected="true" aria-controls="meyvora-tab-general" id="meyvora-tab-btn-general" tabindex="0" data-tab="general"><?php esc_html_e( 'General', 'meyvora-seo' ); ?></button></li>
 				<li><button type="button" class="meyvora-seo-tab" role="tab" aria-selected="false" aria-controls="meyvora-tab-social" id="meyvora-tab-btn-social" tabindex="-1" data-tab="social"><?php esc_html_e( 'Social', 'meyvora-seo' ); ?></button></li>
@@ -382,10 +405,10 @@ class Meyvora_SEO_Meta_Box {
 								?>
 								<?php /* translators: 1: variant letter A or B, 2: number of days the test has been running */ ?>
 								<p style="margin:8px 0;font-size:13px;"><?php echo esc_html( sprintf( __( 'Current variant: %s', 'meyvora-seo' ), strtoupper( $desc_ab_active ) ) ); ?> · <?php echo esc_html( sprintf( _n( '%d day running', '%d days running', $days_running, 'meyvora-seo' ), $days_running ) ); ?></p>
-								<button type="button" class="button button-small mev-ab-switch-btn" data-ab-action="switch" data-post-id="<?php echo (int) $post->ID; ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'meyvora_seo_ab_test' ) ); ?>"><?php esc_html_e( 'Switch to variant A', 'meyvora-seo' ); ?></button>
-								<button type="button" class="button button-small mev-ab-switch-btn" data-ab-action="switch" data-post-id="<?php echo (int) $post->ID; ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'meyvora_seo_ab_test' ) ); ?>"><?php esc_html_e( 'Switch to variant B', 'meyvora-seo' ); ?></button>
-								<button type="button" class="button button-small mev-ab-stop-btn" data-ab-action="stop" data-post-id="<?php echo (int) $post->ID; ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'meyvora_seo_ab_test' ) ); ?>" data-adopt-variant="a"><?php esc_html_e( 'Stop test & adopt A', 'meyvora-seo' ); ?></button>
-								<button type="button" class="button button-small mev-ab-stop-btn" data-ab-action="stop" data-post-id="<?php echo (int) $post->ID; ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'meyvora_seo_ab_test' ) ); ?>" data-adopt-variant="b"><?php esc_html_e( 'Stop test & adopt B', 'meyvora-seo' ); ?></button>
+								<button type="button" class="button button-small mev-ab-switch-btn" data-ab-action="switch" data-post-id="<?php echo esc_attr( (string) (int) $post->ID ); ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'meyvora_seo_ab_test' ) ); ?>"><?php esc_html_e( 'Switch to variant A', 'meyvora-seo' ); ?></button>
+								<button type="button" class="button button-small mev-ab-switch-btn" data-ab-action="switch" data-post-id="<?php echo esc_attr( (string) (int) $post->ID ); ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'meyvora_seo_ab_test' ) ); ?>"><?php esc_html_e( 'Switch to variant B', 'meyvora-seo' ); ?></button>
+								<button type="button" class="button button-small mev-ab-stop-btn" data-ab-action="stop" data-post-id="<?php echo esc_attr( (string) (int) $post->ID ); ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'meyvora_seo_ab_test' ) ); ?>" data-adopt-variant="a"><?php esc_html_e( 'Stop test & adopt A', 'meyvora-seo' ); ?></button>
+								<button type="button" class="button button-small mev-ab-stop-btn" data-ab-action="stop" data-post-id="<?php echo esc_attr( (string) (int) $post->ID ); ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'meyvora_seo_ab_test' ) ); ?>" data-adopt-variant="b"><?php esc_html_e( 'Stop test & adopt B', 'meyvora-seo' ); ?></button>
 							<?php endif; ?>
 							<?php
 							$ab_result = is_string( $desc_ab_result ) && $desc_ab_result !== '' ? json_decode( $desc_ab_result, true ) : null;
@@ -420,7 +443,7 @@ class Meyvora_SEO_Meta_Box {
 				<div class="meyvora-field meyvora-secondary-keywords">
 					<label><?php esc_html_e( 'Secondary keywords', 'meyvora-seo' ); ?></label>
 					<?php foreach ( array( 0, 1, 2 ) as $i ) : ?>
-						<input type="text" name="meyvora_seo_secondary_keyword_<?php echo (int) $i; ?>" value="<?php echo esc_attr( $secondary_keywords[ $i ] ?? '' ); ?>" placeholder="<?php esc_attr_e( 'Optional keyword', 'meyvora-seo' ); ?>" class="meyvora-sec-kw" data-idx="<?php echo (int) $i; ?>" />
+						<input type="text" name="meyvora_seo_secondary_keyword_<?php echo esc_attr( (string) (int) $i ); ?>" value="<?php echo esc_attr( $secondary_keywords[ $i ] ?? '' ); ?>" placeholder="<?php esc_attr_e( 'Optional keyword', 'meyvora-seo' ); ?>" class="meyvora-sec-kw" data-idx="<?php echo esc_attr( (string) (int) $i ); ?>" />
 					<?php endforeach; ?>
 				</div>
 				<?php do_action( 'meyvora_seo_meta_box_general_tab' ); ?>
@@ -433,8 +456,8 @@ class Meyvora_SEO_Meta_Box {
 						<div class="meyvora-preview-card-label"><?php esc_html_e( 'Facebook / Open Graph', 'meyvora-seo' ); ?></div>
 						<div class="meyvora-fb-preview-card meyvora-social-fb-mock">
 							<div class="meyvora-fb-preview-image">
-								<img src="<?php echo $og_image_url ? esc_url( $og_image_url ) : ''; ?>" alt="" id="meyvora-fb-preview-img"<?php echo $og_image_url ? '' : ' style="display:none;"'; ?> />
-								<span class="meyvora-fb-preview-placeholder" id="meyvora-fb-preview-placeholder"<?php echo $og_image_url ? ' style="display:none;"' : ''; ?>><?php esc_html_e( 'No image', 'meyvora-seo' ); ?></span>
+								<img src="<?php echo $og_image_url ? esc_url( $og_image_url ) : ''; ?>" alt="" id="meyvora-fb-preview-img"<?php if ( ! $og_image_url ) : ?> style="display:none;"<?php endif; ?> />
+								<span class="meyvora-fb-preview-placeholder" id="meyvora-fb-preview-placeholder"<?php if ( $og_image_url ) : ?> style="display:none;"<?php endif; ?>><?php esc_html_e( 'No image', 'meyvora-seo' ); ?></span>
 							</div>
 							<div class="meyvora-fb-preview-body">
 								<div class="meyvora-fb-preview-title" id="meyvora-fb-preview-title"><?php echo esc_html( $og_title !== '' ? $og_title : $snippet_title ); ?></div>
@@ -447,8 +470,9 @@ class Meyvora_SEO_Meta_Box {
 						<div class="meyvora-preview-card-label"><?php esc_html_e( 'X / Twitter (summary_large_image)', 'meyvora-seo' ); ?></div>
 						<div class="meyvora-tw-preview-card meyvora-social-tw-mock">
 							<div class="meyvora-tw-preview-image">
-								<img src="<?php echo $tw_image_url ? esc_url( $tw_image_url ) : ( $og_image_url ? esc_url( $og_image_url ) : '' ); ?>" alt="" id="meyvora-tw-preview-img"<?php echo ( $tw_image_url || $og_image_url ) ? '' : ' style="display:none;"'; ?> />
-								<span class="meyvora-tw-preview-placeholder" id="meyvora-tw-preview-placeholder"<?php echo ( $tw_image_url || $og_image_url ) ? ' style="display:none;"' : ''; ?>><?php esc_html_e( 'No image', 'meyvora-seo' ); ?></span>
+								<?php $tw_has_preview_image = $tw_image_url || $og_image_url; ?>
+								<img src="<?php echo $tw_image_url ? esc_url( $tw_image_url ) : ( $og_image_url ? esc_url( $og_image_url ) : '' ); ?>" alt="" id="meyvora-tw-preview-img"<?php if ( ! $tw_has_preview_image ) : ?> style="display:none;"<?php endif; ?> />
+								<span class="meyvora-tw-preview-placeholder" id="meyvora-tw-preview-placeholder"<?php if ( $tw_has_preview_image ) : ?> style="display:none;"<?php endif; ?>><?php esc_html_e( 'No image', 'meyvora-seo' ); ?></span>
 							</div>
 							<div class="meyvora-tw-preview-body">
 								<div class="meyvora-tw-preview-title" id="meyvora-tw-preview-title"><?php echo esc_html( $twitter_title !== '' ? $twitter_title : ( $og_title !== '' ? $og_title : $snippet_title ) ); ?></div>
@@ -460,7 +484,7 @@ class Meyvora_SEO_Meta_Box {
 				</div>
 				<div class="meyvora-field">
 					<label for="meyvora_seo_og_title"><?php esc_html_e( 'OG title', 'meyvora-seo' ); ?></label>
-					<input type="text" id="meyvora_seo_og_title" name="meyvora_seo_og_title" value="<?php echo esc_attr( $og_title ); ?>" maxlength="<?php echo (int) ( class_exists( 'Meyvora_SEO_Social_Preview' ) ? Meyvora_SEO_Social_Preview::OG_TITLE_MAX : 88 ); ?>" />
+					<input type="text" id="meyvora_seo_og_title" name="meyvora_seo_og_title" value="<?php echo esc_attr( $og_title ); ?>" maxlength="<?php echo esc_attr( (string) (int) ( class_exists( 'Meyvora_SEO_Social_Preview' ) ? Meyvora_SEO_Social_Preview::OG_TITLE_MAX : 88 ) ); ?>" />
 					<div class="meyvora-progress-bar"><div id="meyvora_og_title_bar" class="meyvora-progress-bar-fill" style="width:<?php echo esc_attr( (string) min( 100, ( function_exists( 'mb_strlen' ) ? mb_strlen( $og_title ) : strlen( $og_title ) ) / 88 * 100 ) ); ?>%"></div></div>
 					<div id="meyvora_og_title_counter" class="meyvora-char-counter"><?php echo esc_html( (string) ( function_exists( 'mb_strlen' ) ? mb_strlen( $og_title ) : strlen( $og_title ) ) ); ?> / 88</div>
 				</div>
@@ -529,7 +553,7 @@ class Meyvora_SEO_Meta_Box {
 				<div class="mev-schema-fields mev-schema-fields--howto" data-schema-type="HowTo" style="display:none;">
 					<p class="mev-schema-panel-actions">
 						<label><input type="checkbox" class="mev-ai-replace-schema" /> <?php esc_html_e( 'Replace existing values', 'meyvora-seo' ); ?></label>
-						<button type="button" class="button button-small mev-ai-prefill-schema" data-schema-type="HowTo" data-post-id="<?php echo (int) $post->ID; ?>" <?php echo $ai_available ? '' : ' disabled title="' . esc_attr__( 'Configure AI API key in Settings', 'meyvora-seo' ) . '"'; ?>><?php esc_html_e( 'Pre-fill with AI', 'meyvora-seo' ); ?></button>
+						<button type="button" class="button button-small mev-ai-prefill-schema" data-schema-type="HowTo" data-post-id="<?php echo esc_attr( (string) (int) $post->ID ); ?>"<?php if ( ! $ai_available ) : ?> disabled="disabled" title="<?php echo esc_attr__( 'Configure AI API key in Settings', 'meyvora-seo' ); ?>"<?php endif; ?>><?php esc_html_e( 'Pre-fill with AI', 'meyvora-seo' ); ?></button>
 						<span class="mev-schema-prefill-spinner spinner" style="display:none;" aria-hidden="true"></span>
 					</p>
 					<div class="meyvora-field"><label><?php esc_html_e( 'Name', 'meyvora-seo' ); ?></label><input type="text" name="meyvora_seo_schema_howto[name]" value="<?php echo esc_attr( $schema_howto['name'] ?? '' ); ?>" /></div>
@@ -540,9 +564,9 @@ class Meyvora_SEO_Meta_Box {
 						<div class="mev-schema-steps-wrap">
 							<?php foreach ( $howto_steps as $i => $step ) : ?>
 								<div class="mev-schema-step">
-									<input type="text" name="meyvora_seo_schema_howto[steps][<?php echo (int) $i; ?>][name]" value="<?php echo esc_attr( $step['name'] ?? '' ); ?>" placeholder="<?php esc_attr_e( 'Step name', 'meyvora-seo' ); ?>" />
-									<textarea name="meyvora_seo_schema_howto[steps][<?php echo (int) $i; ?>][text]" rows="2" placeholder="<?php esc_attr_e( 'Step text', 'meyvora-seo' ); ?>"><?php echo esc_textarea( $step['text'] ?? '' ); ?></textarea>
-									<div class="meyvora-media-picker-wrap"><input type="hidden" name="meyvora_seo_schema_howto[steps][<?php echo (int) $i; ?>][image]" value="<?php echo esc_attr( $step['image'] ?? '' ); ?>" class="mev-step-image-id" /><button type="button" class="button mev-picker-step-image"><?php esc_html_e( 'Image', 'meyvora-seo' ); ?></button></div>
+									<input type="text" name="meyvora_seo_schema_howto[steps][<?php echo esc_attr( (string) (int) $i ); ?>][name]" value="<?php echo esc_attr( $step['name'] ?? '' ); ?>" placeholder="<?php esc_attr_e( 'Step name', 'meyvora-seo' ); ?>" />
+									<textarea name="meyvora_seo_schema_howto[steps][<?php echo esc_attr( (string) (int) $i ); ?>][text]" rows="2" placeholder="<?php esc_attr_e( 'Step text', 'meyvora-seo' ); ?>"><?php echo esc_textarea( $step['text'] ?? '' ); ?></textarea>
+									<div class="meyvora-media-picker-wrap"><input type="hidden" name="meyvora_seo_schema_howto[steps][<?php echo esc_attr( (string) (int) $i ); ?>][image]" value="<?php echo esc_attr( $step['image'] ?? '' ); ?>" class="mev-step-image-id" /><button type="button" class="button mev-picker-step-image"><?php esc_html_e( 'Image', 'meyvora-seo' ); ?></button></div>
 								</div>
 							<?php endforeach; ?>
 						</div>
@@ -562,8 +586,8 @@ class Meyvora_SEO_Meta_Box {
 								$a = isset( $pair['answer'] ) ? $pair['answer'] : '';
 								?>
 								<div class="mev-schema-faq-row">
-									<input type="text" name="meyvora_seo_faq[<?php echo (int) $i; ?>][question]" value="<?php echo esc_attr( $q ); ?>" placeholder="<?php esc_attr_e( 'Question', 'meyvora-seo' ); ?>" />
-									<textarea name="meyvora_seo_faq[<?php echo (int) $i; ?>][answer]" rows="2" placeholder="<?php esc_attr_e( 'Answer', 'meyvora-seo' ); ?>"><?php echo esc_textarea( $a ); ?></textarea>
+									<input type="text" name="meyvora_seo_faq[<?php echo esc_attr( (string) (int) $i ); ?>][question]" value="<?php echo esc_attr( $q ); ?>" placeholder="<?php esc_attr_e( 'Question', 'meyvora-seo' ); ?>" />
+									<textarea name="meyvora_seo_faq[<?php echo esc_attr( (string) (int) $i ); ?>][answer]" rows="2" placeholder="<?php esc_attr_e( 'Answer', 'meyvora-seo' ); ?>"><?php echo esc_textarea( $a ); ?></textarea>
 									<button type="button" class="button button-small mev-remove-faq-row" aria-label="<?php esc_attr_e( 'Remove', 'meyvora-seo' ); ?>">×</button>
 								</div>
 							<?php endforeach; ?>
@@ -571,8 +595,8 @@ class Meyvora_SEO_Meta_Box {
 						<p class="mev-faq-buttons">
 							<button type="button" class="button mev-add-faq-pair"><?php esc_html_e( 'Add question', 'meyvora-seo' ); ?></button>
 							<button type="button" class="button mev-ai-generate-faq"
-								data-post-id="<?php echo (int) $post->ID; ?>"
-								<?php echo $ai_available ? '' : ' disabled title="' . esc_attr__( 'Configure AI API key in Settings', 'meyvora-seo' ) . '"'; ?>
+								data-post-id="<?php echo esc_attr( (string) (int) $post->ID ); ?>"
+								<?php if ( ! $ai_available ) : ?>disabled="disabled" title="<?php echo esc_attr__( 'Configure AI API key in Settings', 'meyvora-seo' ); ?>"<?php endif; ?>
 							><?php esc_html_e( 'Generate FAQ with AI', 'meyvora-seo' ); ?></button>
 							<span class="mev-faq-spinner spinner" style="display:none;vertical-align:middle;" aria-hidden="true"></span>
 						</p>
@@ -581,7 +605,7 @@ class Meyvora_SEO_Meta_Box {
 				<div class="mev-schema-fields mev-schema-fields--recipe" data-schema-type="Recipe" style="display:none;">
 					<p class="mev-schema-panel-actions">
 						<label><input type="checkbox" class="mev-ai-replace-schema" /> <?php esc_html_e( 'Replace existing values', 'meyvora-seo' ); ?></label>
-						<button type="button" class="button button-small mev-ai-prefill-schema" data-schema-type="Recipe" data-post-id="<?php echo (int) $post->ID; ?>" <?php echo $ai_available ? '' : ' disabled title="' . esc_attr__( 'Configure AI API key in Settings', 'meyvora-seo' ) . '"'; ?>><?php esc_html_e( 'Pre-fill with AI', 'meyvora-seo' ); ?></button>
+						<button type="button" class="button button-small mev-ai-prefill-schema" data-schema-type="Recipe" data-post-id="<?php echo esc_attr( (string) (int) $post->ID ); ?>"<?php if ( ! $ai_available ) : ?> disabled="disabled" title="<?php echo esc_attr__( 'Configure AI API key in Settings', 'meyvora-seo' ); ?>"<?php endif; ?>><?php esc_html_e( 'Pre-fill with AI', 'meyvora-seo' ); ?></button>
 						<span class="mev-schema-prefill-spinner spinner" style="display:none;" aria-hidden="true"></span>
 					</p>
 					<div class="meyvora-field"><label><?php esc_html_e( 'Recipe name', 'meyvora-seo' ); ?></label><input type="text" name="meyvora_seo_schema_recipe[recipeName]" value="<?php echo esc_attr( $schema_recipe['recipeName'] ?? '' ); ?>" /></div>
@@ -596,7 +620,7 @@ class Meyvora_SEO_Meta_Box {
 				<div class="mev-schema-fields mev-schema-fields--event" data-schema-type="Event" style="display:none;">
 					<p class="mev-schema-panel-actions">
 						<label><input type="checkbox" class="mev-ai-replace-schema" /> <?php esc_html_e( 'Replace existing values', 'meyvora-seo' ); ?></label>
-						<button type="button" class="button button-small mev-ai-prefill-schema" data-schema-type="Event" data-post-id="<?php echo (int) $post->ID; ?>" <?php echo $ai_available ? '' : ' disabled title="' . esc_attr__( 'Configure AI API key in Settings', 'meyvora-seo' ) . '"'; ?>><?php esc_html_e( 'Pre-fill with AI', 'meyvora-seo' ); ?></button>
+						<button type="button" class="button button-small mev-ai-prefill-schema" data-schema-type="Event" data-post-id="<?php echo esc_attr( (string) (int) $post->ID ); ?>"<?php if ( ! $ai_available ) : ?> disabled="disabled" title="<?php echo esc_attr__( 'Configure AI API key in Settings', 'meyvora-seo' ); ?>"<?php endif; ?>><?php esc_html_e( 'Pre-fill with AI', 'meyvora-seo' ); ?></button>
 						<span class="mev-schema-prefill-spinner spinner" style="display:none;" aria-hidden="true"></span>
 					</p>
 					<div class="meyvora-field"><label><?php esc_html_e( 'Name', 'meyvora-seo' ); ?></label><input type="text" name="meyvora_seo_schema_event[name]" value="<?php echo esc_attr( $schema_event['name'] ?? '' ); ?>" /></div>
@@ -620,7 +644,7 @@ class Meyvora_SEO_Meta_Box {
 				<div class="mev-schema-fields mev-schema-fields--jobposting" data-schema-type="JobPosting" style="display:none;">
 					<p class="mev-schema-panel-actions">
 						<label><input type="checkbox" class="mev-ai-replace-schema" /> <?php esc_html_e( 'Replace existing values', 'meyvora-seo' ); ?></label>
-						<button type="button" class="button button-small mev-ai-prefill-schema" data-schema-type="JobPosting" data-post-id="<?php echo (int) $post->ID; ?>" <?php echo $ai_available ? '' : ' disabled title="' . esc_attr__( 'Configure AI API key in Settings', 'meyvora-seo' ) . '"'; ?>><?php esc_html_e( 'Pre-fill with AI', 'meyvora-seo' ); ?></button>
+						<button type="button" class="button button-small mev-ai-prefill-schema" data-schema-type="JobPosting" data-post-id="<?php echo esc_attr( (string) (int) $post->ID ); ?>"<?php if ( ! $ai_available ) : ?> disabled="disabled" title="<?php echo esc_attr__( 'Configure AI API key in Settings', 'meyvora-seo' ); ?>"<?php endif; ?>><?php esc_html_e( 'Pre-fill with AI', 'meyvora-seo' ); ?></button>
 						<span class="mev-schema-prefill-spinner spinner" style="display:none;" aria-hidden="true"></span>
 					</p>
 					<div class="meyvora-field"><label><?php esc_html_e( 'Title', 'meyvora-seo' ); ?></label><input type="text" name="meyvora_seo_schema_jobposting[title]" value="<?php echo esc_attr( $schema_job['title'] ?? '' ); ?>" /></div>
@@ -690,7 +714,7 @@ class Meyvora_SEO_Meta_Box {
 						<p class="description" style="margin:0 0 6px 0;"><?php esc_html_e( 'Prevent Google from showing a cached copy.', 'meyvora-seo' ); ?></p>
 						<label><input type="checkbox" id="meyvora_seo_nosnippet" name="meyvora_seo_nosnippet" value="1" <?php checked( $nosnippet ); ?> /> <?php esc_html_e( 'Nosnippet', 'meyvora-seo' ); ?></label>
 						<p class="description" style="margin:0 0 6px 0;"><?php esc_html_e( 'Prevent Google from showing a text snippet in results.', 'meyvora-seo' ); ?></p>
-						<label style="display:flex;align-items:center;gap:6px;"><?php esc_html_e( 'Max snippet:', 'meyvora-seo' ); ?> <input type="number" id="meyvora_seo_max_snippet" name="meyvora_seo_max_snippet" value="<?php echo esc_attr( $max_snippet >= -1 ? $max_snippet : '' ); ?>" min="-1" max="999" style="width:70px;" <?php echo $nosnippet ? ' disabled="disabled"' : ''; ?> /></label>
+						<label style="display:flex;align-items:center;gap:6px;"><?php esc_html_e( 'Max snippet:', 'meyvora-seo' ); ?> <input type="number" id="meyvora_seo_max_snippet" name="meyvora_seo_max_snippet" value="<?php echo esc_attr( $max_snippet >= -1 ? $max_snippet : '' ); ?>" min="-1" max="999" style="width:70px;"<?php if ( $nosnippet ) : ?> disabled="disabled"<?php endif; ?> /></label>
 						<p class="description" style="margin:0 0 6px 0;"><?php esc_html_e( 'Max characters in snippet (-1 = no limit, 0 = no snippet). Only applies when Nosnippet is off.', 'meyvora-seo' ); ?></p>
 						<label style="display:flex;align-items:center;gap:6px;"><?php esc_html_e( 'Max image preview:', 'meyvora-seo' ); ?>
 							<select id="meyvora_seo_max_image_preview" name="meyvora_seo_max_image_preview">
@@ -702,46 +726,6 @@ class Meyvora_SEO_Meta_Box {
 						<label style="display:flex;align-items:center;gap:6px;"><?php esc_html_e( 'Max video preview:', 'meyvora-seo' ); ?> <input type="number" id="meyvora_seo_max_video_preview" name="meyvora_seo_max_video_preview" value="<?php echo esc_attr( $max_video_preview ); ?>" min="-1" max="999" style="width:70px;" /></label>
 						<p class="description" style="margin:0 0 0 0;"><?php esc_html_e( '-1 = unlimited seconds.', 'meyvora-seo' ); ?></p>
 					</div>
-					<script>
-					(function(){
-						var nosnippet = document.getElementById('meyvora_seo_nosnippet');
-						var maxSnippet = document.getElementById('meyvora_seo_max_snippet');
-						if (nosnippet && maxSnippet) {
-							function toggle() { maxSnippet.disabled = nosnippet.checked; }
-							nosnippet.addEventListener('change', toggle);
-						}
-					})();
-					document.addEventListener('click', function(e) {
-						var btn = e.target.closest('[data-ab-action]');
-						if (!btn) return;
-						var action = btn.dataset.abAction;
-						var postId = btn.dataset.postId;
-						var nonce  = btn.dataset.nonce;
-						var adoptVariant = btn.dataset.adoptVariant || 'a';
-						var ajaxAction = action === 'switch'
-							? 'meyvora_seo_ab_switch'
-							: 'meyvora_seo_ab_stop';
-						btn.disabled = true;
-						var fd = new FormData();
-						fd.append('action', ajaxAction);
-						fd.append('nonce', nonce);
-						fd.append('post_id', postId);
-						if (action === 'stop') { fd.append('adopt_variant', adoptVariant); }
-						fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
-							method: 'POST', body: fd, credentials: 'same-origin'
-						}).then(function(r){ return r.json(); })
-						.then(function(res){
-							if (res.success) {
-								alert(res.data.message);
-								window.location.reload();
-							} else {
-								btn.disabled = false;
-								alert(res.data && res.data.message ? res.data.message : 'Error.');
-							}
-						})
-						.catch(function(){ btn.disabled = false; });
-					});
-					</script>
 				</div>
 				<div class="meyvora-field">
 					<label for="meyvora_seo_breadcrumb_title"><?php esc_html_e( 'Breadcrumb title override', 'meyvora-seo' ); ?></label>
@@ -793,9 +777,9 @@ class Meyvora_SEO_Meta_Box {
 							<?php $fail_c = count( array_filter( $results, function ( $r ) { return ( $r['status'] ?? '' ) === 'fail'; } ) ); ?>
 							<?php $warn_c = count( array_filter( $results, function ( $r ) { return ( $r['status'] ?? '' ) === 'warning'; } ) ); ?>
 							<?php $pass_c = count( array_filter( $results, function ( $r ) { return ( $r['status'] ?? '' ) === 'pass'; } ) ); ?>
-							<?php if ( $fail_c > 0 ) : ?><span class="mev-badge mev-badge--red"><?php echo wp_kses_post( meyvora_seo_icon( 'circle_x', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php echo (int) $fail_c; ?> <?php esc_html_e( 'issues', 'meyvora-seo' ); ?></span><?php endif; ?>
-							<?php if ( $warn_c > 0 ) : ?><span class="mev-badge mev-badge--orange"><?php echo wp_kses_post( meyvora_seo_icon( 'alert_triangle', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php echo (int) $warn_c; ?> <?php esc_html_e( 'warnings', 'meyvora-seo' ); ?></span><?php endif; ?>
-							<span class="mev-badge mev-badge--green"><?php echo wp_kses_post( meyvora_seo_icon( 'circle_check', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php echo (int) $pass_c; ?> <?php esc_html_e( 'passed', 'meyvora-seo' ); ?></span>
+							<?php if ( $fail_c > 0 ) : ?><span class="mev-badge mev-badge--red"><?php echo wp_kses_post( meyvora_seo_icon( 'circle_x', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php echo esc_html( (string) (int) $fail_c ); ?> <?php esc_html_e( 'issues', 'meyvora-seo' ); ?></span><?php endif; ?>
+							<?php if ( $warn_c > 0 ) : ?><span class="mev-badge mev-badge--orange"><?php echo wp_kses_post( meyvora_seo_icon( 'alert_triangle', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php echo esc_html( (string) (int) $warn_c ); ?> <?php esc_html_e( 'warnings', 'meyvora-seo' ); ?></span><?php endif; ?>
+							<span class="mev-badge mev-badge--green"><?php echo wp_kses_post( meyvora_seo_icon( 'circle_check', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php echo esc_html( (string) (int) $pass_c ); ?> <?php esc_html_e( 'passed', 'meyvora-seo' ); ?></span>
 						</div>
 					</div>
 				</div>
@@ -843,7 +827,6 @@ class Meyvora_SEO_Meta_Box {
 				</div>
 
 			<div id="meyvora-tab-competitor" class="meyvora-seo-tabpanel meyvora-competitor-tabpanel" role="tabpanel" aria-labelledby="meyvora-tab-btn-competitor" tabindex="-1" hidden>
-				<style>.meyvora-competitor-tabpanel .mev-comp-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:6px 0;border-bottom:1px solid var(--mev-gray-100);}.meyvora-competitor-tabpanel .mev-comp-row:last-child{border-bottom:0;}.meyvora-competitor-tabpanel .mev-comp-label{font-weight:600;color:var(--mev-gray-700);min-width:100px;font-size:12px;}.meyvora-competitor-tabpanel .mev-comp-value{flex:1;word-break:break-word;font-size:12px;}.meyvora-competitor-tabpanel .mev-comp-value.mev-stronger{background:rgba(220,38,38,0.08);color:var(--mev-danger);padding:2px 6px;border-radius:4px;}.meyvora-competitor-tabpanel .mev-comp-value.mev-weaker{background:rgba(5,150,105,0.08);color:var(--mev-success);padding:2px 6px;border-radius:4px;}.meyvora-competitor-tabpanel .mev-comp-list,.meyvora-competitor-tabpanel .mev-comp-og-list{margin:0;padding-left:18px;font-size:12px;}.meyvora-competitor-tabpanel .mev-comp-og-list{padding-left:0;list-style:none;}</style>
 				<p class="description" style="margin-bottom:12px;"><?php esc_html_e( 'Compare this post with a competitor URL. Enter the URL below or use the full Competitor page under Meyvora SEO.', 'meyvora-seo' ); ?></p>
 				<div class="meyvora-competitor-in-metabox">
 					<div class="meyvora-field" style="margin-bottom:12px;">
@@ -879,7 +862,7 @@ class Meyvora_SEO_Meta_Box {
 					if ( ! empty( $fails ) ) :
 					?>
 					<li class="mev-checklist-section">
-						<div class="mev-checklist-section-title mev-checklist-section-title--fail"><?php echo wp_kses_post( meyvora_seo_icon( 'circle_x', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php esc_html_e( 'NEEDS FIXING', 'meyvora-seo' ); ?> <span>(<?php echo (int) count( $fails ); ?>)</span></div>
+						<div class="mev-checklist-section-title mev-checklist-section-title--fail"><?php echo wp_kses_post( meyvora_seo_icon( 'circle_x', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php esc_html_e( 'NEEDS FIXING', 'meyvora-seo' ); ?> <span>(<?php echo esc_html( (string) (int) count( $fails ) ); ?>)</span></div>
 						<?php foreach ( $fails as $r ) : ?>
 						<div class="mev-checklist-item mev-checklist-item--fail mev-check-fail">
 							<div class="mev-checklist-icon"><?php echo wp_kses_post( meyvora_seo_icon( 'circle_x', array( 'width' => 16, 'height' => 16 ) ) ); ?></div>
@@ -898,7 +881,7 @@ class Meyvora_SEO_Meta_Box {
 									<button type="button" class="mev-quick-fix" onclick="document.querySelector('.meyvora-seo-tab[data-tab=social]').click();"><?php esc_html_e( 'Set OG Image', 'meyvora-seo' ); ?></button>
 								<?php endif; ?>
 							</div>
-							<?php if ( ( $r['weight'] ?? 0 ) > 0 ) : ?><div class="mev-checklist-pts">0/<?php echo (int) $r['weight']; ?>pts</div><?php endif; ?>
+							<?php if ( ( $r['weight'] ?? 0 ) > 0 ) : ?><div class="mev-checklist-pts">0/<?php echo esc_html( (string) (int) $r['weight'] ); ?>pts</div><?php endif; ?>
 						</div>
 						<?php endforeach; ?>
 					</li>
@@ -909,7 +892,7 @@ class Meyvora_SEO_Meta_Box {
 					if ( ! empty( $warns ) ) :
 					?>
 					<li class="mev-checklist-section">
-						<div class="mev-checklist-section-title mev-checklist-section-title--warn"><?php echo wp_kses_post( meyvora_seo_icon( 'alert_triangle', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php esc_html_e( 'WARNINGS', 'meyvora-seo' ); ?> <span>(<?php echo (int) count( $warns ); ?>)</span></div>
+						<div class="mev-checklist-section-title mev-checklist-section-title--warn"><?php echo wp_kses_post( meyvora_seo_icon( 'alert_triangle', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php esc_html_e( 'WARNINGS', 'meyvora-seo' ); ?> <span>(<?php echo esc_html( (string) (int) count( $warns ) ); ?>)</span></div>
 						<?php foreach ( $warns as $r ) : ?>
 						<div class="mev-checklist-item mev-checklist-item--warn mev-check-warning">
 							<div class="mev-checklist-icon"><?php echo wp_kses_post( meyvora_seo_icon( 'alert_triangle', array( 'width' => 16, 'height' => 16 ) ) ); ?></div>
@@ -917,7 +900,7 @@ class Meyvora_SEO_Meta_Box {
 								<div class="mev-checklist-label"><?php echo esc_html( $r['label'] ?? '' ); ?></div>
 								<div class="mev-checklist-msg"><?php echo esc_html( $r['message'] ?? '' ); ?></div>
 							</div>
-							<?php if ( ( $r['weight'] ?? 0 ) > 0 ) : ?><div class="mev-checklist-pts"><?php echo (int) ( $r['points_earned'] ?? 0 ); ?>/<?php echo (int) $r['weight']; ?>pts</div><?php endif; ?>
+							<?php if ( ( $r['weight'] ?? 0 ) > 0 ) : ?><div class="mev-checklist-pts"><?php echo esc_html( (string) (int) ( $r['points_earned'] ?? 0 ) ); ?>/<?php echo esc_html( (string) (int) $r['weight'] ); ?>pts</div><?php endif; ?>
 						</div>
 						<?php endforeach; ?>
 					</li>
@@ -929,7 +912,7 @@ class Meyvora_SEO_Meta_Box {
 					?>
 					<li class="mev-checklist-section">
 						<div class="mev-checklist-section-title mev-checklist-section-title--pass" onclick="var el=document.getElementById('mev_passes');el.style.display=el.style.display==='none'?'block':'none';" style="cursor:pointer;">
-							<?php echo wp_kses_post( meyvora_seo_icon( 'circle_check', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php esc_html_e( 'PASSED', 'meyvora-seo' ); ?> <span>(<?php echo (int) count( $passes ); ?>)</span>
+							<?php echo wp_kses_post( meyvora_seo_icon( 'circle_check', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php esc_html_e( 'PASSED', 'meyvora-seo' ); ?> <span>(<?php echo esc_html( (string) (int) count( $passes ) ); ?>)</span>
 							<span style="margin-left:auto;font-size:10px;">▼</span>
 						</div>
 						<div id="mev_passes" style="display:none;">
@@ -940,7 +923,7 @@ class Meyvora_SEO_Meta_Box {
 								<div class="mev-checklist-label"><?php echo esc_html( $r['label'] ?? '' ); ?></div>
 								<div class="mev-checklist-msg"><?php echo esc_html( $r['message'] ?? '' ); ?></div>
 							</div>
-							<?php if ( ( $r['weight'] ?? 0 ) > 0 ) : ?><div class="mev-checklist-pts" style="color:var(--mev-success);">+<?php echo (int) $r['weight']; ?>pts</div><?php endif; ?>
+							<?php if ( ( $r['weight'] ?? 0 ) > 0 ) : ?><div class="mev-checklist-pts" style="color:var(--mev-success);">+<?php echo esc_html( (string) (int) $r['weight'] ); ?>pts</div><?php endif; ?>
 						</div>
 						<?php endforeach; ?>
 						</div>
@@ -996,6 +979,7 @@ class Meyvora_SEO_Meta_Box {
 				continue;
 			}
 			if ( in_array( $k, $url_keys, true ) && is_string( $v ) ) {
+				// esc_url_raw() intentional: schema url/sameAs values stored as JSON in meta — sanitize for storage, not esc_url().
 				$out[ $k ] = esc_url_raw( $v );
 				continue;
 			}
@@ -1074,18 +1058,19 @@ class Meyvora_SEO_Meta_Box {
 		$noindex     = isset( $_POST['meyvora_seo_noindex'] ) && sanitize_text_field( wp_unslash( $_POST['meyvora_seo_noindex'] ) ) === '1';
 		$nofollow    = isset( $_POST['meyvora_seo_nofollow'] ) && sanitize_text_field( wp_unslash( $_POST['meyvora_seo_nofollow'] ) ) === '1';
 		$noodp       = isset( $_POST['meyvora_seo_noodp'] ) && sanitize_text_field( wp_unslash( $_POST['meyvora_seo_noodp'] ) ) === '1';
-		$noarchive   = isset( $_POST['meyvora_seo_noarchive'] );
-		$nosnippet   = isset( $_POST['meyvora_seo_nosnippet'] );
-		$max_snippet_raw = isset( $_POST['meyvora_seo_max_snippet'] ) ? absint( $_POST['meyvora_seo_max_snippet'] ) : -1;
+		$noarchive       = isset( $_POST['meyvora_seo_noarchive'] ) && sanitize_key( wp_unslash( $_POST['meyvora_seo_noarchive'] ) ) !== '';
+		$nosnippet       = isset( $_POST['meyvora_seo_nosnippet'] ) && sanitize_key( wp_unslash( $_POST['meyvora_seo_nosnippet'] ) ) !== '';
+		$max_snippet_raw = isset( $_POST['meyvora_seo_max_snippet'] ) ? absint( wp_unslash( $_POST['meyvora_seo_max_snippet'] ) ) : -1;
 		$focus_kw_raw = isset( $_POST['meyvora_seo_focus_keyword'] ) ? sanitize_text_field( wp_unslash( $_POST['meyvora_seo_focus_keyword'] ) ) : '';
 		$focus_kw     = self::sanitize_focus_keywords_meta( $focus_kw_raw );
+		// esc_url_raw() intentional: canonical URL saved to post meta / DB — not HTML output here (frontend uses esc_url() where echoed).
 		$canonical   = isset( $_POST['meyvora_seo_canonical'] ) ? esc_url_raw( wp_unslash( $_POST['meyvora_seo_canonical'] ) ) : '';
 		$og_title    = isset( $_POST['meyvora_seo_og_title'] ) ? sanitize_text_field( wp_unslash( $_POST['meyvora_seo_og_title'] ) ) : '';
 		$og_desc     = isset( $_POST['meyvora_seo_og_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['meyvora_seo_og_description'] ) ) : '';
-		$og_image    = isset( $_POST['meyvora_seo_og_image'] ) ? absint( $_POST['meyvora_seo_og_image'] ) : 0;
+		$og_image    = isset( $_POST['meyvora_seo_og_image'] ) ? absint( wp_unslash( $_POST['meyvora_seo_og_image'] ) ) : 0;
 		$tw_title    = isset( $_POST['meyvora_seo_twitter_title'] ) ? sanitize_text_field( wp_unslash( $_POST['meyvora_seo_twitter_title'] ) ) : '';
 		$tw_desc     = isset( $_POST['meyvora_seo_twitter_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['meyvora_seo_twitter_description'] ) ) : '';
-		$tw_image    = isset( $_POST['meyvora_seo_twitter_image'] ) ? absint( $_POST['meyvora_seo_twitter_image'] ) : 0;
+		$tw_image    = isset( $_POST['meyvora_seo_twitter_image'] ) ? absint( wp_unslash( $_POST['meyvora_seo_twitter_image'] ) ) : 0;
 		$schema_type = isset( $_POST['meyvora_seo_schema_type'] ) ? sanitize_text_field( wp_unslash( $_POST['meyvora_seo_schema_type'] ) ) : '';
 		$breadcrumb  = isset( $_POST['meyvora_seo_breadcrumb_title'] ) ? sanitize_text_field( wp_unslash( $_POST['meyvora_seo_breadcrumb_title'] ) ) : '';
 		$sec_kw      = array();
@@ -1108,7 +1093,7 @@ class Meyvora_SEO_Meta_Box {
 		$desc_variant_b = isset( $_POST['meyvora_seo_desc_variant_b'] ) ? sanitize_textarea_field( wp_unslash( $_POST['meyvora_seo_desc_variant_b'] ) ) : '';
 		update_post_meta( $post_id, MEYVORA_SEO_META_DESC_VARIANT_A, $desc_variant_a );
 		update_post_meta( $post_id, MEYVORA_SEO_META_DESC_VARIANT_B, $desc_variant_b );
-		$ab_start_now = isset( $_POST['meyvora_seo_ab_start_now'] ) && (string) $_POST['meyvora_seo_ab_start_now'] === '1';
+		$ab_start_now = isset( $_POST['meyvora_seo_ab_start_now'] ) && sanitize_key( wp_unslash( (string) $_POST['meyvora_seo_ab_start_now'] ) ) === '1';
 		if ( $ab_start_now && $desc_variant_a !== '' && $desc_variant_b !== '' ) {
 			update_post_meta( $post_id, MEYVORA_SEO_META_DESC_AB_ACTIVE, 'a' );
 			update_post_meta( $post_id, MEYVORA_SEO_META_DESC_AB_START, (string) time() );
@@ -1117,18 +1102,22 @@ class Meyvora_SEO_Meta_Box {
 		update_post_meta( $post_id, $meta_key_for( MEYVORA_SEO_META_NOINDEX ), $noindex ? '1' : '' );
 		update_post_meta( $post_id, $meta_key_for( MEYVORA_SEO_META_NOFOLLOW ), $nofollow ? '1' : '' );
 		update_post_meta( $post_id, $meta_key_for( MEYVORA_SEO_META_NOODP ), $noodp ? '1' : '' );
-		update_post_meta( $post_id, $meta_key_for( MEYVORA_SEO_META_NOARCHIVE ), isset( $_POST['meyvora_seo_noarchive'] ) ? '1' : '' );
-		update_post_meta( $post_id, $meta_key_for( MEYVORA_SEO_META_NOSNIPPET ), isset( $_POST['meyvora_seo_nosnippet'] ) ? '1' : '' );
+		update_post_meta( $post_id, $meta_key_for( MEYVORA_SEO_META_NOARCHIVE ), $noarchive ? '1' : '' );
+		update_post_meta( $post_id, $meta_key_for( MEYVORA_SEO_META_NOSNIPPET ), $nosnippet ? '1' : '' );
 		if ( ! $nosnippet && $max_snippet_raw >= -1 ) {
 			update_post_meta( $post_id, $meta_key_for( MEYVORA_SEO_META_MAX_SNIPPET ), $max_snippet_raw );
 		}
 		$max_image_preview_raw = isset( $_POST['meyvora_seo_max_image_preview'] ) ? sanitize_text_field( wp_unslash( $_POST['meyvora_seo_max_image_preview'] ) ) : 'large';
-		$max_video_preview_raw = isset( $_POST['meyvora_seo_max_video_preview'] ) ? (int) $_POST['meyvora_seo_max_video_preview'] : -1;
+		$max_video_preview_raw = isset( $_POST['meyvora_seo_max_video_preview'] )
+			? (int) sanitize_text_field( wp_unslash( $_POST['meyvora_seo_max_video_preview'] ) )
+			: -1;
+		$max_video_preview_raw = $max_video_preview_raw >= -1 ? $max_video_preview_raw : -1;
 		if ( in_array( $max_image_preview_raw, array( 'none', 'standard', 'large' ), true ) ) {
 			update_post_meta( $post_id, $meta_key_for( MEYVORA_SEO_META_ROBOTS_MAX_IMAGE_PREVIEW ), $max_image_preview_raw );
 		}
-		update_post_meta( $post_id, $meta_key_for( MEYVORA_SEO_META_ROBOTS_MAX_VIDEO_PREVIEW ), $max_video_preview_raw >= -1 ? $max_video_preview_raw : -1 );
-		update_post_meta( $post_id, $meta_key_for( MEYVORA_SEO_META_CORNERSTONE ), isset( $_POST['meyvora_seo_cornerstone'] ) ? '1' : '' );
+		update_post_meta( $post_id, $meta_key_for( MEYVORA_SEO_META_ROBOTS_MAX_VIDEO_PREVIEW ), $max_video_preview_raw );
+		$cornerstone = isset( $_POST['meyvora_seo_cornerstone'] ) && sanitize_key( wp_unslash( $_POST['meyvora_seo_cornerstone'] ) ) !== '';
+		update_post_meta( $post_id, $meta_key_for( MEYVORA_SEO_META_CORNERSTONE ), $cornerstone ? '1' : '' );
 		update_post_meta( $post_id, $meta_key_for( MEYVORA_SEO_META_FOCUS_KEYWORD ), is_array( $focus_kw ) ? wp_json_encode( $focus_kw ) : $focus_kw );
 		update_post_meta( $post_id, $meta_key_for( MEYVORA_SEO_META_CANONICAL ), $canonical );
 		$priority_raw = isset( $_POST['meyvora_seo_sitemap_priority'] ) ? sanitize_text_field( wp_unslash( $_POST['meyvora_seo_sitemap_priority'] ) ) : '';
@@ -1151,16 +1140,17 @@ class Meyvora_SEO_Meta_Box {
 		update_post_meta( $post_id, $meta_key_for( MEYVORA_SEO_META_BREADCRUMB_TITLE ), $breadcrumb );
 		update_post_meta( $post_id, $meta_key_for( MEYVORA_SEO_META_SECONDARY_KEYWORDS ), wp_json_encode( $sec_kw ) );
 
-		// FAQ pairs: array of { question, answer } from POST; each element sanitized in loop.
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Array values sanitized in loop below.
-		$faq_post = isset( $_POST['meyvora_seo_faq'] ) && is_array( $_POST['meyvora_seo_faq'] ) ? wp_unslash( $_POST['meyvora_seo_faq'] ) : array();
+		// FAQ pairs: array of { question, answer }; tree unslashed + textarea-sanitized, then fields normalized.
 		$faq_sanitized = array();
-		foreach ( $faq_post as $row ) {
+		$faq_rows      = isset( $_POST['meyvora_seo_faq'] ) && is_array( $_POST['meyvora_seo_faq'] )
+			? map_deep( wp_unslash( $_POST['meyvora_seo_faq'] ), 'sanitize_textarea_field' )
+			: array();
+		foreach ( $faq_rows as $row ) {
 			if ( ! is_array( $row ) ) {
 				continue;
 			}
-			$q = isset( $row['question'] ) ? sanitize_text_field( $row['question'] ) : '';
-			$a = isset( $row['answer'] ) ? sanitize_textarea_field( $row['answer'] ) : '';
+			$q = isset( $row['question'] ) ? sanitize_text_field( (string) $row['question'] ) : '';
+			$a = isset( $row['answer'] ) ? sanitize_textarea_field( (string) $row['answer'] ) : '';
 			if ( $q !== '' || $a !== '' ) {
 				$faq_sanitized[] = array( 'question' => $q, 'answer' => $a );
 			}
@@ -1224,11 +1214,11 @@ class Meyvora_SEO_Meta_Box {
 			}
 			set_transient( $rate_key, $count + 1, self::ANALYZE_RATE_WINDOW );
 		}
-		$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+		$post_id = isset( $_POST['post_id'] ) ? absint( wp_unslash( $_POST['post_id'] ) ) : 0;
 		if ( $post_id <= 0 ) {
 			wp_send_json_error( array( 'message' => 'Invalid post' ) );
 		}
-		$content = isset( $_POST['content'] ) ? wp_kses_post( wp_unslash( $_POST['content'] ) ) : null;
+		$content = isset( $_POST['content'] ) ? wp_kses_post( wp_unslash( (string) $_POST['content'] ) ) : null;
 		$live_title    = isset( $_POST['title'] ) ? sanitize_text_field( wp_unslash( $_POST['title'] ) ) : null;
 		$live_desc     = isset( $_POST['description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['description'] ) ) : null;
 		$live_keyword_raw = isset( $_POST['focus_keyword'] ) ? sanitize_text_field( wp_unslash( $_POST['focus_keyword'] ) ) : null;
@@ -1282,16 +1272,15 @@ class Meyvora_SEO_Meta_Box {
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_send_json_error( array( 'message' => 'Forbidden' ) );
 		}
-		$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+		$post_id = isset( $_POST['post_id'] ) ? absint( wp_unslash( $_POST['post_id'] ) ) : 0;
 		if ( $post_id <= 0 || ! get_post( $post_id ) ) {
 			wp_send_json_error( array( 'message' => 'Invalid post' ) );
 		}
 		// JS sends data as a JSON-encoded string via encodeURIComponent(JSON.stringify(data)).
 		// is_array() would always be false on a string, so decode it first.
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Raw string decoded and validated below; keys sanitized on use.
-		$data_raw = isset( $_POST['data'] ) ? wp_unslash( $_POST['data'] ) : '';
+		$data_raw = isset( $_POST['data'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['data'] ) ) : '';
 		$data_raw = is_string( $data_raw ) ? $data_raw : '';
-		if ( is_array( $_POST['data'] ?? null ) ) {
+		if ( isset( $_POST['data'] ) && is_array( $_POST['data'] ) ) {
 			// Fallback: sent as a real array (unlikely); sanitized via allowed keys below.
 			$data = map_deep( wp_unslash( $_POST['data'] ), 'sanitize_text_field' );
 		} elseif ( $data_raw !== '' ) {
@@ -1322,7 +1311,8 @@ class Meyvora_SEO_Meta_Box {
 			}
 			$val = $data[ $key ];
 			if ( $key === 'meyvora_seo_canonical' ) {
-				$val = esc_url_raw( wp_unslash( $val ) );
+				// esc_url_raw() intentional: AJAX autosave persists canonical to meta — sanitize for storage, not esc_url().
+				$val = esc_url_raw( wp_unslash( (string) $val ) );
 			} elseif ( in_array( $key, array( 'meyvora_seo_og_image', 'meyvora_seo_twitter_image' ), true ) ) {
 				$val = absint( $val );
 			} elseif ( in_array( $key, array( 'meyvora_seo_description', 'meyvora_seo_og_description', 'meyvora_seo_twitter_description' ), true ) ) {

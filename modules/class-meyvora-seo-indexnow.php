@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Meyvora_SEO_IndexNow {
 
-	const OPTION_PING_LOG = 'indexnow_ping_log';
+	const OPTION_PING_LOG = 'meyvora_indexnow_ping_log';
 	const TRANSIENT_PREFIX = 'meyvora_indexnow_ping_';
 	const API_URL = 'https://api.indexnow.org/indexnow';
 

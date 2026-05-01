@@ -994,10 +994,11 @@ class Meyvora_SEO_Schema {
 
 	private function echo_ld_json( array $data ): void {
 		$json = wp_json_encode( $data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
-		if ( $json === false ) {
+		if ( $json === false || ! function_exists( 'meyvora_seo_print_ld_json_script' ) ) {
 			return;
 		}
-		echo '<script type="application/ld+json">' . $json . "</script>\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		meyvora_seo_print_ld_json_script( $json );
+		echo "\n";
 	}
 
 	private function remove_null( array $arr ): array {

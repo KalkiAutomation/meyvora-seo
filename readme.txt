@@ -15,6 +15,8 @@ Smart SEO toolkit for titles, meta, sitemaps, redirects, schema, Open Graph, and
 
 Smart SEO toolkit: title/description editor, SEO score, focus keywords, readability, XML sitemap, redirects, schema markup, Open Graph, Twitter Cards, breadcrumbs, bulk editor, AI generation, internal link suggestions, and page builder integrations.
 
+This plugin relies on external services for some optional features (APIs, notifications, and indexing helpers). See the **External Services** section below for each provider, what data is sent, and links to their terms and privacy policies.
+
 == Features ==
 
 * **Real-time SEO analysis** – 20+ checks: focus keyword in title/description/slug/content, keyword density, keyword in first H2, title/description length, content length, H1 count, headings structure, image alt text, internal/external links, paragraph count, sentence length, passive voice, transition words, Flesch Reading Ease, OG image, schema type. Score 0–100 with pass/warning/fail and points. Analysis caching for performance.
@@ -45,15 +47,87 @@ Smart SEO toolkit: title/description editor, SEO score, focus keywords, readabil
 3. Go to Meyvora SEO in the admin menu to configure settings, redirects, and view the SEO Audit.
 4. Use the SEO panel on posts and pages (or the Block Editor sidebar) to set focus keyword, title, description, and review the score.
 
-== External services ==
+== Source Code ==
 
-Optional integrations send data to third parties only when you enable a feature and provide credentials (or accept an OAuth prompt):
+The JavaScript and CSS used by Meyvora SEO are maintained and publicly available here:
+https://github.com/KalkiAutomation/meyvora-seo
 
-* **Google (Search Console, Analytics Data API, PageSpeed Insights)** – used for GSC/GA4 reporting and Core Web Vitals checks. See [Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy).
-* **AI providers (OpenAI-compatible or custom URL)** – meta suggestions and content helpers; API keys stay in the WordPress database and requests are made server-side from your site.
-* **DataForSEO** (optional) – keyword and SERP data when you add an API key in settings.
+WordPress.org release packages ship these scripts and stylesheets as readable source files (for example under `admin/assets/`, `assets/`, `blocks/`, and `integrations/assets/`). They are the same kinds of sources you find in that repository—they are not an opaque compiled-only artifact in the current workflow.
 
-Core SEO features (meta tags, sitemap, redirects, schema, analysis) run entirely on your server without a vendor account.
+If you work from Git, clone the repository into `wp-content/plugins/meyvora-seo`, edit assets there, test in WordPress as usual, and open a pull request on GitHub.
+
+== External Services ==
+
+This plugin connects to the following third-party services. By using the relevant features, you agree to their respective terms and privacy policies.
+
+**DataForSEO**
+Used for: keyword research, search volume data, competitor page analysis, and ranked keyword data.
+Data sent: keyword queries, competitor URLs, your DataForSEO API credentials.
+Triggered when: you use the Keyword Research, AI SEO, or Competitor Analysis features.
+Terms of Service: https://dataforseo.com/terms-and-conditions
+Privacy Policy: https://dataforseo.com/privacy-policy
+
+**OpenAI**
+Used for: AI-powered SEO content suggestions and analysis (including optional image alt-text generation when configured).
+Data sent: page content, keywords, and prompts you provide to the AI features.
+Triggered when: you use any AI content feature in the plugin.
+Terms of Service: https://openai.com/policies/terms-of-use
+Privacy Policy: https://openai.com/policies/privacy-policy
+
+If you choose a **custom OpenAI-compatible API endpoint** in settings, requests are sent to the host and URL you configure; that provider’s terms and privacy policy apply instead of (or in addition to) OpenAI’s.
+
+**IndexNow**
+Used for: notifying search engines of new or updated content for faster indexing.
+Data sent: URLs of published or updated posts/pages on your site.
+Triggered when: you publish or update a post/page (only if IndexNow is enabled in settings).
+Terms of Service: https://www.indexnow.org/faq
+Privacy Policy: https://www.indexnow.org/faq
+
+**Google Search Console (GSC)**
+Used for: retrieving keyword and performance data for your site.
+Data sent: OAuth credentials and your site's Search Console property URL.
+Triggered when: you connect your Google account in the GSC settings.
+Terms of Service: https://developers.google.com/terms
+Privacy Policy: https://policies.google.com/privacy
+
+**Google Sitemaps Ping**
+Used for: notifying Google of updated sitemaps.
+Data sent: your sitemap URL.
+Triggered when: you publish or update content (only if sitemap ping is enabled in settings).
+Terms of Service: https://policies.google.com/terms
+Privacy Policy: https://policies.google.com/privacy
+
+**Google PageSpeed Insights API**
+Used for: Core Web Vitals and PageSpeed performance data in the admin.
+Data sent: the page URL being tested and, if you add one, your Google PageSpeed API key.
+Triggered when: you run a Core Web Vitals / PageSpeed check from the plugin.
+Terms of Service: https://developers.google.com/terms
+Privacy Policy: https://policies.google.com/privacy
+
+**Slack (Incoming Webhooks)**
+Used for: sending notification messages to a Slack workspace you configure.
+Data sent: message payloads to your webhook URL (commonly on hooks.slack.com).
+Triggered when: you enable Slack notifications and an event sends a message, or you send a test from settings.
+Terms of Service: https://slack.com/terms-of-service
+Privacy Policy: https://slack.com/trust/privacy/privacy-policy
+
+**OpenStreetMap Nominatim (geocoding)**
+Used for: turning your local business address into latitude and longitude for Local SEO / schema fields.
+Data sent: the address text you enter (request is made from your browser to Nominatim).
+Triggered when: you use the “lookup coordinates from address” control in Meyvora SEO settings.
+Terms of Service / usage policy: https://operations.osmfoundation.org/policies/nominatim/
+Privacy Policy: https://wiki.openstreetmap.org/wiki/Privacy_policy
+
+**User-specified URLs (HTTP requests)**
+Used for: loading a competitor page for analysis, checking whether outbound links respond, and similar tools.
+Data sent: standard HTTP requests only to URLs you enter or that appear in your content (for example competitor pages or link targets). No fixed third-party vendor is used for these requests beyond the site you target.
+Triggered when: you use competitor analysis, the link checker, or related features against those URLs.
+Terms of Service: varies by each destination website.
+Privacy Policy: varies by each destination website.
+
+Visitors’ browsers may also load **Google Analytics 4 / gtag.js** from Google when you enable GA4 measurement ID output in settings; see Google’s terms and privacy policy linked above.
+
+Core SEO features (meta tags, sitemap generation, redirects, schema, on-server analysis without APIs) run on your WordPress installation without contacting these services unless you enable the relevant options.
 
 == Changelog ==
 

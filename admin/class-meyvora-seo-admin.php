@@ -386,17 +386,17 @@ class Meyvora_SEO_Admin {
 
 		<nav class="mev-insights-tabs" aria-label="Insights navigation">
 		  <a href="<?php echo esc_url( admin_url( 'admin.php?page=meyvora-seo-reports' ) ); ?>"
-		     class="mev-itab <?php echo ( $current_page === 'reports' ) ? 'mev-itab--active' : ''; ?>">
+		     class="mev-itab <?php echo esc_attr( ( $current_page === 'reports' ) ? 'mev-itab--active' : '' ); ?>">
 		    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
 		    Reports
 		  </a>
 		  <a href="<?php echo esc_url( admin_url( 'admin.php?page=meyvora-seo-audit' ) ); ?>"
-		     class="mev-itab <?php echo ( $current_page === 'content-audit' ) ? 'mev-itab--active' : ''; ?>">
+		     class="mev-itab <?php echo esc_attr( ( $current_page === 'content-audit' ) ? 'mev-itab--active' : '' ); ?>">
 		    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
 		    Content Audit
 		  </a>
 		  <a href="<?php echo esc_url( admin_url( 'admin.php?page=meyvora-seo-site-audit' ) ); ?>"
-		     class="mev-itab <?php echo ( $current_page === 'site-audit' ) ? 'mev-itab--active' : ''; ?>">
+		     class="mev-itab <?php echo esc_attr( ( $current_page === 'site-audit' ) ? 'mev-itab--active' : '' ); ?>">
 		    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
 		    Site Audit
 		  </a>
@@ -406,11 +406,11 @@ class Meyvora_SEO_Admin {
 		<div class="mev-audit-summary">
 		  <div class="mev-audit-summary-item"><span class="mev-icon-wrap"><?php echo wp_kses_post( meyvora_seo_icon( 'bar_chart_2', array( 'width' => 18, 'height' => 18 ) ) ); ?></span> <?php printf( /* translators: %d: total number of posts */ esc_html__( '%d total', 'meyvora-seo' ), count( $all_ids ) ); ?></div>
 		  <div style="width:1px;background:var(--mev-border);height:16px;"></div>
-		  <div class="mev-audit-summary-item"><span class="mev-badge mev-badge--green"><?php echo wp_kses_post( meyvora_seo_icon( 'circle_check', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php echo (int) $sum_good; ?> <?php esc_html_e( 'Good', 'meyvora-seo' ); ?></span></div>
-		  <div class="mev-audit-summary-item"><span class="mev-badge mev-badge--orange"><?php echo wp_kses_post( meyvora_seo_icon( 'alert_triangle', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php echo (int) $sum_okay; ?> <?php esc_html_e( 'Okay', 'meyvora-seo' ); ?></span></div>
-		  <div class="mev-audit-summary-item"><span class="mev-badge mev-badge--red"><?php echo wp_kses_post( meyvora_seo_icon( 'circle_x', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php echo (int) $sum_poor; ?> <?php esc_html_e( 'Poor', 'meyvora-seo' ); ?></span></div>
+		  <div class="mev-audit-summary-item"><span class="mev-badge mev-badge--green"><?php echo wp_kses_post( meyvora_seo_icon( 'circle_check', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php echo esc_html( (string) (int) $sum_good ); ?> <?php esc_html_e( 'Good', 'meyvora-seo' ); ?></span></div>
+		  <div class="mev-audit-summary-item"><span class="mev-badge mev-badge--orange"><?php echo wp_kses_post( meyvora_seo_icon( 'alert_triangle', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php echo esc_html( (string) (int) $sum_okay ); ?> <?php esc_html_e( 'Okay', 'meyvora-seo' ); ?></span></div>
+		  <div class="mev-audit-summary-item"><span class="mev-badge mev-badge--red"><?php echo wp_kses_post( meyvora_seo_icon( 'circle_x', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php echo esc_html( (string) (int) $sum_poor ); ?> <?php esc_html_e( 'Poor', 'meyvora-seo' ); ?></span></div>
 		  <?php if ( $sum_none > 0 ) : ?>
-		  <div class="mev-audit-summary-item"><span class="mev-badge mev-badge--gray"><?php echo wp_kses_post( meyvora_seo_icon( 'square', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php echo (int) $sum_none; ?> <?php esc_html_e( 'Not analyzed', 'meyvora-seo' ); ?></span></div>
+		  <div class="mev-audit-summary-item"><span class="mev-badge mev-badge--gray"><?php echo wp_kses_post( meyvora_seo_icon( 'square', array( 'width' => 14, 'height' => 14 ) ) ); ?> <?php echo esc_html( (string) (int) $sum_none ); ?> <?php esc_html_e( 'Not analyzed', 'meyvora-seo' ); ?></span></div>
 		  <?php endif; ?>
 		</div>
 
@@ -484,30 +484,30 @@ class Meyvora_SEO_Admin {
 				  }
 				  $edit_url = get_edit_post_link( $pid, 'raw' ) ?: '#';
 			  ?>
-			  <tr class="mev-audit-row" data-pid="<?php echo (int) $pid; ?>" style="cursor:pointer;">
-				<td><button type="button" class="mev-row-expand-btn" data-pid="<?php echo (int) $pid; ?>" aria-label="<?php esc_attr_e( 'Expand', 'meyvora-seo' ); ?>" style="transition:transform 0.2s ease;">▶</button></td>
+			  <tr class="mev-audit-row" data-pid="<?php echo esc_attr( (string) (int) $pid ); ?>" style="cursor:pointer;">
+				<td><button type="button" class="mev-row-expand-btn" data-pid="<?php echo esc_attr( (string) (int) $pid ); ?>" aria-label="<?php esc_attr_e( 'Expand', 'meyvora-seo' ); ?>" style="transition:transform 0.2s ease;">▶</button></td>
 				<td>
 				  <div style="font-weight:600;color:var(--mev-gray-800);"><?php echo esc_html( $p->post_title ?: __( '(no title)', 'meyvora-seo' ) ); ?></div>
 				  <span class="mev-post-type mev-post-type--<?php echo esc_attr( $p->post_type ); ?>"><?php echo esc_html( $p->post_type ); ?></span>
 				</td>
-				<td><span class="mev-score-pill mev-score-pill--<?php echo esc_attr( $sc_cls ); ?>"><?php echo $score !== null ? (int) $score : '—'; ?></span></td>
-				<td><?php if ( $read !== null ) : ?><span class="mev-score-pill mev-score-pill--<?php echo esc_attr( $read_cls ); ?>"><?php echo (int) $read; ?></span><?php else : ?><span style="color:var(--mev-gray-300);">—</span><?php endif; ?></td>
+				<td><span class="mev-score-pill mev-score-pill--<?php echo esc_attr( $sc_cls ); ?>"><?php echo $score !== null ? esc_html( (string) (int) $score ) : '&mdash;'; ?></span></td>
+				<td><?php if ( $read !== null ) : ?><span class="mev-score-pill mev-score-pill--<?php echo esc_attr( $read_cls ); ?>"><?php echo esc_html( (string) (int) $read ); ?></span><?php else : ?><span style="color:var(--mev-gray-300);"><?php echo '&mdash;'; ?></span><?php endif; ?></td>
 				<td style="font-size:12px;"><?php echo $kw ? esc_html( $kw ) : '<em style="color:var(--mev-gray-300);">' . esc_html__( 'Not set', 'meyvora-seo' ) . '</em>'; ?></td>
 				<td style="text-align:center;"><?php echo trim( (string) $title_v ) !== '' ? '<span style="color:var(--mev-success);">' . wp_kses_post( meyvora_seo_icon( 'check', array( 'width' => 14, 'height' => 14 ) ) ) . '</span>' : '<span style="color:var(--mev-danger);">' . wp_kses_post( meyvora_seo_icon( 'circle_x', array( 'width' => 14, 'height' => 14 ) ) ) . '</span>'; ?></td>
 				<td style="text-align:center;"><?php echo trim( (string) $desc_v ) !== '' ? '<span style="color:var(--mev-success);">' . wp_kses_post( meyvora_seo_icon( 'check', array( 'width' => 14, 'height' => 14 ) ) ) . '</span>' : '<span style="color:var(--mev-danger);">' . wp_kses_post( meyvora_seo_icon( 'circle_x', array( 'width' => 14, 'height' => 14 ) ) ) . '</span>'; ?></td>
 				<td>
 				  <div class="mev-issue-count">
-					<?php if ( $fails > 0 ) : ?><span class="mev-issue-fail"><?php echo (int) $fails; ?><?php echo wp_kses_post( meyvora_seo_icon( 'circle_x', array( 'width' => 14, 'height' => 14 ) ) ); ?></span><?php endif; ?>
-					<?php if ( $warns > 0 ) : ?><span class="mev-issue-warn"><?php echo (int) $warns; ?><?php echo wp_kses_post( meyvora_seo_icon( 'alert_triangle', array( 'width' => 14, 'height' => 14 ) ) ); ?></span><?php endif; ?>
+					<?php if ( $fails > 0 ) : ?><span class="mev-issue-fail"><?php echo esc_html( (string) (int) $fails ); ?><?php echo wp_kses_post( meyvora_seo_icon( 'circle_x', array( 'width' => 14, 'height' => 14 ) ) ); ?></span><?php endif; ?>
+					<?php if ( $warns > 0 ) : ?><span class="mev-issue-warn"><?php echo esc_html( (string) (int) $warns ); ?><?php echo wp_kses_post( meyvora_seo_icon( 'alert_triangle', array( 'width' => 14, 'height' => 14 ) ) ); ?></span><?php endif; ?>
 					<?php if ( ! $fails && ! $warns ) : ?><span style="color:var(--mev-success);"><?php echo wp_kses_post( meyvora_seo_icon( 'check', array( 'width' => 14, 'height' => 14 ) ) ); ?></span><?php endif; ?>
 				  </div>
 				</td>
 				<td><?php echo $noindex ? '<span class="mev-badge mev-badge--red">' . esc_html__( 'Noindex', 'meyvora-seo' ) . '</span>' : '<span class="mev-badge mev-badge--green">' . esc_html__( 'Indexed', 'meyvora-seo' ) . '</span>'; ?></td>
 				<td onclick="event.stopPropagation()"><a href="<?php echo esc_url( $edit_url ); ?>" class="mev-btn mev-btn--secondary mev-btn--sm"><?php esc_html_e( 'Edit', 'meyvora-seo' ); ?></a></td>
 			  </tr>
-			  <tr id="mev-detail-<?php echo (int) $pid; ?>" class="mev-detail-row">
+			  <tr id="mev-detail-<?php echo esc_attr( (string) (int) $pid ); ?>" class="mev-detail-row">
 				<td colspan="10">
-				  <div class="mev-row-detail" id="mev-detail-body-<?php echo (int) $pid; ?>">
+				  <div class="mev-row-detail" id="mev-detail-body-<?php echo esc_attr( (string) (int) $pid ); ?>">
 					<?php
 					if ( isset( $meta[ MEYVORA_SEO_META_ANALYSIS ] ) ) {
 						$dec = json_decode( $meta[ MEYVORA_SEO_META_ANALYSIS ], true );
@@ -523,7 +523,7 @@ class Meyvora_SEO_Admin {
 								foreach ( $fail_items as $r ) {
 									echo '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;">';
 									echo '<span>' . wp_kses_post( meyvora_seo_icon( 'circle_x', array( 'width' => 14, 'height' => 14 ) ) ) . '</span><span style="color:var(--mev-gray-700);">' . esc_html( $r['message'] ?? $r['label'] ?? '' ) . '</span>';
-									echo '<span style="margin-left:auto;color:var(--mev-danger);font-size:11px;font-weight:700;">0/' . (int) ( $r['weight'] ?? 0 ) . ' ' . esc_html__( 'pts', 'meyvora-seo' ) . '</span>';
+									echo '<span style="margin-left:auto;color:var(--mev-danger);font-size:11px;font-weight:700;">0/' . esc_html( (string) (int) ( $r['weight'] ?? 0 ) ) . ' ' . esc_html__( 'pts', 'meyvora-seo' ) . '</span>';
 									echo '</div>';
 								}
 							}
@@ -563,76 +563,13 @@ class Meyvora_SEO_Admin {
 			for ( $i = 1; $i <= $pages; $i++ ) {
 				$url = add_query_arg( array( 'page' => 'meyvora-seo-audit', 'paged' => $i, 'mev_score' => $score_filter, 's' => $search ), admin_url( 'admin.php' ) );
 				?>
-			<a href="<?php echo esc_url( $url ); ?>" class="mev-btn <?php echo $i === $paged ? 'mev-btn--primary' : 'mev-btn--secondary'; ?> mev-btn--sm"><?php echo (int) $i; ?></a>
+			<a href="<?php echo esc_url( $url ); ?>" class="mev-btn <?php echo esc_attr( $i === $paged ? 'mev-btn--primary' : 'mev-btn--secondary' ); ?> mev-btn--sm"><?php echo esc_html( (string) (int) $i ); ?></a>
 			<?php } ?>
 		  </div>
 		</div>
 		<?php endif; ?>
 
 		</div><!-- /.wrap -->
-		<script>
-		(function(){
-			var DURATION_MS = 350;
-
-			function mevToggleDetail(pid) {
-				var detailBody = document.getElementById('mev-detail-body-' + pid);
-				var btn = document.querySelector('.mev-row-expand-btn[data-pid="' + pid + '"]');
-				if (!detailBody) return;
-				var isOpen = detailBody.classList.contains('is-open');
-
-				if (isOpen) {
-					// Close: capture current height, then animate to 0
-					var startHeight = detailBody.scrollHeight;
-					detailBody.style.height = startHeight + 'px';
-					detailBody.style.padding = '14px 20px';
-					detailBody.offsetHeight;
-					detailBody.classList.remove('is-open');
-					detailBody.style.height = '0';
-					detailBody.style.padding = '0 20px';
-					detailBody.addEventListener('transitionend', function onCloseEnd(e) {
-						if (e.propertyName !== 'height') return;
-						detailBody.removeEventListener('transitionend', onCloseEnd);
-						detailBody.style.height = '';
-						detailBody.style.padding = '';
-					}, { once: true });
-				} else {
-					// Open: add class, measure content height (incl. padding 14px top+bottom), animate from 0
-					detailBody.classList.add('is-open');
-					detailBody.style.height = '0';
-					detailBody.style.padding = '0 20px';
-					detailBody.offsetHeight;
-					var contentHeight = detailBody.scrollHeight;
-					var endHeight = contentHeight + 28;
-					detailBody.style.height = endHeight + 'px';
-					detailBody.style.padding = '14px 20px';
-					detailBody.addEventListener('transitionend', function onOpenEnd(e) {
-						if (e.propertyName !== 'height') return;
-						detailBody.removeEventListener('transitionend', onOpenEnd);
-						detailBody.style.height = 'auto';
-						detailBody.style.padding = '14px 20px';
-					}, { once: true });
-				}
-
-				if (btn) {
-					btn.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(90deg)';
-					btn.style.color = isOpen ? '' : 'var(--mev-primary)';
-				}
-				var dataRow = document.querySelector('.mev-audit-row[data-pid="' + pid + '"]');
-				if (dataRow) dataRow.classList.toggle('is-expanded', !isOpen);
-			}
-			window.mevToggleDetail = mevToggleDetail;
-
-			document.addEventListener('DOMContentLoaded', function() {
-				document.querySelectorAll('.mev-audit-row').forEach(function(row) {
-					row.addEventListener('click', function(e) {
-						if (e.target.tagName === 'A' || e.target.tagName === 'INPUT') return;
-						var pid = this.dataset.pid;
-						if (pid) mevToggleDetail(pid);
-					});
-				});
-			});
-		})();
-		</script>
 		<?php
 	}
 
@@ -685,10 +622,10 @@ class Meyvora_SEO_Admin {
 		if ( ! in_array( $source, array( 'yoast', 'rankmath', 'aioseo' ), true ) ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid source.', 'meyvora-seo' ) ) );
 		}
-		$offset = isset( $_POST['offset'] ) ? max( 0, (int) $_POST['offset'] ) : 0;
-		$dry_run = ! empty( $_POST['dry_run'] );
-		$delete_after = ! empty( $_POST['delete_after'] );
-		$import_redirects = ! empty( $_POST['import_redirects'] );
+		$offset = isset( $_POST['offset'] ) ? max( 0, absint( wp_unslash( $_POST['offset'] ) ) ) : 0;
+		$dry_run          = ! empty( sanitize_key( wp_unslash( $_POST['dry_run'] ?? '' ) ) );
+		$delete_after     = ! empty( sanitize_key( wp_unslash( $_POST['delete_after'] ?? '' ) ) );
+		$import_redirects = ! empty( sanitize_key( wp_unslash( $_POST['import_redirects'] ?? '' ) ) );
 
 		$redirects_count = 0;
 		if ( $offset === 0 && $import_redirects ) {
@@ -749,7 +686,7 @@ class Meyvora_SEO_Admin {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Forbidden', 'meyvora-seo' ) ) );
 		}
-		$source_id   = isset( $_POST['source_id'] ) ? (int) $_POST['source_id'] : 0;
+		$source_id   = isset( $_POST['source_id'] ) ? absint( wp_unslash( $_POST['source_id'] ) ) : 0;
 		$final_target = isset( $_POST['final_target'] ) ? sanitize_text_field( wp_unslash( $_POST['final_target'] ) ) : '';
 		if ( $source_id <= 0 || $final_target === '' ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid source_id or final_target.', 'meyvora-seo' ) ) );
@@ -778,16 +715,14 @@ class Meyvora_SEO_Admin {
 	}
 
 	/**
-	 * Build traffic data for dashboard (GSC summary, GA4 top posts).
+	 * Build traffic data for dashboard (GSC summary).
 	 *
-	 * @return array{gsc_summary: array{clicks: int, impressions: int}|null, ga4_top_posts: array, gsc_connected: bool, ga4_connected: bool}
+	 * @return array{gsc_summary: array{clicks: int, impressions: int}|null, gsc_connected: bool, ctr_opportunities: array, decaying_pages_count: int}
 	 */
 	private function get_dashboard_traffic_data(): array {
 		$data = array(
 			'gsc_summary'          => null,
-			'ga4_top_posts'        => array(),
 			'gsc_connected'        => false,
-			'ga4_connected'        => false,
 			'ctr_opportunities'    => array(),
 			'decaying_pages_count' => 0,
 		);
@@ -810,21 +745,6 @@ class Meyvora_SEO_Admin {
 					);
 					$data['ctr_opportunities'] = $gsc->get_ctr_opportunities( 5 );
 					$data['decaying_pages_count'] = count( $gsc->get_decaying_pages( 10 ) );
-				}
-			}
-		}
-
-		// GA4: top 5 pages by pageviews when advanced connected.
-		if ( class_exists( 'Meyvora_SEO_GA4' ) ) {
-			$ga4_file = MEYVORA_SEO_PATH . 'modules/class-meyvora-seo-ga4.php';
-			if ( file_exists( $ga4_file ) ) {
-				require_once $ga4_file;
-			}
-			if ( class_exists( 'Meyvora_SEO_GA4' ) ) {
-				$ga4 = new Meyvora_SEO_GA4( meyvora_seo()->get_loader(), meyvora_seo()->get_options() );
-				if ( $ga4->is_advanced_connected() ) {
-					$data['ga4_connected'] = true;
-					$data['ga4_top_posts'] = $ga4->get_top_posts_by_views( 5 );
 				}
 			}
 		}
@@ -883,19 +803,6 @@ class Meyvora_SEO_Admin {
 					$gsc->disconnect();
 				}
 			}
-			wp_safe_redirect( add_query_arg( array( 'page' => 'meyvora-seo-settings', 'tab' => 'tab-integrations' ), admin_url( 'admin.php' ) ) );
-			exit;
-		}
-		if ( isset( $_GET['meyvora_ga4_disconnect'] ) && isset( $_GET['_wpnonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'meyvora_ga4_disconnect' ) ) {
-			$ga4_file = MEYVORA_SEO_PATH . 'modules/class-meyvora-seo-ga4.php';
-			if ( file_exists( $ga4_file ) ) {
-				require_once $ga4_file;
-				if ( class_exists( 'Meyvora_SEO_GA4' ) ) {
-					$ga4 = new Meyvora_SEO_GA4( meyvora_seo()->get_loader(), meyvora_seo()->get_options() );
-					$ga4->disconnect();
-				}
-			}
-			$this->options->update_all( array( 'ga4_credentials_encrypted' => '', 'ga4_property_id' => '' ) );
 			wp_safe_redirect( add_query_arg( array( 'page' => 'meyvora-seo-settings', 'tab' => 'tab-integrations' ), admin_url( 'admin.php' ) ) );
 			exit;
 		}
@@ -987,7 +894,58 @@ class Meyvora_SEO_Admin {
 				defined( 'MEYVORA_SEO_VERSION' ) ? MEYVORA_SEO_VERSION : '1.0.0'
 			);
 		}
+		if ( $hook_suffix === 'meyvora-seo_page_meyvora-seo-audit' || $hook_suffix === 'meyvora-seo_page_meyvora-seo-site-audit' ) {
+			$url  = defined( 'MEYVORA_SEO_URL' ) ? MEYVORA_SEO_URL : '';
+			$path = defined( 'MEYVORA_SEO_PATH' ) ? MEYVORA_SEO_PATH : '';
+			$ver  = defined( 'MEYVORA_SEO_VERSION' ) ? MEYVORA_SEO_VERSION : '1.0.0';
+			$file = $path ? $path . 'admin/assets/js/meyvora-audit-expand.js' : '';
+			if ( $file && file_exists( $file ) ) {
+				wp_enqueue_script( 'meyvora-audit-expand', $url . 'admin/assets/js/meyvora-audit-expand.js', array(), $ver, true );
+			}
+		}
+		if ( $hook_suffix === 'meyvora-seo_page_meyvora-seo-import' ) {
+			$url  = defined( 'MEYVORA_SEO_URL' ) ? MEYVORA_SEO_URL : '';
+			$path = defined( 'MEYVORA_SEO_PATH' ) ? MEYVORA_SEO_PATH : '';
+			$ver  = defined( 'MEYVORA_SEO_VERSION' ) ? MEYVORA_SEO_VERSION : '1.0.0';
+			$file = $path ? $path . 'admin/assets/js/meyvora-import-batch.js' : '';
+			$batch_size = 100;
+			$import_file = $path ? $path . 'admin/class-meyvora-seo-import.php' : '';
+			if ( $import_file && file_exists( $import_file ) ) {
+				require_once $import_file;
+				if ( class_exists( 'Meyvora_SEO_Import' ) ) {
+					$batch_size = Meyvora_SEO_Import::BATCH_SIZE;
+				}
+			}
+			if ( $file && file_exists( $file ) ) {
+				wp_enqueue_script( 'meyvora-import-batch', $url . 'admin/assets/js/meyvora-import-batch.js', array( 'jquery' ), $ver, true );
+				wp_localize_script(
+					'meyvora-import-batch',
+					'meyvoraSeoImport',
+					array(
+						'batchSize' => (int) $batch_size,
+						'nonce'     => wp_create_nonce( 'meyvora_seo_import_batch' ),
+						'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
+					)
+				);
+			}
+		}
 		if ( $hook_suffix === 'meyvora-seo_page_meyvora-seo-redirects' ) {
+			$url_rd = defined( 'MEYVORA_SEO_URL' ) ? MEYVORA_SEO_URL : '';
+			$path_rd = defined( 'MEYVORA_SEO_PATH' ) ? MEYVORA_SEO_PATH : '';
+			$ver_rd = defined( 'MEYVORA_SEO_VERSION' ) ? MEYVORA_SEO_VERSION : '1.0.0';
+			$css_rd = $path_rd ? $path_rd . 'admin/assets/css/meyvora-redirects-page.css' : '';
+			if ( $css_rd && file_exists( $css_rd ) ) {
+				wp_enqueue_style(
+					'meyvora-redirects-page',
+					$url_rd . 'admin/assets/css/meyvora-redirects-page.css',
+					array( 'meyvora-seo-admin' ),
+					$ver_rd
+				);
+			}
+			$tab_js = $path_rd ? $path_rd . 'admin/assets/js/meyvora-redirects-tabs.js' : '';
+			if ( $tab_js && file_exists( $tab_js ) ) {
+				wp_enqueue_script( 'meyvora-redirects-tabs', $url_rd . 'admin/assets/js/meyvora-redirects-tabs.js', array(), $ver_rd, true );
+			}
 			$js_path = defined( 'MEYVORA_SEO_PATH' ) ? MEYVORA_SEO_PATH . 'admin/assets/js/meyvora-redirects-chains.js' : '';
 			if ( $js_path && file_exists( $js_path ) ) {
 				wp_enqueue_script(
@@ -1030,23 +988,48 @@ class Meyvora_SEO_Admin {
 			return;
 		}
 		$this->enqueue_meyvora_toast();
-		wp_add_inline_script( 'jquery', "
-			jQuery(function($){
-				var hash = location.hash ? location.hash.replace('#','') : 'tab-general';
-				$('.meyvora-seo-tab-pane').hide();
-				$('#'+hash).show();
-				$('.mev-settings-nav-item').removeClass('active').filter('[data-tab=\"'+hash+'\"]').addClass('active');
-				$('.mev-settings-nav-item').on('click',function(e){
-					e.preventDefault();
-					var t = $(this).data('tab');
-					location.hash = t;
-					$('.meyvora-seo-tab-pane').hide();
-					$('#'+t).show();
-					$('.mev-settings-nav-item').removeClass('active');
-					$(this).addClass('active');
-				});
-			});
-		" );
+		$css = MEYVORA_SEO_PATH . 'admin/assets/css/meyvora-admin.css';
+		if ( $css && file_exists( $css ) ) {
+			wp_enqueue_style(
+				'meyvora-seo-admin',
+				MEYVORA_SEO_URL . 'admin/assets/css/meyvora-admin.css',
+				array(),
+				MEYVORA_SEO_VERSION
+			);
+		}
+		wp_enqueue_script(
+			'meyvora-seo-settings-page',
+			MEYVORA_SEO_URL . 'admin/assets/js/meyvora-settings-page.js',
+			array( 'jquery' ),
+			MEYVORA_SEO_VERSION,
+			true
+		);
+		wp_localize_script(
+			'meyvora-seo-settings-page',
+			'meyvoraSeoSettings',
+			array(
+				'ajaxUrl'              => admin_url( 'admin-ajax.php' ),
+				'geocodingUrlTemplate' => 'https://nominatim.openstreetmap.org/search?format=json&q=',
+				'slackInputId'          => 'meyvora_seo_score_alert_slack',
+				'slackNonce'            => wp_create_nonce( 'meyvora_seo_test_slack' ),
+				'slackAjaxAction'       => 'meyvora_seo_test_slack_webhook',
+				'openingHoursHiddenId'  => 'schema_lb_hours',
+				'openingDays'           => array( 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ),
+				'i18nGeo'               => array(
+					'fillAddressFirst' => __( 'Please fill in your address fields first.', 'meyvora-seo' ),
+					'foundPrefix'      => __( 'Found: ', 'meyvora-seo' ),
+					'saveHint'          => __( 'Click Save Settings to store.', 'meyvora-seo' ),
+					'notFound'          => __( 'Could not find coordinates. Please enter manually.', 'meyvora-seo' ),
+					'failed'            => __( 'Geocoding failed. Please enter coordinates manually.', 'meyvora-seo' ),
+				),
+				'i18nSlack'             => array(
+					'enterUrl'     => __( 'Enter a URL first.', 'meyvora-seo' ),
+					'sent'         => __( 'Sent.', 'meyvora-seo' ),
+					'failed'       => __( 'Failed.', 'meyvora-seo' ),
+					'requestFailed' => __( 'Request failed.', 'meyvora-seo' ),
+				),
+			)
+		);
 	}
 
 	/**
@@ -1099,7 +1082,7 @@ class Meyvora_SEO_Admin {
 			foreach ( $tabs as $id => $label ) :
 				$icon_name = $tab_icons[ $id ] ?? 'circle_check';
 				?>
-			<a href="#<?php echo esc_attr( $id ); ?>" class="mev-settings-nav-item meyvora-seo-nav-tab <?php echo $id === 'tab-general' ? 'active' : ''; ?>" data-tab="<?php echo esc_attr( $id ); ?>">
+			<a href="#<?php echo esc_attr( $id ); ?>" class="mev-settings-nav-item meyvora-seo-nav-tab <?php echo esc_attr( $id === 'tab-general' ? 'active' : '' ); ?>" data-tab="<?php echo esc_attr( $id ); ?>">
 			  <span class="mev-settings-nav-icon"><?php echo wp_kses_post( meyvora_seo_icon( $icon_name, array( 'width' => 18, 'height' => 18 ) ) ); ?></span>
 			  <?php echo esc_html( $label ); ?>
 			</a>
@@ -1135,7 +1118,7 @@ class Meyvora_SEO_Admin {
 	}
 
 	/**
-	 * Integrations tab: GSC/GA4 connection status and settings sections.
+	 * Integrations tab: GSC connection status and settings sections.
 	 */
 	private function render_integrations_tab(): void {
 		$gsc_file = MEYVORA_SEO_PATH . 'modules/class-meyvora-seo-gsc.php';
@@ -1147,18 +1130,6 @@ class Meyvora_SEO_Admin {
 				$gsc = new Meyvora_SEO_GSC( meyvora_seo()->get_loader(), meyvora_seo()->get_options() );
 				$gsc_connected = $gsc->is_connected();
 				$gsc_auth_url = $gsc->get_auth_url();
-			}
-		}
-		$ga4_advanced = $this->options->get( 'ga4_mode', 'simple' ) === 'advanced';
-		$ga4_advanced_connected = false;
-		if ( $ga4_advanced ) {
-			$ga4_file = MEYVORA_SEO_PATH . 'modules/class-meyvora-seo-ga4.php';
-			if ( file_exists( $ga4_file ) ) {
-				require_once $ga4_file;
-				if ( class_exists( 'Meyvora_SEO_GA4' ) ) {
-					$ga4 = new Meyvora_SEO_GA4( meyvora_seo()->get_loader(), meyvora_seo()->get_options() );
-					$ga4_advanced_connected = $ga4->is_advanced_connected();
-				}
 			}
 		}
 		$redirect_uri = '';
@@ -1191,18 +1162,7 @@ class Meyvora_SEO_Admin {
 			</div>
 			<div class="mev-card" style="padding:16px 20px;">
 				<h3 style="margin-top:0;"><?php esc_html_e( 'Google Analytics 4', 'meyvora-seo' ); ?></h3>
-				<p>
-					<?php if ( $ga4_advanced ) : ?>
-						<?php if ( $ga4_advanced_connected ) : ?>
-							<span style="color:var(--mev-success);"><?php esc_html_e( 'Advanced: Connected (Views column in post list)', 'meyvora-seo' ); ?></span>
-							<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'meyvora_ga4_disconnect', '1', admin_url( 'admin.php?page=meyvora-seo-settings' ) ), 'meyvora_ga4_disconnect', '_wpnonce' ) ); ?>" class="button button-secondary" style="margin-left:12px;"><?php esc_html_e( 'Disconnect', 'meyvora-seo' ); ?></a>
-						<?php else : ?>
-							<span style="color:var(--mev-gray-500);"><?php esc_html_e( 'Advanced: Add Property ID and service account JSON below, then save.', 'meyvora-seo' ); ?></span>
-						<?php endif; ?>
-					<?php else : ?>
-						<span><?php esc_html_e( 'Simple mode: add Measurement ID below to load gtag.js.', 'meyvora-seo' ); ?></span>
-					<?php endif; ?>
-				</p>
+				<p><span><?php esc_html_e( 'gtag.js is added on the front end only when a Measurement ID is set below.', 'meyvora-seo' ); ?></span></p>
 			</div>
 		</div>
 		<?php
@@ -1268,9 +1228,6 @@ class Meyvora_SEO_Admin {
 			<h2><?php esc_html_e( 'System information', 'meyvora-seo' ); ?></h2>
 			<textarea id="meyvora-system-info" readonly class="large-text code" rows="12" style="width:100%;"><?php echo esc_textarea( $text ); ?></textarea>
 			<p><button type="button" class="button" id="meyvora-copy-system-info"><?php esc_html_e( 'Copy system info', 'meyvora-seo' ); ?></button></p>
-			<script>
-				document.getElementById('meyvora-copy-system-info').addEventListener('click', function(){ var t=document.getElementById('meyvora-system-info'); t.select(); t.setSelectionRange(0,99999); navigator.clipboard.writeText(t.value); });
-			</script>
 		</div>
 		<?php
 	}

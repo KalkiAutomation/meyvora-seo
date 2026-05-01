@@ -1,0 +1,381 @@
+/*
+== Source Code == https://github.com/KalkiAutomation/meyvora-seo (admin/assets/css/meyvora-404-monitor.css)
+404 Monitor page layout — previously inline in PHP.
+*/
+
+.mev-404-wrap {
+	max-width: 1200px;
+}
+.mev-404-header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin-bottom: 28px;
+}
+.mev-404-header-left h1 {
+	font-size: 22px;
+	font-weight: 700;
+	color: var(--mev-gray-900);
+	margin: 0 0 4px;
+}
+.mev-404-header-left p {
+	font-size: 13px;
+	color: var(--mev-gray-500);
+	margin: 0;
+}
+.mev-404-header-right {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	flex-wrap: wrap;
+}
+.mev-404-stats {
+	display: flex;
+	gap: 12px;
+	flex-wrap: wrap;
+	margin-bottom: 24px;
+}
+.mev-404-stat {
+	background: var(--mev-surface);
+	border: 1px solid var(--mev-border);
+	border-radius: var(--mev-radius);
+	padding: 14px 20px;
+	min-width: 110px;
+	box-shadow: var(--mev-shadow-sm);
+	position: relative;
+	overflow: hidden;
+}
+.mev-404-stat::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 3px;
+}
+.mev-404-stat.st-total::before {
+	background: var(--mev-accent);
+}
+.mev-404-stat.st-high::before {
+	background: var(--mev-danger);
+}
+.mev-404-stat.st-alert::before {
+	background: var(--mev-success);
+}
+.mev-404-stat .sn {
+	font-size: 26px;
+	font-weight: 700;
+	color: var(--mev-gray-900);
+	line-height: 1;
+}
+.mev-404-stat.st-high .sn {
+	color: var(--mev-danger);
+}
+.mev-404-stat.st-alert .sn {
+	color: var(--mev-success);
+}
+.mev-404-stat .sl {
+	font-size: 11px;
+	color: var(--mev-gray-500);
+	margin-top: 4px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+.mev-404-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	padding: 8px 16px;
+	border-radius: var(--mev-radius-sm);
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.15s;
+	text-decoration: none;
+	border: none;
+}
+.mev-404-btn.btn-primary {
+	background: var(--mev-primary);
+	color: #fff;
+	box-shadow: 0 1px 3px rgba(124, 58, 237, 0.3);
+}
+.mev-404-btn.btn-primary:hover {
+	background: var(--mev-primary-hover);
+	transform: translateY(-1px);
+}
+.mev-404-btn.btn-outline {
+	background: var(--mev-surface);
+	color: var(--mev-gray-700);
+	border: 1.5px solid var(--mev-border);
+}
+.mev-404-btn.btn-outline:hover {
+	border-color: var(--mev-gray-400);
+	background: var(--mev-surface-2);
+	color: var(--mev-gray-900);
+}
+.mev-404-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 16px;
+	background: var(--mev-surface-2);
+	border: 1px solid var(--mev-border);
+	border-radius: var(--mev-radius) var(--mev-radius) 0 0;
+}
+.mev-404-search {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+.mev-404-search input {
+	padding: 7px 10px 7px 32px;
+	border: 1.5px solid var(--mev-border);
+	border-radius: var(--mev-radius-sm);
+	font-size: 13px;
+	color: var(--mev-gray-800);
+	background: var(--mev-surface);
+	width: 260px;
+	transition: border-color 0.15s;
+}
+.mev-404-search input:focus {
+	outline: none;
+	border-color: var(--mev-primary);
+	box-shadow: 0 0 0 3px var(--mev-primary-light);
+}
+.mev-404-search svg {
+	position: absolute;
+	left: 9px;
+	color: var(--mev-gray-400);
+	pointer-events: none;
+}
+.mev-404-table-wrap {
+	border: 1px solid var(--mev-border);
+	border-top: none;
+	border-radius: 0 0 var(--mev-radius) var(--mev-radius);
+	overflow: hidden;
+}
+.mev-404-tbl {
+	width: 100%;
+	border-collapse: collapse;
+	background: var(--mev-surface);
+}
+.mev-404-tbl thead tr {
+	background: var(--mev-surface-2);
+}
+.mev-404-tbl th {
+	padding: 10px 14px;
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--mev-gray-500);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	text-align: left;
+	border-bottom: 1px solid var(--mev-border);
+	white-space: nowrap;
+}
+.mev-404-tbl td {
+	padding: 11px 14px;
+	font-size: 13px;
+	color: var(--mev-gray-700);
+	border-bottom: 1px solid var(--mev-border);
+	vertical-align: top;
+}
+.mev-404-tbl tr:last-child td {
+	border-bottom: none;
+}
+.mev-404-tbl tr:hover td {
+	background: var(--mev-surface-2);
+}
+.mev-404-tbl tr.row-fixed td {
+	opacity: 0.45;
+	text-decoration: line-through;
+}
+.mev-url-cell {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+}
+.mev-url-code {
+	font-family: monospace;
+	font-size: 12px;
+	color: var(--mev-danger);
+	background: var(--mev-danger-light);
+	padding: 3px 8px;
+	border-radius: 4px;
+	word-break: break-all;
+	line-height: 1.4;
+}
+.mev-hit-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 36px;
+	padding: 3px 8px;
+	border-radius: var(--mev-radius-full);
+	font-size: 12px;
+	font-weight: 700;
+}
+.mev-hit-badge.badge-low {
+	background: var(--mev-surface-3);
+	color: var(--mev-gray-600);
+}
+.mev-hit-badge.badge-med {
+	background: var(--mev-warning-light);
+	color: var(--mev-warning);
+}
+.mev-hit-badge.badge-high {
+	background: var(--mev-danger-light);
+	color: var(--mev-danger);
+}
+.mev-404-action-cell {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+.mev-fix-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 5px 12px;
+	background: var(--mev-primary-light);
+	color: var(--mev-primary);
+	border: 1px solid transparent;
+	border-radius: var(--mev-radius-sm);
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.15s;
+}
+.mev-fix-btn:hover {
+	background: var(--mev-primary);
+	color: #fff;
+}
+.mev-404-inline-form {
+	display: none;
+	margin-top: 8px;
+	background: var(--mev-surface-2);
+	border: 1px solid var(--mev-border);
+	border-radius: var(--mev-radius-sm);
+	padding: 10px 12px;
+}
+.mev-404-inline-form.open {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+.mev-404-inline-form input {
+	flex: 1;
+	min-width: 200px;
+	padding: 7px 10px;
+	border: 1.5px solid var(--mev-border);
+	border-radius: var(--mev-radius-sm);
+	font-size: 13px;
+	color: var(--mev-gray-800);
+	background: var(--mev-surface);
+	transition: border-color 0.15s;
+}
+.mev-404-inline-form input:focus {
+	outline: none;
+	border-color: var(--mev-primary);
+}
+.mev-404-submit-btn {
+	padding: 6px 14px;
+	background: var(--mev-primary);
+	color: #fff;
+	border: none;
+	border-radius: var(--mev-radius-sm);
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: all 0.15s;
+}
+.mev-404-submit-btn:hover {
+	background: var(--mev-primary-hover);
+}
+.mev-404-cancel-btn {
+	padding: 6px 12px;
+	background: transparent;
+	color: var(--mev-gray-500);
+	border: 1px solid var(--mev-border);
+	border-radius: var(--mev-radius-sm);
+	font-size: 12px;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: all 0.15s;
+}
+.mev-404-cancel-btn:hover {
+	color: var(--mev-gray-800);
+}
+.mev-404-empty {
+	padding: 64px 24px;
+	text-align: center;
+}
+.mev-404-empty .empty-icon {
+	font-size: 48px;
+	opacity: 0.2;
+	display: block;
+	margin-bottom: 12px;
+}
+.mev-404-empty p {
+	font-size: 14px;
+	color: var(--mev-gray-500);
+	margin: 0;
+}
+.mev-404-alert-card {
+	margin-top: 20px;
+	background: var(--mev-surface);
+	border: 1px solid var(--mev-border);
+	border-radius: var(--mev-radius);
+	box-shadow: var(--mev-shadow-sm);
+	overflow: hidden;
+}
+.mev-404-alert-header {
+	padding: 14px 20px;
+	border-bottom: 1px solid var(--mev-border);
+	background: var(--mev-surface-2);
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+.mev-404-alert-header h3 {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--mev-gray-800);
+}
+.mev-404-alert-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 3px 10px;
+	border-radius: var(--mev-radius-full);
+	font-size: 12px;
+	font-weight: 600;
+}
+.mev-404-alert-status.on {
+	background: var(--mev-success-light);
+	color: var(--mev-success);
+}
+.mev-404-alert-status.off {
+	background: var(--mev-surface-3);
+	color: var(--mev-gray-500);
+}
+.mev-404-alert-body {
+	padding: 16px 20px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+.mev-404-alert-desc {
+	font-size: 13px;
+	color: var(--mev-gray-600);
+	max-width: 500px;
+	line-height: 1.6;
+}

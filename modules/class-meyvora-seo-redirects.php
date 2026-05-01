@@ -5,7 +5,7 @@
  * @package Meyvora_SEO
  */
 
-// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Table from prefix; REQUEST_URI/REFERER for redirect matching only.
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table from prefix; prepared SQL.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -108,8 +108,8 @@ class Meyvora_SEO_Redirects {
 		if ( ! is_404() ) {
 			return;
 		}
-		$uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
-		$referrer = isset( $_SERVER['HTTP_REFERER'] ) ? wp_unslash( $_SERVER['HTTP_REFERER'] ) : '';
+		$uri      = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( (string) $_SERVER['REQUEST_URI'] ) ) : '';
+		$referrer = isset( $_SERVER['HTTP_REFERER'] ) ? esc_url_raw( wp_unslash( (string) $_SERVER['HTTP_REFERER'] ) ) : '';
 		self::log_404( $uri, $referrer );
 	}
 
@@ -151,13 +151,13 @@ class Meyvora_SEO_Redirects {
 			KEY url (url(191))
 		) $charset;";
 
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		require_once trailingslashit( get_home_path() ) . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql_redirects );
 		dbDelta( $sql_404 );
 	}
 
 	public function do_redirect(): void {
-		$uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+		$uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( (string) $_SERVER['REQUEST_URI'] ) ) : '';
 		$uri = preg_replace( '/#.*$/', '', $uri );
 		// Strip query string for path-only exact matching.
 		$path_only = (string) ( wp_parse_url( $uri, PHP_URL_PATH ) ?: $uri );

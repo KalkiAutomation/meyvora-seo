@@ -78,6 +78,14 @@ class Meyvora_SEO_Competitor {
 			return;
 		}
 		wp_enqueue_style( 'meyvora-admin', MEYVORA_SEO_URL . 'admin/assets/css/meyvora-admin.css', array(), MEYVORA_SEO_VERSION );
+		if ( $is_competitor_page ) {
+			wp_enqueue_style(
+				'meyvora-competitor-page',
+				MEYVORA_SEO_URL . 'admin/assets/css/meyvora-competitor-page.css',
+				array( 'meyvora-admin' ),
+				MEYVORA_SEO_VERSION
+			);
+		}
 		wp_enqueue_script(
 			'meyvora-competitor',
 			MEYVORA_SEO_URL . 'admin/assets/js/meyvora-competitor.js',
@@ -153,12 +161,14 @@ class Meyvora_SEO_Competitor {
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Forbidden.', 'meyvora-seo' ) ), 403 );
 		}
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized via esc_url_raw.
-		$competitor_url = isset( $_POST['url'] ) ? esc_url_raw( trim( (string) wp_unslash( $_POST['url'] ) ) ) : '';
+		/*
+		 * sanitize_url + wp_unslash: remote request URL for wp_remote_get(); use esc_url() in templates when outputting.
+		 */
+		$competitor_url = isset( $_POST['url'] ) ? trim( sanitize_url( wp_unslash( $_POST['url'] ) ) ) : '';
 		if ( $competitor_url === '' || ! preg_match( '#^https?://#i', $competitor_url ) ) {
 			wp_send_json_error( array( 'message' => __( 'Please enter a valid competitor URL.', 'meyvora-seo' ) ) );
 		}
-		$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+		$post_id = isset( $_POST['post_id'] ) ? absint( wp_unslash( $_POST['post_id'] ) ) : 0;
 
 		$cache_key = 'meyvora_competitor_' . md5( $competitor_url );
 		$cached = get_transient( $cache_key );
@@ -627,7 +637,7 @@ class Meyvora_SEO_Competitor {
 			wp_send_json_error();
 			return;
 		}
-		$id = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
+		$id = isset( $_POST['id'] ) ? absint( wp_unslash( $_POST['id'] ) ) : 0;
 		if ( $id <= 0 ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid snapshot ID.', 'meyvora-seo' ) ) );
 			return;
@@ -663,8 +673,8 @@ class Meyvora_SEO_Competitor {
 			wp_send_json_error();
 			return;
 		}
-		$id1 = isset( $_POST['id1'] ) ? absint( $_POST['id1'] ) : 0;
-		$id2 = isset( $_POST['id2'] ) ? absint( $_POST['id2'] ) : 0;
+		$id1 = isset( $_POST['id1'] ) ? absint( wp_unslash( $_POST['id1'] ) ) : 0;
+		$id2 = isset( $_POST['id2'] ) ? absint( wp_unslash( $_POST['id2'] ) ) : 0;
 		if ( $id1 <= 0 || $id2 <= 0 ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid snapshot IDs.', 'meyvora-seo' ) ) );
 			return;
@@ -714,6 +724,13 @@ class Meyvora_SEO_Competitor {
 	 */
 	public function schedule_competitor_monitor_cron(): void {
 		$hook = 'meyvora_seo_competitor_monitor';
+		if ( ! $this->options->is_enabled( 'competitor_monitor_enabled' ) ) {
+			$timestamp = wp_next_scheduled( $hook );
+			if ( $timestamp ) {
+				wp_unschedule_event( $timestamp, 'weekly', $hook );
+			}
+			return;
+		}
 		if ( ! wp_next_scheduled( $hook ) ) {
 			wp_schedule_event( time() + 60, 'weekly', $hook );
 		}
@@ -750,6 +767,9 @@ class Meyvora_SEO_Competitor {
 	 * Run weekly competitor monitor: re-fetch each URL with snapshots, compare with last snapshot, fire action if changed.
 	 */
 	public function run_competitor_monitor(): void {
+		if ( ! $this->options->is_enabled( 'competitor_monitor_enabled' ) ) {
+			return;
+		}
 		global $wpdb;
 		$table = $wpdb->prefix . self::TABLE_SNAPSHOTS;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table.

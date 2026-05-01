@@ -61,6 +61,12 @@ class Meyvora_SEO_Reports {
 			return;
 		}
 		wp_enqueue_style( 'meyvora-admin', MEYVORA_SEO_URL . 'admin/assets/css/meyvora-admin.css', array(), MEYVORA_SEO_VERSION );
+		wp_enqueue_style(
+			'meyvora-reports-page',
+			MEYVORA_SEO_URL . 'admin/assets/css/meyvora-reports-page.css',
+			array( 'meyvora-admin' ),
+			MEYVORA_SEO_VERSION
+		);
 	}
 
 	/**
@@ -117,7 +123,6 @@ class Meyvora_SEO_Reports {
 		}
 		$week_start = gmdate( 'Y-m-d', strtotime( 'monday this week', current_time( 'timestamp' ) ) );
 		$gsc_top = array();
-		$ga4_top = array();
 		if ( class_exists( 'Meyvora_SEO_GSC' ) ) {
 			$gsc = new Meyvora_SEO_GSC( meyvora_seo()->get_loader(), meyvora_seo()->get_options() );
 			if ( $gsc->is_connected() ) {
@@ -125,14 +130,7 @@ class Meyvora_SEO_Reports {
 				$gsc_top = isset( $dash['top_queries'] ) && is_array( $dash['top_queries'] ) ? array_slice( $dash['top_queries'], 0, 5 ) : array();
 			}
 		}
-		if ( class_exists( 'Meyvora_SEO_GA4' ) ) {
-			$ga4 = new Meyvora_SEO_GA4( meyvora_seo()->get_loader(), meyvora_seo()->get_options() );
-			if ( method_exists( $ga4, 'get_top_posts_by_views' ) ) {
-				$ga4_top = $ga4->get_top_posts_by_views( 5 );
-			}
-		}
 		update_option( 'meyvora_seo_reports_gsc_snapshot', $gsc_top, false );
-		update_option( 'meyvora_seo_reports_ga4_snapshot', $ga4_top, false );
 
 		$snapshots[] = array(
 			'week_start'       => $week_start,
@@ -284,17 +282,17 @@ class Meyvora_SEO_Reports {
 		<div style="max-width:560px;margin:24px auto;background:#fff;border-radius:12px;box-shadow:0 4px 6px rgba(0,0,0,0.07);overflow:hidden;">
 			<div style="background:linear-gradient(135deg,#7c3aed 0%,#6d28d9 100%);padding:24px;text-align:center;">
 				<h1 style="margin:0;font-size:20px;font-weight:600;color:#fff;">Meyvora SEO</h1>
-				<p style="margin:8px 0 0;font-size:14px;color:rgba(255,255,255,0.9);"><?php echo esc_html( $site_name ); ?> — <?php echo esc_html( $date ); ?></p>
+				<p style="margin:8px 0 0;font-size:14px;color:rgba(255,255,255,0.9);"><?php echo esc_html( $site_name ); ?> &mdash; <?php echo esc_html( $date ); ?></p>
 			</div>
 			<div style="padding:24px;">
 				<p style="margin:0 0 16px;font-size:15px;"><?php esc_html_e( 'Your weekly SEO health summary:', 'meyvora-seo' ); ?></p>
 				<div style="background:#f9fafb;border-radius:10px;padding:20px;margin-bottom:20px;text-align:center;">
 					<div style="font-size:13px;color:#6b7280;margin-bottom:4px;"><?php esc_html_e( 'Overall score', 'meyvora-seo' ); ?></div>
-					<div style="font-size:36px;font-weight:700;color:#7c3aed;"><?php echo (int) $score; ?><span style="font-size:18px;color:#9ca3af;">/100</span></div>
+					<div style="font-size:36px;font-weight:700;color:#7c3aed;"><?php echo esc_html( (string) (int) $score ); ?><span style="font-size:18px;color:#9ca3af;">/100</span></div>
 				</div>
 				<div style="margin-bottom:20px;">
 					<p style="margin:0 0 8px;font-size:14px;color:#6b7280;"><?php esc_html_e( 'New issues this week:', 'meyvora-seo' ); ?></p>
-					<p style="margin:0;font-size:20px;font-weight:600;color:<?php echo (int) $new_issues > 0 ? '#d97706' : '#059669'; ?>;"><?php echo (int) $new_issues; ?></p>
+					<p style="margin:0;font-size:20px;font-weight:600;color:<?php echo esc_attr( (int) $new_issues > 0 ? '#d97706' : '#059669' ); ?>;"><?php echo esc_html( (string) (int) $new_issues ); ?></p>
 				</div>
 				<?php if ( $gsc_clicks > 0 || $gsc_impressions > 0 || $prev_clicks > 0 || $prev_impressions > 0 ) : ?>
 				<div style="margin-bottom:20px;">
@@ -329,7 +327,7 @@ class Meyvora_SEO_Reports {
 					<?php foreach ( $top3_fix as $item ) : ?>
 					<li style="margin-bottom:8px;">
 						<a href="<?php echo esc_url( $item['edit'] ?? '#' ); ?>" style="color:#7c3aed;text-decoration:none;font-size:14px;"><?php echo esc_html( $item['title'] ?? __( '(no title)', 'meyvora-seo' ) ); ?></a>
-						<span style="color:#9ca3af;font-size:13px;"> — <?php echo (int) ( $item['score'] ?? 0 ); ?>/100</span>
+						<span style="color:#9ca3af;font-size:13px;"> &mdash; <?php echo esc_html( (string) (int) ( $item['score'] ?? 0 ) ); ?>/100</span>
 					</li>
 					<?php endforeach; ?>
 				</ul>
@@ -344,7 +342,7 @@ class Meyvora_SEO_Reports {
 						<?php foreach ( $ctr_opportunities as $opp ) : ?>
 						<li style="margin-bottom:6px;">
 							<a href="<?php echo esc_url( $opp['url'] ?? '#' ); ?>" style="color:#7c3aed;text-decoration:none;word-break:break-all;"><?php echo esc_html( wp_parse_url( $opp['url'] ?? '', PHP_URL_PATH ) ?: ( $opp['url'] ?? '' ) ); ?></a>
-							<span style="color:#6b7280;"> — <?php echo esc_html( sprintf( /* translators: position, impressions, CTR */ __( 'Pos %1$s, %2$s impr, %3$s%% CTR', 'meyvora-seo' ), (string) ( $opp['position'] ?? 0 ), number_format_i18n( (int) ( $opp['impressions'] ?? 0 ) ), (string) ( $opp['ctr'] ?? 0 ) ) ); ?></span>
+							<span style="color:#6b7280;"> &mdash; <?php echo esc_html( sprintf( /* translators: position, impressions, CTR */ __( 'Pos %1$s, %2$s impr, %3$s%% CTR', 'meyvora-seo' ), (string) ( $opp['position'] ?? 0 ), number_format_i18n( (int) ( $opp['impressions'] ?? 0 ) ), (string) ( $opp['ctr'] ?? 0 ) ) ); ?></span>
 						</li>
 						<?php endforeach; ?>
 					</ul>
@@ -360,7 +358,7 @@ class Meyvora_SEO_Reports {
 						<?php foreach ( $decaying_pages as $dec ) : ?>
 						<li style="margin-bottom:6px;">
 							<a href="<?php echo esc_url( $dec['url'] ?? '#' ); ?>" style="color:#7c3aed;text-decoration:none;word-break:break-all;"><?php echo esc_html( wp_parse_url( $dec['url'] ?? '', PHP_URL_PATH ) ?: ( $dec['url'] ?? '' ) ); ?></a>
-							<span style="color:#6b7280;"> — <?php echo esc_html( sprintf( /* translators: current clicks, previous clicks, drop percent */ __( '%1$s → %2$s clicks, %3$s%% drop', 'meyvora-seo' ), number_format_i18n( (int) ( $dec['curr'] ?? 0 ) ), number_format_i18n( (int) ( $dec['prev'] ?? 0 ) ), (string) ( $dec['drop_pct'] ?? 0 ) ) ); ?></span>
+							<span style="color:#6b7280;"> &mdash; <?php echo esc_html( sprintf( /* translators: current clicks, previous clicks, drop percent */ __( '%1$s → %2$s clicks, %3$s%% drop', 'meyvora-seo' ), number_format_i18n( (int) ( $dec['curr'] ?? 0 ) ), number_format_i18n( (int) ( $dec['prev'] ?? 0 ) ), (string) ( $dec['drop_pct'] ?? 0 ) ) ); ?></span>
 						</li>
 						<?php endforeach; ?>
 					</ul>
@@ -380,7 +378,7 @@ class Meyvora_SEO_Reports {
 							<?php else : ?>
 								<span><?php echo esc_html( $sp['title'] ?? __( '(no title)', 'meyvora-seo' ) ); ?></span>
 							<?php endif; ?>
-							<span style="color:#6b7280;"> — <?php echo (int) ( $sp['days_old'] ?? 0 ); ?> <?php esc_html_e( 'days since update', 'meyvora-seo' ); ?></span>
+							<span style="color:#6b7280;"> &mdash; <?php echo esc_html( (string) (int) ( $sp['days_old'] ?? 0 ) ); ?> <?php esc_html_e( 'days since update', 'meyvora-seo' ); ?></span>
 						</li>
 						<?php endforeach; ?>
 					</ul>
@@ -414,6 +412,27 @@ class Meyvora_SEO_Reports {
 			wp_die( esc_html__( 'Invalid link.', 'meyvora-seo' ) );
 		}
 		$data   = $this->get_report_data( true );
+		wp_enqueue_style(
+			'meyvora-report-print',
+			MEYVORA_SEO_URL . 'admin/assets/css/meyvora-report-print.css',
+			array(),
+			MEYVORA_SEO_VERSION
+		);
+		wp_enqueue_script(
+			'meyvora-report-print',
+			MEYVORA_SEO_URL . 'admin/assets/js/meyvora-report-print.js',
+			array(),
+			MEYVORA_SEO_VERSION,
+			true
+		);
+		wp_localize_script(
+			'meyvora-report-print',
+			'meyvoraReportPrint',
+			array(
+				'autoPrintPdf'   => $is_pdf,
+				'checkPrintQuery' => ! $is_pdf,
+			)
+		);
 		$print_view = MEYVORA_SEO_PATH . 'admin/views/report-print.php';
 		if ( file_exists( $print_view ) ) {
 			include $print_view;
@@ -658,26 +677,6 @@ class Meyvora_SEO_Reports {
 			$gsc_opportunities = $gsc->get_ctr_opportunities( 5 );
 		}
 
-		$ga4_connected = false;
-		$ga4_top_posts = array();
-		if ( class_exists( 'Meyvora_SEO_GA4' ) ) {
-			$ga4 = new Meyvora_SEO_GA4( meyvora_seo()->get_loader(), meyvora_seo()->get_options() );
-			if ( method_exists( $ga4, 'get_top_posts_by_views' ) ) {
-				$ga4_raw = $ga4->get_top_posts_by_views( 5 );
-				if ( ! empty( $ga4_raw ) ) {
-					$ga4_connected = true;
-					foreach ( $ga4_raw as $item ) {
-						$path = isset( $item['path'] ) ? $item['path'] : '';
-						$views = isset( $item['views'] ) ? (int) $item['views'] : 0;
-						$url = home_url( $path );
-						$post_id = url_to_postid( $url );
-						$title = $post_id ? get_the_title( $post_id ) : $path;
-						$ga4_top_posts[] = array( 'title' => $title, 'views' => $views, 'url' => $url );
-					}
-				}
-			}
-		}
-
 		return array(
 			'health_score'     => $health_score,
 			'top_10'           => $top_10,
@@ -691,8 +690,6 @@ class Meyvora_SEO_Reports {
 			'gsc_top_pages'     => $gsc_top_pages,
 			'gsc_opportunities' => $gsc_opportunities,
 			'decaying_pages'    => $decaying_pages,
-			'ga4_connected'    => $ga4_connected,
-			'ga4_top_posts'    => $ga4_top_posts,
 		);
 	}
 

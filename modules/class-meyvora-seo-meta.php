@@ -5,7 +5,7 @@
  * @package Meyvora_SEO
  */
 
-// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Recommended -- REQUEST_URI for URL comparison; REST/AJAX use nonce.
+// phpcs:disable WordPress.Security.NonceVerification.Recommended -- REST/AJAX use nonce.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -75,7 +75,7 @@ class Meyvora_SEO_Meta {
 	 * Redirect to URL without session ID query params when strip_session_ids is enabled.
 	 */
 	public function redirect_strip_session_ids(): void {
-		$uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+		$uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( (string) $_SERVER['REQUEST_URI'] ) ) : '';
 		if ( $uri === '' ) {
 			return;
 		}
@@ -452,7 +452,8 @@ class Meyvora_SEO_Meta {
 		if ( is_date() && $this->options->get( 'noindex_date_archives', true ) ) {
 			$directives[] = 'noindex';
 		}
-		if ( isset( $_GET['replytocom'] ) && $this->options->get( 'noindex_replytocom', true ) ) {
+		$replytocom = isset( $_GET['replytocom'] ) ? absint( $_GET['replytocom'] ) : 0;
+		if ( $replytocom > 0 && $this->options->get( 'noindex_replytocom', true ) ) {
 			$directives[] = 'noindex';
 		}
 

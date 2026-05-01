@@ -254,6 +254,7 @@ class Meyvora_SEO_Settings {
 		add_settings_field( 'sitemap_news_enabled', __( 'Include News Sitemap', 'meyvora-seo' ), array( $this, 'field_checkbox' ), $page_sitemap, 'meyvora_seo_sitemap', array( 'key' => 'sitemap_news_enabled' ) );
 		add_settings_field( 'sitemap_news_post_type', __( 'News post type slug (default: post)', 'meyvora-seo' ), array( $this, 'field_text' ), $page_sitemap, 'meyvora_seo_sitemap', array( 'label_for' => 'sitemap_news_post_type', 'key' => 'sitemap_news_post_type', 'type' => 'text', 'class' => 'regular-text' ) );
 		add_settings_field( 'sitemap_video_enabled', __( 'Include Video Sitemap', 'meyvora-seo' ), array( $this, 'field_checkbox' ), $page_sitemap, 'meyvora_seo_sitemap', array( 'key' => 'sitemap_video_enabled' ) );
+		add_settings_field( 'sitemap_ping_google_enabled', __( 'Automatically ping Google when content is published', 'meyvora-seo' ), array( $this, 'field_checkbox' ), $page_sitemap, 'meyvora_seo_sitemap', array( 'key' => 'sitemap_ping_google_enabled', 'description' => __( 'Sends Google a sitemap ping when a public post reaches “Published”. You can still ping manually from the setup wizard.', 'meyvora-seo' ) ) );
 
 		add_settings_section( 'meyvora_seo_schema', __( 'Schema', 'meyvora-seo' ), array( $this, 'section_schema_desc' ), $page_schema );
 		add_settings_field( 'schema_organization', __( 'Enable Organization schema', 'meyvora-seo' ), array( $this, 'field_checkbox' ), $page_schema, 'meyvora_seo_schema', array( 'key' => 'schema_organization' ) );
@@ -293,11 +294,8 @@ class Meyvora_SEO_Settings {
 		add_settings_field( 'gsc_client_id', __( 'OAuth Client ID', 'meyvora-seo' ), array( $this, 'field_text' ), $page_integrations, 'meyvora_seo_gsc', array( 'label_for' => 'gsc_client_id', 'key' => 'gsc_client_id', 'type' => 'text', 'class' => 'regular-text', 'description' => __( 'From Google Cloud Console. Create OAuth 2.0 credentials and add redirect URI: your site Admin → Settings → Integrations (see tab URL).', 'meyvora-seo' ) ) );
 		add_settings_field( 'gsc_client_secret', __( 'OAuth Client Secret', 'meyvora-seo' ), array( $this, 'field_text' ), $page_integrations, 'meyvora_seo_gsc', array( 'label_for' => 'gsc_client_secret', 'key' => 'gsc_client_secret', 'type' => 'password', 'class' => 'regular-text', 'description' => __( 'Keep blank to leave unchanged.', 'meyvora-seo' ) ) );
 		add_settings_section( 'meyvora_seo_ga4', __( 'Google Analytics 4', 'meyvora-seo' ), array( $this, 'section_ga4_desc' ), $page_integrations );
-		add_settings_field( 'ga4_mode', __( 'Mode', 'meyvora-seo' ), array( $this, 'field_select' ), $page_integrations, 'meyvora_seo_ga4', array( 'label_for' => 'ga4_mode', 'key' => 'ga4_mode', 'options' => array( 'simple' => __( 'Simple (gtag.js only)', 'meyvora-seo' ), 'advanced' => __( 'Advanced (Data API + Views column)', 'meyvora-seo' ) ), 'description' => __( 'Simple: paste Measurement ID. Advanced: Property ID + service account for post list views.', 'meyvora-seo' ) ) );
-		add_settings_field( 'ga4_measurement_id', __( 'GA4 Measurement ID (G-XXXXXXX)', 'meyvora-seo' ), array( $this, 'field_text' ), $page_integrations, 'meyvora_seo_ga4', array( 'label_for' => 'ga4_measurement_id', 'key' => 'ga4_measurement_id', 'type' => 'text', 'class' => 'regular-text', 'description' => __( 'Used in simple mode. Add gtag.js to wp_head.', 'meyvora-seo' ) ) );
-		add_settings_field( 'ga4_exclude_admins', __( 'Exclude logged-in admins from tracking', 'meyvora-seo' ), array( $this, 'field_checkbox' ), $page_integrations, 'meyvora_seo_ga4', array( 'key' => 'ga4_exclude_admins', 'description' => __( 'When enabled, users with manage_options are not tracked (simple mode).', 'meyvora-seo' ) ) );
-		add_settings_field( 'ga4_property_id', __( 'GA4 Property ID (numeric)', 'meyvora-seo' ), array( $this, 'field_text' ), $page_integrations, 'meyvora_seo_ga4', array( 'label_for' => 'ga4_property_id', 'key' => 'ga4_property_id', 'type' => 'text', 'class' => 'small-text', 'description' => __( 'Advanced mode only. Find in GA4 Admin → Property settings (e.g. 123456789).', 'meyvora-seo' ) ) );
-		add_settings_field( 'ga4_credentials', __( 'Service account JSON (advanced)', 'meyvora-seo' ), array( $this, 'field_ga4_credentials' ), $page_integrations, 'meyvora_seo_ga4', array( 'label_for' => 'ga4_credentials' ) );
+		add_settings_field( 'ga4_measurement_id', __( 'GA4 Measurement ID (G-XXXXXXX)', 'meyvora-seo' ), array( $this, 'field_text' ), $page_integrations, 'meyvora_seo_ga4', array( 'label_for' => 'ga4_measurement_id', 'key' => 'ga4_measurement_id', 'type' => 'text', 'class' => 'regular-text', 'description' => __( 'Adds gtag.js to the public front end only (never in wp-admin).', 'meyvora-seo' ) ) );
+		add_settings_field( 'ga4_exclude_admins', __( 'Exclude logged-in admins from tracking', 'meyvora-seo' ), array( $this, 'field_checkbox' ), $page_integrations, 'meyvora_seo_ga4', array( 'key' => 'ga4_exclude_admins', 'description' => __( 'When enabled, users with manage_options are not tracked on the public site.', 'meyvora-seo' ) ) );
 		add_settings_section( 'meyvora_seo_pagespeed', __( 'PageSpeed Insights', 'meyvora-seo' ), function () {
 			echo '<p>' . esc_html__( 'Core Web Vitals (LCP, CLS, TBT) are fetched from Google PageSpeed Insights. An API key is optional and removes rate limits.', 'meyvora-seo' ) . '</p>';
 		}, $page_integrations );
@@ -351,6 +349,15 @@ class Meyvora_SEO_Settings {
 		add_settings_field( '404_email_alert', __( 'Email alert for 404s', 'meyvora-seo' ), array( $this, 'field_checkbox' ), $page_adv, 'meyvora_seo_404', array( 'key' => '404_email_alert', 'description' => __( 'Send daily email when any 404 URL has hits at or above the threshold.', 'meyvora-seo' ) ) );
 		add_settings_field( '404_alert_threshold', __( 'Alert threshold (hits)', 'meyvora-seo' ), array( $this, 'field_text' ), $page_adv, 'meyvora_seo_404', array( 'label_for' => '404_alert_threshold', 'key' => '404_alert_threshold', 'type' => 'number', 'class' => 'small-text', 'description' => __( 'Minimum hit count to include in daily email (1–1000).', 'meyvora-seo' ) ) );
 
+		add_settings_section(
+			'meyvora_seo_background_outbound',
+			__( 'Background external checks', 'meyvora-seo' ),
+			array( $this, 'section_background_outbound_desc' ),
+			$page_adv
+		);
+		add_settings_field( 'link_checker_background_enabled', __( 'Link Checker: automated remote checks', 'meyvora-seo' ), array( $this, 'field_checkbox' ), $page_adv, 'meyvora_seo_background_outbound', array( 'key' => 'link_checker_background_enabled', 'description' => __( 'Allows the scheduled task to send HTTP HEAD requests to external URLs found in recent content (used for the Link Checker admin page). Disabled by default. Manual fixes in the UI do not need this.', 'meyvora-seo' ) ) );
+		add_settings_field( 'competitor_monitor_enabled', __( 'Competitor: weekly automatic refresh', 'meyvora-seo' ), array( $this, 'field_checkbox' ), $page_adv, 'meyvora_seo_background_outbound', array( 'key' => 'competitor_monitor_enabled', 'description' => __( 'Re-fetch saved competitor URLs in the background weekly to detect content changes (and trigger alerts if configured). Analyze / snapshot actions from the Competitor screen are unaffected.', 'meyvora-seo' ) ) );
+
 		if ( current_user_can( 'manage_options' ) ) {
 			add_settings_section(
 				'meyvora_seo_white_label',
@@ -372,6 +379,7 @@ class Meyvora_SEO_Settings {
 		);
 		add_settings_field( 'score_alert_enabled', __( 'Enable score drop alerts', 'meyvora-seo' ), array( $this, 'field_checkbox' ), $page_adv, 'meyvora_seo_score_alert', array( 'key' => 'score_alert_enabled', 'description' => __( 'Notify when an SEO score drops by the threshold or more after analysis.', 'meyvora-seo' ) ) );
 		add_settings_field( 'score_alert_email', __( 'Alert email address', 'meyvora-seo' ), array( $this, 'field_text' ), $page_adv, 'meyvora_seo_score_alert', array( 'label_for' => 'score_alert_email', 'key' => 'score_alert_email', 'type' => 'email', 'class' => 'regular-text', 'description' => __( 'Receive alerts at this email when a post\'s score drops.', 'meyvora-seo' ) ) );
+		add_settings_field( 'score_alert_slack_enabled', __( 'Send score alerts to Slack', 'meyvora-seo' ), array( $this, 'field_checkbox' ), $page_adv, 'meyvora_seo_score_alert', array( 'key' => 'score_alert_slack_enabled', 'description' => __( 'When enabled, automatic alerts post to your Slack Incoming Webhook. The Test button still works when this is off.', 'meyvora-seo' ) ) );
 		add_settings_field( 'score_alert_slack', __( 'Slack webhook URL', 'meyvora-seo' ), array( $this, 'field_score_alert_slack' ), $page_adv, 'meyvora_seo_score_alert' );
 		add_settings_field( 'score_alert_threshold', __( 'Drop threshold', 'meyvora-seo' ), array( $this, 'field_text' ), $page_adv, 'meyvora_seo_score_alert', array( 'label_for' => 'score_alert_threshold', 'key' => 'score_alert_threshold', 'type' => 'number', 'class' => 'small-text', 'description' => __( 'Alert when score drops by this many points or more (default 10).', 'meyvora-seo' ) ) );
 
@@ -465,36 +473,10 @@ class Meyvora_SEO_Settings {
 			__( 'Auto-detect Coordinates', 'meyvora-seo' ),
 			function () {
 				?>
-				<button type="button" class="mev-btn mev-btn--secondary mev-btn--sm" onclick="mevGeoLookup()" style="margin-bottom:6px;">
+				<button type="button" class="mev-btn mev-btn--secondary mev-btn--sm mev-geo-coords-from-address-btn" style="margin-bottom:6px;">
 					<?php echo wp_kses_post( meyvora_seo_icon( 'map', array( 'width' => 16, 'height' => 16 ) ) ); ?> <?php esc_html_e( 'Get coordinates from address above', 'meyvora-seo' ); ?>
 				</button>
 				<p class="mev-field-help"><?php esc_html_e( 'Fills in latitude/longitude from your address using free geocoding. Save after.', 'meyvora-seo' ); ?></p>
-				<script>
-				function mevGeoLookup() {
-					var street  = (document.getElementById('meyvora_seo_schema_lb_street') || document.getElementById('schema_lb_street') || {}).value  || '';
-					var city    = (document.getElementById('meyvora_seo_schema_lb_locality') || document.getElementById('schema_lb_locality') || {}).value || '';
-					var region  = (document.getElementById('meyvora_seo_schema_lb_region') || document.getElementById('schema_lb_region') || {}).value   || '';
-					var country = (document.getElementById('meyvora_seo_schema_lb_country') || document.getElementById('schema_lb_country') || {}).value  || '';
-					var addr = [street, city, region, country].filter(Boolean).join(', ');
-					if (!addr) { alert('<?php echo esc_js( __( 'Please fill in your address fields first.', 'meyvora-seo' ) ); ?>'); return; }
-					fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(addr))
-						.then(function(r){ return r.json(); })
-						.then(function(d){
-							if (d && d[0]) {
-								var lat = parseFloat(d[0].lat).toFixed(6);
-								var lng = parseFloat(d[0].lon).toFixed(6);
-								var el_lat = document.getElementById('schema_lb_lat') || document.getElementById('meyvora_seo_schema_lb_lat');
-								var el_lng = document.getElementById('schema_lb_lng') || document.getElementById('meyvora_seo_schema_lb_lng');
-								if (el_lat) el_lat.value = lat;
-								if (el_lng) el_lng.value = lng;
-								alert('<?php echo esc_js( __( 'Found: ', 'meyvora-seo' ) ); ?>' + lat + ', ' + lng + '\n<?php echo esc_js( __( 'Click Save Settings to store.', 'meyvora-seo' ) ); ?>');
-							} else {
-								alert('<?php echo esc_js( __( 'Could not find coordinates. Please enter manually.', 'meyvora-seo' ) ); ?>');
-							}
-						})
-						.catch(function(){ alert('<?php echo esc_js( __( 'Geocoding failed. Please enter coordinates manually.', 'meyvora-seo' ) ); ?>'); });
-				}
-				</script>
 				<?php
 			},
 			$page_local,
@@ -527,7 +509,7 @@ class Meyvora_SEO_Settings {
 	 * Section description: Score Drop Alerts.
 	 */
 	public function section_score_alert_desc(): void {
-		echo '<p>' . esc_html__( 'Get notified by email and/or Slack when an existing post\'s SEO score drops significantly after the next analysis. New posts (no previous score) do not trigger alerts.', 'meyvora-seo' ) . '</p>';
+		echo '<p>' . esc_html__( 'Get notified by email and, if you opt in, Slack when an existing post\'s SEO score drops significantly after the next analysis. New posts (no previous score) do not trigger alerts.', 'meyvora-seo' ) . '</p>';
 	}
 
 	/**
@@ -538,39 +520,12 @@ class Meyvora_SEO_Settings {
 		$value = $this->options->get( $key, '' );
 		$id    = 'meyvora_seo_score_alert_slack';
 		$name  = MEYVORA_SEO_OPTION_KEY . '[' . $key . ']';
-		$nonce = wp_create_nonce( 'meyvora_seo_test_slack' );
 		?>
 		<div class="mev-field-input-col">
 			<input type="url" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( $value ); ?>" class="regular-text" style="width:320px;max-width:100%;padding:9px 12px;border:1.5px solid var(--mev-gray-200);border-radius:var(--mev-radius-sm);font-size:13px;" placeholder="https://hooks.slack.com/services/..." />
 			<button type="button" class="mev-btn mev-btn--secondary mev-btn--sm" id="mev-test-slack-webhook" style="margin-left:8px;vertical-align:middle;"><?php esc_html_e( 'Test', 'meyvora-seo' ); ?></button>
 			<span id="mev-test-slack-result" style="margin-left:8px;font-size:12px;"></span>
 			<p class="description" style="margin-top:8px;"><?php esc_html_e( 'Incoming webhook URL. Sends a test message when you click Test.', 'meyvora-seo' ); ?></p>
-			<script>
-			(function(){
-				var btn = document.getElementById('mev-test-slack-webhook');
-				var input = document.getElementById('<?php echo esc_js( $id ); ?>');
-				var result = document.getElementById('mev-test-slack-result');
-				if (!btn || !input) return;
-				btn.addEventListener('click', function(){
-					var url = (input.value || '').trim();
-					result.textContent = '';
-					if (!url) { result.textContent = '<?php echo esc_js( __( 'Enter a URL first.', 'meyvora-seo' ) ); ?>'; result.style.color = 'var(--mev-warning)'; return; }
-					btn.disabled = true;
-					var fd = new FormData();
-					fd.append('action', 'meyvora_seo_test_slack_webhook');
-					fd.append('nonce', '<?php echo esc_js( $nonce ); ?>');
-					fd.append('slack_url', url);
-					fetch('<?php echo esc_js( admin_url( 'admin-ajax.php' ) ); ?>', { method: 'POST', body: fd, credentials: 'same-origin' })
-						.then(function(r){ return r.json(); })
-						.then(function(data){
-							btn.disabled = false;
-							if (data.success) { result.textContent = '<?php echo esc_js( __( 'Sent.', 'meyvora-seo' ) ); ?>'; result.style.color = 'var(--mev-success)'; }
-							else { result.textContent = data.data && data.data.message ? data.data.message : '<?php echo esc_js( __( 'Failed.', 'meyvora-seo' ) ); ?>'; result.style.color = 'var(--mev-danger)'; }
-						})
-						.catch(function(){ btn.disabled = false; result.textContent = '<?php echo esc_js( __( 'Request failed.', 'meyvora-seo' ) ); ?>'; result.style.color = 'var(--mev-danger)'; });
-				});
-			})();
-			</script>
 		</div>
 		<?php
 	}
@@ -579,14 +534,14 @@ class Meyvora_SEO_Settings {
 	 * AJAX: send a test payload to the Slack webhook URL.
 	 */
 	public function ajax_test_slack_webhook(): void {
+		check_ajax_referer( 'meyvora_seo_test_slack', 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Insufficient permissions.', 'meyvora-seo' ) ) );
 		}
-		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'meyvora_seo_test_slack' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Invalid security token.', 'meyvora-seo' ) ) );
-		}
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized via esc_url_raw below.
-		$slack_url = isset( $_POST['slack_url'] ) ? esc_url_raw( trim( (string) wp_unslash( $_POST['slack_url'] ) ) ) : '';
+		/*
+		 * sanitize_url + wp_unslash: webhook URL for wp_remote_post(); not echoed as HTML here.
+		 */
+		$slack_url = isset( $_POST['slack_url'] ) ? trim( sanitize_url( wp_unslash( $_POST['slack_url'] ) ) ) : '';
 		if ( $slack_url === '' || ! filter_var( $slack_url, FILTER_VALIDATE_URL ) ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid webhook URL.', 'meyvora-seo' ) ) );
 		}
@@ -664,24 +619,14 @@ class Meyvora_SEO_Settings {
 	 * Section description: Google Analytics 4.
 	 */
 	public function section_ga4_desc(): void {
-		echo '<p>' . esc_html__( 'Simple mode: add your GA4 Measurement ID to load gtag.js. Advanced mode: use the Data API to show page views in the post list (requires a GA4 property and service account JSON).', 'meyvora-seo' ) . '</p>';
+		echo '<p>' . esc_html__( 'Adds Google Analytics measurement to visitors on your public pages. No analytics scripts or GA API calls load in wp-admin.', 'meyvora-seo' ) . '</p>';
 	}
 
 	/**
-	 * GA4 service account JSON (textarea). Value not shown; submit as ga4_credentials for encryption.
-	 *
-	 * @param array<string, mixed> $args
+	 * Background tasks that contact third-party URLs from this site server.
 	 */
-	public function field_ga4_credentials( array $args ): void {
-		$id   = isset( $args['label_for'] ) ? $args['label_for'] : 'ga4_credentials';
-		$name = MEYVORA_SEO_OPTION_KEY . '[ga4_credentials]';
-		$has  = $this->options->get( 'ga4_credentials_encrypted', '' );
-		?>
-		<div class="mev-field-input-col">
-			<textarea id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" rows="6" class="large-text code" placeholder="<?php echo esc_attr( $has ? __( 'Leave blank to keep current credentials', 'meyvora-seo' ) : '{"type":"service_account",...}' ); ?>"></textarea>
-			<p class="mev-field-help"><?php esc_html_e( 'Paste the full JSON key file from Google Cloud (service account for GA4 Data API). Stored encrypted.', 'meyvora-seo' ); ?></p>
-		</div>
-		<?php
+	public function section_background_outbound_desc(): void {
+		echo '<p>' . esc_html__( 'These options only affect automated background tasks. Screens where you click an action yourself are unchanged.', 'meyvora-seo' ) . '</p>';
 	}
 
 	/**
@@ -841,59 +786,16 @@ class Meyvora_SEO_Settings {
 								</label>
 							</td>
 							<td style="padding:4px 8px;">
-								<input type="time" class="mev-hours-open-time small-text" value="<?php echo esc_attr( $row['open'] ); ?>" data-day="<?php echo esc_attr( $row['day'] ); ?>" <?php echo $row['closed'] ? ' disabled' : ''; ?> style="padding:4px 8px; border:1px solid var(--mev-gray-200); border-radius:4px;" />
+								<input type="time" class="mev-hours-open-time small-text" value="<?php echo esc_attr( $row['open'] ); ?>" data-day="<?php echo esc_attr( $row['day'] ); ?>"<?php if ( $row['closed'] ) : ?> disabled="disabled"<?php endif; ?> style="padding:4px 8px; border:1px solid var(--mev-gray-200); border-radius:4px;" />
 							</td>
 							<td style="padding:4px 8px;">
-								<input type="time" class="mev-hours-close-time small-text" value="<?php echo esc_attr( $row['close'] ); ?>" data-day="<?php echo esc_attr( $row['day'] ); ?>" <?php echo $row['closed'] ? ' disabled' : ''; ?> style="padding:4px 8px; border:1px solid var(--mev-gray-200); border-radius:4px;" />
+								<input type="time" class="mev-hours-close-time small-text" value="<?php echo esc_attr( $row['close'] ); ?>" data-day="<?php echo esc_attr( $row['day'] ); ?>"<?php if ( $row['closed'] ) : ?> disabled="disabled"<?php endif; ?> style="padding:4px 8px; border:1px solid var(--mev-gray-200); border-radius:4px;" />
 							</td>
 						</tr>
 					<?php endforeach; ?>
 				</tbody>
 			</table>
 			<p class="mev-field-help" style="margin-top:8px;"><?php esc_html_e( 'Toggle "Open" and set times per day. Stored as openingHoursSpecification in LocalBusiness schema.', 'meyvora-seo' ); ?></p>
-			<script>
-			(function(){
-				var wrap = document.querySelector('.mev-opening-hours-wrap');
-				if (!wrap) return;
-				var hidden = document.getElementById('<?php echo esc_js( $id ); ?>');
-				var days = <?php echo wp_json_encode( $days ); ?>;
-				function serialize() {
-					var out = [];
-					wrap.querySelectorAll('tbody tr').forEach(function(tr, i){
-						var day = days[i];
-						var openCb = tr.querySelector('.mev-hours-open');
-						var openInp = tr.querySelector('.mev-hours-open-time');
-						var closeInp = tr.querySelector('.mev-hours-close-time');
-						out.push({
-							day: day,
-							closed: !openCb.checked,
-							open: openInp ? openInp.value : '09:00',
-							close: closeInp ? closeInp.value : '17:00'
-						});
-					});
-					hidden.value = JSON.stringify(out);
-				}
-				function toggleRow(openCb) {
-					var tr = openCb.closest('tr');
-					var openInp = tr.querySelector('.mev-hours-open-time');
-					var closeInp = tr.querySelector('.mev-hours-close-time');
-					if (openCb.checked) {
-						openInp.disabled = false;
-						closeInp.disabled = false;
-					} else {
-						openInp.disabled = true;
-						closeInp.disabled = true;
-					}
-					serialize();
-				}
-				wrap.querySelectorAll('.mev-hours-open').forEach(function(cb){
-					cb.addEventListener('change', function(){ toggleRow(cb); });
-				});
-				wrap.querySelectorAll('.mev-hours-open-time, .mev-hours-close-time').forEach(function(inp){
-					inp.addEventListener('change', serialize);
-				});
-			})();
-			</script>
 		</div>
 		<?php
 	}

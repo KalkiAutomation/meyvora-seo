@@ -57,11 +57,28 @@ class Meyvora_SEO_404_Monitor {
 			return;
 		}
 		wp_enqueue_style( 'meyvora-admin', MEYVORA_SEO_URL . 'admin/assets/css/meyvora-admin.css', array(), MEYVORA_SEO_VERSION );
-		wp_localize_script( 'jquery', 'meyvora404', array(
-			'nonce'  => wp_create_nonce( self::NONCE_ACTION ),
-			'create' => self::AJAX_CREATE,
-			'export' => self::AJAX_EXPORT,
-		) );
+		wp_enqueue_style( 'meyvora-404-monitor', MEYVORA_SEO_URL . 'admin/assets/css/meyvora-404-monitor.css', array( 'meyvora-admin' ), MEYVORA_SEO_VERSION );
+		wp_enqueue_script(
+			'meyvora-404-monitor',
+			MEYVORA_SEO_URL . 'admin/assets/js/meyvora-404-monitor.js',
+			array(),
+			MEYVORA_SEO_VERSION,
+			true
+		);
+		wp_localize_script(
+			'meyvora-404-monitor',
+			'meyvora404Monitor',
+			array(
+				'nonce'         => wp_create_nonce( self::NONCE_ACTION ),
+				'createAction' => self::AJAX_CREATE,
+				'exportAction' => self::AJAX_EXPORT,
+				'ajaxUrl'      => admin_url( 'admin-ajax.php' ),
+				'i18n'          => array(
+					'saving' => __( 'Saving…', 'meyvora-seo' ),
+					'add'    => __( 'Add', 'meyvora-seo' ),
+				),
+			)
+		);
 	}
 
 	public function render_page(): void {
@@ -73,74 +90,9 @@ class Meyvora_SEO_404_Monitor {
 		$log_404   = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table_404} ORDER BY hit_count DESC LIMIT %d", 500 ), ARRAY_A );
 		$enabled   = $this->options->get( '404_email_alert', false );
 		$threshold = (int) $this->options->get( '404_alert_threshold', 10 );
-		$nonce     = wp_create_nonce( self::NONCE_ACTION );
 		$total     = count( (array) $log_404 );
 		$high      = count( array_filter( (array) $log_404, function( $r ) use ( $threshold ) { return (int)($r['hit_count']??0) >= $threshold; } ) );
 		?>
-		<style>
-		.mev-404-wrap{max-width:1200px;}
-		.mev-404-header{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:28px;}
-		.mev-404-header-left h1{font-size:22px;font-weight:700;color:var(--mev-gray-900);margin:0 0 4px;}
-		.mev-404-header-left p{font-size:13px;color:var(--mev-gray-500);margin:0;}
-		.mev-404-header-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
-		.mev-404-stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px;}
-		.mev-404-stat{background:var(--mev-surface);border:1px solid var(--mev-border);border-radius:var(--mev-radius);padding:14px 20px;min-width:110px;box-shadow:var(--mev-shadow-sm);position:relative;overflow:hidden;}
-		.mev-404-stat::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
-		.mev-404-stat.st-total::before{background:var(--mev-accent);}
-		.mev-404-stat.st-high::before{background:var(--mev-danger);}
-		.mev-404-stat.st-alert::before{background:var(--mev-success);}
-		.mev-404-stat .sn{font-size:26px;font-weight:700;color:var(--mev-gray-900);line-height:1;}
-		.mev-404-stat.st-high .sn{color:var(--mev-danger);}
-		.mev-404-stat.st-alert .sn{color:var(--mev-success);}
-		.mev-404-stat .sl{font-size:11px;color:var(--mev-gray-500);margin-top:4px;text-transform:uppercase;letter-spacing:.04em;}
-		.mev-404-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:var(--mev-radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;text-decoration:none;border:none;}
-		.mev-404-btn.btn-primary{background:var(--mev-primary);color:#fff;box-shadow:0 1px 3px rgba(124,58,237,.3);}
-		.mev-404-btn.btn-primary:hover{background:var(--mev-primary-hover);transform:translateY(-1px);}
-		.mev-404-btn.btn-outline{background:var(--mev-surface);color:var(--mev-gray-700);border:1.5px solid var(--mev-border);}
-		.mev-404-btn.btn-outline:hover{border-color:var(--mev-gray-400);background:var(--mev-surface-2);color:var(--mev-gray-900);}
-		.mev-404-toolbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--mev-surface-2);border:1px solid var(--mev-border);border-radius:var(--mev-radius) var(--mev-radius) 0 0;}
-		.mev-404-search{position:relative;display:flex;align-items:center;}
-		.mev-404-search input{padding:7px 10px 7px 32px;border:1.5px solid var(--mev-border);border-radius:var(--mev-radius-sm);font-size:13px;color:var(--mev-gray-800);background:var(--mev-surface);width:260px;transition:border-color .15s;}
-		.mev-404-search input:focus{outline:none;border-color:var(--mev-primary);box-shadow:0 0 0 3px var(--mev-primary-light);}
-		.mev-404-search svg{position:absolute;left:9px;color:var(--mev-gray-400);pointer-events:none;}
-		.mev-404-table-wrap{border:1px solid var(--mev-border);border-top:none;border-radius:0 0 var(--mev-radius) var(--mev-radius);overflow:hidden;}
-		.mev-404-tbl{width:100%;border-collapse:collapse;background:var(--mev-surface);}
-		.mev-404-tbl thead tr{background:var(--mev-surface-2);}
-		.mev-404-tbl th{padding:10px 14px;font-size:11px;font-weight:600;color:var(--mev-gray-500);text-transform:uppercase;letter-spacing:.05em;text-align:left;border-bottom:1px solid var(--mev-border);white-space:nowrap;}
-		.mev-404-tbl td{padding:11px 14px;font-size:13px;color:var(--mev-gray-700);border-bottom:1px solid var(--mev-border);vertical-align:top;}
-		.mev-404-tbl tr:last-child td{border-bottom:none;}
-		.mev-404-tbl tr:hover td{background:var(--mev-surface-2);}
-		.mev-404-tbl tr.row-fixed td{opacity:.45;text-decoration:line-through;}
-		.mev-url-cell{display:flex;align-items:flex-start;gap:8px;}
-		.mev-url-code{font-family:monospace;font-size:12px;color:var(--mev-danger);background:var(--mev-danger-light);padding:3px 8px;border-radius:4px;word-break:break-all;line-height:1.4;}
-		.mev-hit-badge{display:inline-flex;align-items:center;justify-content:center;min-width:36px;padding:3px 8px;border-radius:var(--mev-radius-full);font-size:12px;font-weight:700;}
-		.mev-hit-badge.badge-low{background:var(--mev-surface-3);color:var(--mev-gray-600);}
-		.mev-hit-badge.badge-med{background:var(--mev-warning-light);color:var(--mev-warning);}
-		.mev-hit-badge.badge-high{background:var(--mev-danger-light);color:var(--mev-danger);}
-		.mev-404-action-cell{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-		.mev-fix-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:var(--mev-primary-light);color:var(--mev-primary);border:1px solid transparent;border-radius:var(--mev-radius-sm);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
-		.mev-fix-btn:hover{background:var(--mev-primary);color:#fff;}
-		.mev-404-inline-form{display:none;margin-top:8px;background:var(--mev-surface-2);border:1px solid var(--mev-border);border-radius:var(--mev-radius-sm);padding:10px 12px;}
-		.mev-404-inline-form.open{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-		.mev-404-inline-form input{flex:1;min-width:200px;padding:7px 10px;border:1.5px solid var(--mev-border);border-radius:var(--mev-radius-sm);font-size:13px;color:var(--mev-gray-800);background:var(--mev-surface);transition:border-color .15s;}
-		.mev-404-inline-form input:focus{outline:none;border-color:var(--mev-primary);}
-		.mev-404-submit-btn{padding:6px 14px;background:var(--mev-primary);color:#fff;border:none;border-radius:var(--mev-radius-sm);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;}
-		.mev-404-submit-btn:hover{background:var(--mev-primary-hover);}
-		.mev-404-cancel-btn{padding:6px 12px;background:transparent;color:var(--mev-gray-500);border:1px solid var(--mev-border);border-radius:var(--mev-radius-sm);font-size:12px;cursor:pointer;white-space:nowrap;transition:all .15s;}
-		.mev-404-cancel-btn:hover{color:var(--mev-gray-800);}
-		.mev-404-empty{padding:64px 24px;text-align:center;}
-		.mev-404-empty .empty-icon{font-size:48px;opacity:.2;display:block;margin-bottom:12px;}
-		.mev-404-empty p{font-size:14px;color:var(--mev-gray-500);margin:0;}
-		.mev-404-alert-card{margin-top:20px;background:var(--mev-surface);border:1px solid var(--mev-border);border-radius:var(--mev-radius);box-shadow:var(--mev-shadow-sm);overflow:hidden;}
-		.mev-404-alert-header{padding:14px 20px;border-bottom:1px solid var(--mev-border);background:var(--mev-surface-2);display:flex;align-items:center;gap:10px;}
-		.mev-404-alert-header h3{margin:0;font-size:14px;font-weight:600;color:var(--mev-gray-800);}
-		.mev-404-alert-status{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:var(--mev-radius-full);font-size:12px;font-weight:600;}
-		.mev-404-alert-status.on{background:var(--mev-success-light);color:var(--mev-success);}
-		.mev-404-alert-status.off{background:var(--mev-surface-3);color:var(--mev-gray-500);}
-		.mev-404-alert-body{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
-		.mev-404-alert-desc{font-size:13px;color:var(--mev-gray-600);max-width:500px;line-height:1.6;}
-		</style>
-
 		<div class="wrap mev-404-wrap">
 			<div class="mev-404-header">
 				<div class="mev-404-header-left">
@@ -161,11 +113,11 @@ class Meyvora_SEO_404_Monitor {
 
 			<div class="mev-404-stats">
 				<div class="mev-404-stat st-total">
-					<div class="sn"><?php echo number_format( $total ); ?></div>
+					<div class="sn"><?php echo esc_html( number_format( $total ) ); ?></div>
 					<div class="sl"><?php esc_html_e( 'Broken URLs', 'meyvora-seo' ); ?></div>
 				</div>
 				<div class="mev-404-stat st-high">
-					<div class="sn"><?php echo number_format( $high ); ?></div>
+					<div class="sn"><?php echo esc_html( number_format( $high ) ); ?></div>
 					<div class="sl"><?php echo sprintf( /* translators: %d: hit count threshold */ esc_html__( 'Above %d hits', 'meyvora-seo' ), (int) $threshold ); ?></div>
 				</div>
 				<div class="mev-404-stat st-alert">
@@ -209,14 +161,14 @@ class Meyvora_SEO_404_Monitor {
 								$badge_class = $hits >= $threshold ? 'badge-high' : ( $hits >= 3 ? 'badge-med' : 'badge-low' );
 								$last_fmt = $last ? date_i18n( get_option('date_format'), strtotime( $last ) ) : '—';
 							?>
-								<tr data-id="<?php echo (int) $id; ?>" data-url="<?php echo esc_attr( $url ); ?>" data-search="<?php echo esc_attr( strtolower( $url ) ); ?>">
+								<tr data-id="<?php echo esc_attr( (string) (int) $id ); ?>" data-url="<?php echo esc_attr( $url ); ?>" data-search="<?php echo esc_attr( strtolower( $url ) ); ?>">
 									<td>
 										<div class="mev-url-cell">
 											<span class="mev-url-code"><?php echo esc_html( $url ); ?></span>
 										</div>
 									</td>
 									<td>
-										<span class="mev-hit-badge <?php echo esc_attr( $badge_class ); ?>"><?php echo number_format( $hits ); ?></span>
+										<span class="mev-hit-badge <?php echo esc_attr( $badge_class ); ?>"><?php echo esc_html( number_format( $hits ) ); ?></span>
 									</td>
 									<td style="color:var(--mev-gray-500);font-size:12px;"><?php echo esc_html( $last_fmt ); ?></td>
 									<td>
@@ -243,7 +195,7 @@ class Meyvora_SEO_404_Monitor {
 				<div class="mev-404-alert-header">
 					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
 					<h3><?php esc_html_e( 'Email alerts', 'meyvora-seo' ); ?></h3>
-					<span class="mev-404-alert-status <?php echo $enabled ? 'on' : 'off'; ?>">
+					<span class="mev-404-alert-status <?php echo esc_attr( $enabled ? 'on' : 'off' ); ?>">
 						<?php echo $enabled ? esc_html__( 'Enabled', 'meyvora-seo' ) : esc_html__( 'Disabled', 'meyvora-seo' ); ?>
 					</span>
 				</div>
@@ -261,95 +213,6 @@ class Meyvora_SEO_404_Monitor {
 			</div>
 		</div>
 
-		<script>
-		(function(){
-			var N = <?php echo wp_json_encode( $nonce ); ?>;
-			var CA = <?php echo wp_json_encode( self::AJAX_CREATE ); ?>;
-			var EA = <?php echo wp_json_encode( self::AJAX_EXPORT ); ?>;
-			var U  = <?php echo wp_json_encode( admin_url( 'admin-ajax.php' ) ); ?>;
-
-			// Export CSV
-			document.getElementById('mev-404-export-csv')?.addEventListener('click', function(){
-				window.location.href = U + '?action=' + EA + '&nonce=' + encodeURIComponent(N);
-			});
-
-			// Live search filter
-			var searchInput = document.getElementById('mev-404-search');
-			if (searchInput) {
-				searchInput.addEventListener('input', function(){
-					var q = this.value.toLowerCase().trim();
-					document.querySelectorAll('#mev-404-table tbody tr').forEach(function(row){
-						row.style.display = (!q || row.dataset.search.indexOf(q) !== -1) ? '' : 'none';
-					});
-				});
-			}
-
-			// Toggle inline form
-			document.querySelectorAll('.mev-404-create-redirect').forEach(function(btn){
-				btn.addEventListener('click', function(){
-					var form = btn.closest('td').querySelector('.mev-404-inline-form');
-					var isOpen = form.classList.contains('open');
-					document.querySelectorAll('.mev-404-inline-form.open').forEach(function(f){ f.classList.remove('open'); });
-					if (!isOpen) {
-						form.classList.add('open');
-						form.querySelector('.mev-404-target').focus();
-					}
-				});
-			});
-
-			document.querySelectorAll('.mev-404-cancel-btn').forEach(function(btn){
-				btn.addEventListener('click', function(){
-					btn.closest('.mev-404-inline-form').classList.remove('open');
-				});
-			});
-
-			// Submit redirect
-			document.querySelectorAll('.mev-404-submit-btn').forEach(function(btn){
-				btn.addEventListener('click', function(){
-					var row    = btn.closest('tr');
-					var form   = btn.closest('.mev-404-inline-form');
-					var source = row.dataset.url;
-					var target = form.querySelector('.mev-404-target').value.trim();
-					var rowId  = row.dataset.id;
-					if (!target) {
-						form.querySelector('.mev-404-target').style.borderColor = 'var(--mev-danger)';
-						return;
-					}
-					btn.disabled = true;
-					btn.textContent = '<?php echo esc_js( __( 'Saving…', 'meyvora-seo' ) ); ?>';
-					var fd = new FormData();
-					fd.append('action', CA); fd.append('nonce', N);
-					fd.append('source_url', source); fd.append('target_url', target);
-					fd.append('404_id', rowId);
-					fetch(U, { method:'POST', body:fd, credentials:'same-origin' })
-						.then(function(r){ return r.json(); })
-						.then(function(res){
-							if (res && res.success) {
-								row.classList.add('row-fixed');
-								form.classList.remove('open');
-								setTimeout(function(){ row.remove(); }, 1200);
-							} else {
-								btn.disabled = false;
-								btn.textContent = '<?php echo esc_js( __( 'Add', 'meyvora-seo' ) ); ?>';
-							}
-						})
-						.catch(function(){
-							btn.disabled = false;
-							btn.textContent = '<?php echo esc_js( __( 'Add', 'meyvora-seo' ) ); ?>';
-						});
-				});
-			});
-
-			// Enter key in target input
-			document.querySelectorAll('.mev-404-target').forEach(function(input){
-				input.addEventListener('keydown', function(e){
-					if (e.key === 'Enter') { input.closest('.mev-404-inline-form').querySelector('.mev-404-submit-btn').click(); }
-					if (e.key === 'Escape') { input.closest('.mev-404-inline-form').classList.remove('open'); }
-				});
-				input.addEventListener('input', function(){ this.style.borderColor = ''; });
-			});
-		})();
-		</script>
 		<?php
 	}
 
@@ -359,6 +222,7 @@ class Meyvora_SEO_404_Monitor {
 			wp_send_json_error();
 		}
 		$source = isset( $_POST['source_url'] ) ? sanitize_text_field( wp_unslash( $_POST['source_url'] ) ) : '';
+		// esc_url_raw() intentional: target URL persisted via redirect manager (DB) — sanitization for storage, not HTML output.
 		$target = isset( $_POST['target_url'] ) ? esc_url_raw( wp_unslash( $_POST['target_url'] ) ) : '';
 		if ( $source === '' || $target === '' ) {
 			wp_send_json_error();
@@ -373,7 +237,7 @@ class Meyvora_SEO_404_Monitor {
 		}
 		$redirect_id = Meyvora_SEO_Redirects::add_redirect( $source, $target, 301, __( 'From 404 Monitor', 'meyvora-seo' ), false );
 		if ( $redirect_id ) {
-			$row_id = isset( $_POST['404_id'] ) ? absint( $_POST['404_id'] ) : 0;
+			$row_id = isset( $_POST['404_id'] ) ? absint( wp_unslash( $_POST['404_id'] ) ) : 0;
 			if ( $row_id > 0 ) {
 				global $wpdb;
 				$table_404 = $wpdb->prefix . Meyvora_SEO_Redirects::TABLE_404;

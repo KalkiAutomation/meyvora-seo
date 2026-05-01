@@ -186,7 +186,7 @@ class Meyvora_SEO_AB_Test {
 			wp_send_json_error( array( 'message' => 'Permission denied.' ) );
 			return;
 		}
-		$post_id = absint( $_POST['post_id'] ?? 0 );
+		$post_id = absint( wp_unslash( $_POST['post_id'] ?? 0 ) );
 		if ( ! $post_id ) {
 			wp_send_json_error();
 			return;
@@ -213,7 +213,7 @@ class Meyvora_SEO_AB_Test {
 			wp_send_json_error( array( 'message' => 'Permission denied.' ) );
 			return;
 		}
-		$post_id = absint( $_POST['post_id'] ?? 0 );
+		$post_id = absint( wp_unslash( $_POST['post_id'] ?? 0 ) );
 		if ( ! $post_id ) {
 			wp_send_json_error();
 			return;

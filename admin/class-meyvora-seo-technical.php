@@ -14,6 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Meyvora_SEO_Technical {
 
+	/**
+	 * Note on ABSPATH usage: this class manages robots.txt and .htaccess which WordPress Core
+	 * itself manages at ABSPATH. Using ABSPATH here is correct and intentional — these files
+	 * must live at the web root to function. See https://developer.wordpress.org/reference/functions/get_home_path/
+	 */
+
 	const OPTION_HTACCESS_BACKUPS = 'meyvora_seo_htaccess_backups';
 	const HTACCESS_BACKUPS_MAX   = 10;
 	const NONCE_ACTION           = 'meyvora_technical_save';
@@ -58,6 +64,27 @@ class Meyvora_SEO_Technical {
 				MEYVORA_SEO_VERSION
 			);
 		}
+		wp_enqueue_script(
+			'meyvora-technical-robots',
+			MEYVORA_SEO_URL . 'admin/assets/js/meyvora-technical-robots.js',
+			array(),
+			MEYVORA_SEO_VERSION,
+			true
+		);
+		wp_localize_script(
+			'meyvora-technical-robots',
+			'meyvoraTechnicalRobots',
+			array(
+				'nonce'           => wp_create_nonce( 'meyvora_technical_test_url' ),
+				'ajaxUrl'         => admin_url( 'admin-ajax.php' ),
+				'defaultTemplate' => self::get_default_robots_template(),
+				'i18nTest'        => array(
+					'allowedLabel'   => __( '✓ Allowed', 'meyvora-seo' ),
+					'disallowedLabel' => __( '✗ Disallowed', 'meyvora-seo' ),
+					'errorLabel'     => __( 'Error', 'meyvora-seo' ),
+				),
+			)
+		);
 	}
 
 	/**
@@ -71,14 +98,14 @@ class Meyvora_SEO_Technical {
 	 * Get path to physical robots.txt in WordPress root.
 	 */
 	public static function get_robots_file_path(): string {
-		return trailingslashit( ABSPATH ) . 'robots.txt';
+		return trailingslashit( ABSPATH ) . 'robots.txt'; // ABSPATH intentional: robots.txt must live at the WordPress web root.
 	}
 
 	/**
 	 * Get path to .htaccess in WordPress root.
 	 */
 	public static function get_htaccess_path(): string {
-		return trailingslashit( ABSPATH ) . '.htaccess';
+		return trailingslashit( ABSPATH ) . '.htaccess'; // ABSPATH intentional: .htaccess must live at the WordPress web root.
 	}
 
 	/**
@@ -107,7 +134,7 @@ class Meyvora_SEO_Technical {
 			return true;
 		}
 		$path = self::get_robots_file_path();
-		$dir = trailingslashit( ABSPATH );
+		$dir = trailingslashit( ABSPATH ); // ABSPATH intentional: robots.txt must live at the WordPress web root.
 		// Direct filesystem check for robots.txt; WP_Filesystem would require credentials form.
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable
 		return ( is_writable( $dir ) && ( ! file_exists( $path ) || is_writable( $path ) ) ) && file_put_contents( $path, $content ) !== false;
@@ -280,7 +307,7 @@ class Meyvora_SEO_Technical {
 			$content = is_string( $content ) ? $content : '';
 		}
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable
-		$dir_writable = is_writable( trailingslashit( ABSPATH ) );
+		$dir_writable = is_writable( trailingslashit( ABSPATH ) ); // ABSPATH intentional: checking web root writability for .htaccess.
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable
 		$file_writable = $path && ( ! file_exists( $path ) ? $dir_writable : is_writable( $path ) );
 		$parsed = self::parse_htaccess( $content );
@@ -370,8 +397,9 @@ class Meyvora_SEO_Technical {
 		}
 		$robots_content = self::ensure_sitemap_line( $robots_content );
 		$robots_warnings = self::validate_robots( $robots_content );
+		$web_root = trailingslashit( ABSPATH ); // ABSPATH intentional: checking web root writability for robots.txt.
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable
-		$robots_writable = self::robots_use_virtual() || ( is_writable( trailingslashit( ABSPATH ) ) && ( ! file_exists( self::get_robots_file_path() ) || is_writable( self::get_robots_file_path() ) ) );
+		$robots_writable = self::robots_use_virtual() || ( is_writable( $web_root ) && ( ! file_exists( self::get_robots_file_path() ) || is_writable( self::get_robots_file_path() ) ) );
 		$htaccess = $this->get_htaccess_data();
 		return array(
 			'robots_content'    => $robots_content,

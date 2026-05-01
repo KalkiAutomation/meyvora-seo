@@ -1,0 +1,137 @@
+/*
+== Source Code == https://github.com/KalkiAutomation/meyvora-seo (admin/assets/css/meyvora-report-print.css)
+Print/PDF SEO report (standalone view).
+*/
+
+* {
+	box-sizing: border-box;
+}
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, sans-serif;
+	margin: 24px;
+	color: #374151;
+	font-size: 14px;
+}
+h1 {
+	font-size: 22px;
+	margin: 0 0 8px;
+	color: #7c3aed;
+}
+h2 {
+	font-size: 16px;
+	margin: 20px 0 10px;
+	color: #1f2937;
+	border-bottom: 1px solid #e5e7eb;
+	padding-bottom: 6px;
+}
+.mev-no-print {
+	margin-bottom: 16px;
+}
+.mev-page-break {
+	page-break-after: always;
+}
+.header {
+	margin-bottom: 24px;
+}
+.header .sub {
+	color: #6b7280;
+	font-size: 13px;
+}
+.score-box {
+	display: inline-block;
+	background: #f3f4f6;
+	padding: 12px 20px;
+	border-radius: 10px;
+	margin: 12px 0;
+}
+.score-box .num {
+	font-size: 28px;
+	font-weight: 700;
+	color: #7c3aed;
+}
+.score-large {
+	font-size: 48px;
+	font-weight: 700;
+	color: #7c3aed;
+	line-height: 1.2;
+}
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 8px 0;
+}
+th,
+td {
+	text-align: left;
+	padding: 8px 12px;
+	border-bottom: 1px solid #e5e7eb;
+}
+th {
+	font-weight: 600;
+	color: #6b7280;
+	font-size: 12px;
+	text-transform: uppercase;
+}
+.issues-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.issues-list li {
+	padding: 6px 0;
+	border-bottom: 1px solid #f3f4f6;
+	display: flex;
+	justify-content: space-between;
+}
+.footer {
+	margin-top: 32px;
+	padding-top: 16px;
+	border-top: 1px solid #e5e7eb;
+	font-size: 12px;
+	color: #9ca3af;
+}
+.mev-trend-chart {
+	display: flex;
+	align-items: flex-end;
+	gap: 4px;
+	height: 120px;
+	margin: 16px 0;
+	padding: 0;
+	list-style: none;
+}
+.mev-trend-bar {
+	flex: 1;
+	min-width: 0;
+	background: #7c3aed;
+	border-radius: 4px 4px 0 0;
+	min-height: 4px;
+}
+.cover-page {
+	text-align: center;
+	padding: 60px 24px;
+}
+.cover-page .cover-title {
+	font-size: 28px;
+	font-weight: 700;
+	color: #1f2937;
+	margin: 24px 0 8px;
+}
+.cover-page .cover-sub {
+	color: #6b7280;
+	font-size: 15px;
+	margin: 4px 0;
+}
+.cover-page .cover-date {
+	margin-top: 32px;
+	font-size: 13px;
+	color: #9ca3af;
+}
+@media print {
+	.mev-no-print {
+		display: none !important;
+	}
+	body {
+		font-size: 11pt;
+		margin: 16px;
+	}
+}

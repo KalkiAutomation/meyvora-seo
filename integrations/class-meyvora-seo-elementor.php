@@ -113,7 +113,7 @@ class Meyvora_SEO_Elementor {
 	 */
 	public static function ajax_elementor_save_meta(): void {
 		check_ajax_referer( 'meyvora_seo_elementor', 'nonce' );
-		$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+		$post_id = isset( $_POST['post_id'] ) ? absint( wp_unslash( $_POST['post_id'] ) ) : 0;
 		if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) ) {
 			wp_send_json_error();
 			return;
@@ -135,7 +135,7 @@ class Meyvora_SEO_Elementor {
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_send_json_error( array( 'message' => 'Forbidden' ) );
 		}
-		$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+		$post_id = isset( $_POST['post_id'] ) ? absint( wp_unslash( $_POST['post_id'] ) ) : 0;
 		if ( $post_id <= 0 || ! get_post( $post_id ) ) {
 			wp_send_json_error( array( 'message' => 'Invalid post' ) );
 		}

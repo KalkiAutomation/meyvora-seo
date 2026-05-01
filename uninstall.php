@@ -11,7 +11,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-$keys_file = dirname( __FILE__ ) . '/includes/meyvora-seo-keys.php';
+$keys_file = plugin_dir_path( __FILE__ ) . 'includes/meyvora-seo-keys.php';
 if ( ! is_file( $keys_file ) ) {
 	return;
 }
@@ -49,6 +49,7 @@ delete_option( MEYVORA_SEO_WEEKLY_SNAPSHOTS_OPTION );
 delete_option( MEYVORA_SEO_AUTOMATION_RULES_OPTION );
 delete_option( 'meyvora_seo_ga4_credentials' );
 delete_option( 'meyvora_seo_install_db_version' );
+delete_option( 'meyvora_indexnow_ping_log' );
 delete_option( 'indexnow_ping_log' );
 delete_option( 'meyvora_seo_reports_gsc_snapshot' );
 delete_option( 'meyvora_seo_reports_ga4_snapshot' );
