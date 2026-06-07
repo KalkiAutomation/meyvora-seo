@@ -9,6 +9,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+add_action( 'init', 'meyvora_citations_register_block_assets', 9 );
+
+/**
+ * Register block editor script (editor iframe; block API v3 for WP 7.0).
+ */
+function meyvora_citations_register_block_assets(): void {
+	$url     = defined( 'MEYVORA_SEO_URL' ) ? MEYVORA_SEO_URL : '';
+	$ver     = defined( 'MEYVORA_SEO_VERSION' ) ? MEYVORA_SEO_VERSION : '1.0.0';
+	$js_path = defined( 'MEYVORA_SEO_PATH' ) ? MEYVORA_SEO_PATH . 'blocks/meyvora-citations/index.js' : '';
+	if ( $js_path && file_exists( $js_path ) ) {
+		wp_register_script(
+			'meyvora-seo-citations-block',
+			$url . 'blocks/meyvora-citations/index.js',
+			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n' ),
+			$ver,
+			true
+		);
+	}
+}
+
 add_action( 'init', 'meyvora_citations_register_block' );
 
 function meyvora_citations_register_block(): void {
@@ -16,6 +36,8 @@ function meyvora_citations_register_block(): void {
 		return;
 	}
 	register_block_type( 'meyvora-seo/citations', array(
+		'api_version'     => 3,
+		'editor_script'   => 'meyvora-seo-citations-block',
 		'render_callback' => 'meyvora_citations_render_block',
 		'attributes'      => array(
 			'citations' => array(

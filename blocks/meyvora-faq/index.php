@@ -45,6 +45,31 @@ function meyvora_faq_enqueue_frontend_assets(): void {
 }
 
 /**
+ * Register block editor assets (loaded in the editor iframe when the block is used).
+ */
+add_action( 'init', 'meyvora_faq_register_block_assets', 9 );
+function meyvora_faq_register_block_assets(): void {
+    $url = defined( 'MEYVORA_SEO_URL' ) ? MEYVORA_SEO_URL : '';
+    $ver = defined( 'MEYVORA_SEO_VERSION' ) ? MEYVORA_SEO_VERSION : '1.0.0';
+    $js_path = defined( 'MEYVORA_SEO_PATH' ) ? MEYVORA_SEO_PATH . 'blocks/meyvora-faq/index.js' : '';
+    if ( $js_path && file_exists( $js_path ) ) {
+        wp_register_script(
+            'meyvora-seo-faq-block',
+            $url . 'blocks/meyvora-faq/index.js',
+            array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n', 'wp-data', 'wp-rich-text' ),
+            $ver,
+            true
+        );
+    }
+    wp_register_style(
+        'meyvora-faq-block-editor',
+        $url . 'admin/assets/css/meyvora-admin.css',
+        array(),
+        $ver
+    );
+}
+
+/**
  * Register the Gutenberg block with server-side render callback.
  * The block stores data in post meta; render_callback reads meta and outputs HTML.
  */
@@ -53,16 +78,10 @@ function meyvora_faq_register_block(): void {
     if ( ! function_exists( 'register_block_type' ) ) {
         return;
     }
-    $url = defined( 'MEYVORA_SEO_URL' ) ? MEYVORA_SEO_URL : '';
-    $ver = defined( 'MEYVORA_SEO_VERSION' ) ? MEYVORA_SEO_VERSION : '1.0.0';
-    wp_register_style(
-        'meyvora-faq-block-editor',
-        $url . 'admin/assets/css/meyvora-admin.css',
-        array(),
-        $ver
-    );
     register_block_type( 'meyvora-seo/faq', array(
-        'editor_style'   => 'meyvora-faq-block-editor',
+        'api_version'     => 3,
+        'editor_script'   => 'meyvora-seo-faq-block',
+        'editor_style'    => 'meyvora-faq-block-editor',
         'render_callback' => 'meyvora_faq_render_block',
         'attributes'      => array(
             'pairs'     => array( 'type' => 'string', 'default' => '' ),

@@ -33,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * GET  /wp-json/meyvora-seo/v1/post/{id}/keywords
  *   Rank-tracked keywords for the post: current position, SERP feature, last 90 history rows per keyword.
- *   Permission: same as GET post/{id} (can_read_post).
+ *   Permission: edit_post( id ) — rank history is not public data.
  *   Example: curl -X GET "https://example.com/wp-json/meyvora-seo/v1/post/42/keywords"
  *
  * GET  /wp-json/meyvora-seo/v1/redirects
@@ -186,7 +186,7 @@ class Meyvora_SEO_REST_API {
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_post_keywords' ),
-				'permission_callback' => array( $this, 'can_read_post' ),
+				'permission_callback' => array( $this, 'can_edit_post' ),
 				'args'                => array(
 					'id' => array(
 						'validate_callback' => function ( $param ) {

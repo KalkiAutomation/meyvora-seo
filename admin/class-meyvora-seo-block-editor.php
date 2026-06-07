@@ -410,33 +410,13 @@ class Meyvora_SEO_Block_Editor {
 		wp_enqueue_script(
 			'meyvora-seo-block-editor',
 			MEYVORA_SEO_URL . 'admin/assets/js/meyvora-block-editor.js',
-			array( 'wp-plugins', 'wp-edit-post', 'wp-editor', 'wp-element', 'wp-components', 'wp-data', 'wp-i18n', 'wp-api-fetch', 'wp-block-editor', 'wp-compose', 'media-editor' ),
+			array( 'wp-plugins', 'wp-editor', 'wp-edit-post', 'wp-element', 'wp-components', 'wp-data', 'wp-i18n', 'wp-api-fetch', 'wp-block-editor', 'wp-compose', 'media-editor' ),
 			MEYVORA_SEO_VERSION,
 			true
 		);
 
-		// Meyvora FAQ block
-		$faq_js = MEYVORA_SEO_PATH . 'blocks/meyvora-faq/index.js';
-		if ( file_exists( $faq_js ) ) {
-			wp_enqueue_script(
-				'meyvora-seo-faq-block',
-				MEYVORA_SEO_URL . 'blocks/meyvora-faq/index.js',
-				array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n', 'wp-data', 'wp-rich-text' ),
-				MEYVORA_SEO_VERSION,
-				true
-			);
-		}
-		// Meyvora Citations block (E-E-A-T)
-		$citations_js = MEYVORA_SEO_PATH . 'blocks/meyvora-citations/index.js';
-		if ( file_exists( $citations_js ) ) {
-			wp_enqueue_script(
-				'meyvora-seo-citations-block',
-				MEYVORA_SEO_URL . 'blocks/meyvora-citations/index.js',
-				array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n' ),
-				MEYVORA_SEO_VERSION,
-				true
-			);
-		}
+		// FAQ and Citations block scripts are registered on `init` with editor_script + api_version 3
+		// (see blocks/meyvora-faq/index.php and blocks/meyvora-citations/index.php).
 
 		$ai_enabled = class_exists( 'Meyvora_SEO_AI' ) && (bool) $this->options->get( 'ai_enabled', true );
 		// Chat history is session-only and is cleared when the panel is closed or the page is refreshed — no chat history is stored server-side.
